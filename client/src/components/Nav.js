@@ -20,7 +20,8 @@ class Nav extends Component {
           </ul>
         </div>
         <div id="profile-group" className="col">
-          <Link to="/login">Logout</Link>
+          <h2 id="user-name">Michael Scott</h2>
+          <Link to="/login"><button type="button" className="btn btn-primary">Logout</button></Link>
         </div>
       </div>
     );
