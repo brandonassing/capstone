@@ -1,0 +1,22 @@
+@import './helpers/variables';
+
+#home-body {
+  background-color: $body-color;
+  min-height: 100vh;
+  #header {
+      background-color: $primary-color;
+      height: 200px;
+      padding: $spacing-small;
+      padding-left: 50px;
+      padding-right: 50px;
+  }
+  #nav-tab-content {
+    height: 500px;
+    background-color: $main-content-color;
+    padding: $spacing-small;
+    border: {
+      radius: 10px;
+    }
+
+  }
+}
