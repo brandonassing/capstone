@@ -2,6 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3001/api",
   "dependencies": {
     "connected-react-router": "^4.5.0",
     "history": "^4.7.2",

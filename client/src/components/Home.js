@@ -6,6 +6,11 @@ import ClientProfile from './ClientProfile';
 import Statistics from './Statistics';
 
 class Home extends Component {
+  componentDidMount() {
+    fetch('/clients')
+      .then(res => res.json())
+      .then(clients => console.log(clients));
+  }
   render() {
     return (
       <div id="home-body">
