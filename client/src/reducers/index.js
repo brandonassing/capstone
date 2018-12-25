@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import counter from './counter';
+import { clientReducer } from './clientList';
 export default combineReducers({
-  counter
+  clientReducer: clientReducer
 });

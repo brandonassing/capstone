@@ -7,11 +7,7 @@ import Statistics from './Statistics';
 import AdminDashboard from './AdminDashboard';
 
 class Home extends Component {
-  componentDidMount() {
-    fetch('/clients')
-      .then(res => res.json())
-      .then(clients => console.log(clients));
-  }
+
   render() {
     return (
       <div id="home-body">
@@ -19,7 +15,7 @@ class Home extends Component {
           <Nav />
           <div className="tab-content shadow" id="nav-tab-content">
             <div className="tab-pane fade show active" id="stats" role="tabpanel" aria-labelledby="stats-tab">
-            <Statistics />
+              <Statistics />
             </div>
             <div className="tab-pane fade" id="clients" role="tabpanel" aria-labelledby="client-tab">
               <ClientProfile />
