@@ -9,7 +9,7 @@ var clients = [{
     timestamp: 32043
   },
   {
-    probability: 90.4,
+    probability: 12.3,
     timestamp: 31043
   },
   {
@@ -34,7 +34,7 @@ var clients = [{
   email: "b_newport@gmail.com",
   phoneNumber: "6478849394",
   churnProbabilities: [{
-    probability: 45.2,
+    probability: 32.3,
     timestamp: 32043
   }],
   planDetails: [{

@@ -15,3 +15,26 @@
     @extend %input-field;
   }
 }
+#client-profile-table {
+  tbody {
+    p {
+      margin: 0;
+    }
+    td.churn-prob {
+      text-align: center;
+      p {
+        font-weight: bold;
+        font-size: 20px;
+      }
+      p.bad {
+        color: $churn-prob-bad;
+      }
+      p.med {
+        color: $churn-prob-med;
+      }
+      p.good {
+        color: $churn-prob-good;
+      }
+    }
+  }
+}
