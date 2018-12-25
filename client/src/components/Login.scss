@@ -1,5 +1,6 @@
 @import './helpers/mixins';
 @import './helpers/variables';
+@import './helpers/placeholders';
 
 #login-body {
   background-color: $primary-color;
@@ -33,6 +34,9 @@
       padding: $spacing-small;
       border: {
         radius: 10px;
+      }
+      input {
+        @extend %input-field;
       }
       .btn-primary {
         background-color: $accent-color;
