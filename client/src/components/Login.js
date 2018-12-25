@@ -11,8 +11,8 @@ class Login extends Component {
     }
   }
 
-  authenticate = () => {
-
+  authenticate = (e) => {
+    e.preventDefault();
   }
 
   render() {
@@ -30,7 +30,7 @@ class Login extends Component {
             <form onSubmit={this.authenticate}>
               <div className="form-group">
                 <label htmlFor="email-login-input">Email address</label>
-                <input type="email" className="form-control" id="email-login-input" aria-describedby="emailHelp" placeholder="Enter email" value={this.state.username} onChange={(e) => { this.setState({ username: e.target.value }) }}/>
+                <input className="form-control" id="email-login-input" aria-describedby="emailHelp" placeholder="Enter email" value={this.state.username} onChange={(e) => { this.setState({ username: e.target.value }) }}/>
                 <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
               </div>
               <div className="form-group">
