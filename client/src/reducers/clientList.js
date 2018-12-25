@@ -1,4 +1,4 @@
-import { storeClients, STORE_CLIENTS } from '../actions/clientList';
+import { STORE_CLIENTS } from '../actions/clientList';
 const initialStateClientReducer = {
   clients: []
 };

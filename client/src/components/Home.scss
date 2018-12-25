@@ -11,7 +11,7 @@
       padding-right: 10vw;
   }
   #nav-tab-content {
-    height: 500px;
+    min-height: 500px;
     background-color: $main-content-color;
     padding: $spacing-small;
     border: {

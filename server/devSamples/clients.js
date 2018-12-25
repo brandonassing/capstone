@@ -76,6 +76,11 @@ var clients = [{
     rpuMonthly: 50.40,
     dataPlan: 3.5,
     timestamp: 34543
+  },
+  {
+    rpuMonthly: 20.50,
+    dataPlan: 2,
+    timestamp: 34529
   }]
 },
 {
