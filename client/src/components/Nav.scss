@@ -7,8 +7,7 @@
     display: flex;
     align-items: center;
     #logo {
-      background-color: red;
-      @include square(40px);
+      @include logo(40px);
     }
     .nav-pills {
       margin-left: 15px;

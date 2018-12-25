@@ -4,6 +4,7 @@ import './Home.scss';
 import Nav from './Nav';
 import ClientProfile from './ClientProfile';
 import Statistics from './Statistics';
+import AdminDashboard from './AdminDashboard';
 
 class Home extends Component {
   componentDidMount() {
@@ -22,6 +23,9 @@ class Home extends Component {
             </div>
             <div className="tab-pane fade" id="clients" role="tabpanel" aria-labelledby="client-tab">
               <ClientProfile />
+            </div>
+            <div className="tab-pane fade" id="admin-dashboard" role="tabpanel" aria-labelledby="admin-tab">
+              <AdminDashboard />
             </div>
           </div>
         </div>
