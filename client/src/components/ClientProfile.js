@@ -16,6 +16,10 @@ class ClientProfile extends Component {
   render() {
     return (
       <div>
+        <div id="clients-header">
+          <h2>Client profiles</h2>
+          <input type="email" className="form-control" id="client-search" placeholder="Search" />
+        </div>
         <table className="table table-hover">
           <thead>
             <tr>
@@ -30,6 +34,14 @@ class ClientProfile extends Component {
           <tbody>
             {
               this.props.clientProfiles.map((client) => {
+                let mostRecent = 0;
+                let mostRecentIndex = 0;
+                for (let i = 0; i < client.churnProbabilities.length; i++) {
+                  if(client.churnProbabilities[i].timestamp > mostRecent) {
+                    mostRecent = client.churnProbabilities[i].timestamp;
+                    mostRecentIndex = i;
+                  }
+                }
                 return(
                   <tr key={client.clientId}>
                     <th scope="row">{client.clientId}</th>
@@ -37,7 +49,7 @@ class ClientProfile extends Component {
                     <td>{client.email}</td>
                     <td>{client.phoneNumber}</td>
                     <td>{client.planDetails.length}</td>
-                    <td>TODO</td>
+                    <td>{client.churnProbabilities[mostRecentIndex].probability}</td>
                   </tr>
                 );
               })

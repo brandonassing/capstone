@@ -5,13 +5,26 @@ var clients = [{
   email: "b_newport@gmail.com",
   phoneNumber: "6478849394",
   churnProbabilities: [{
-    probability: 45.2,
+    probability: 80.3,
     timestamp: 32043
+  },
+  {
+    probability: 90.4,
+    timestamp: 31043
+  },
+  {
+    probability: 45.2,
+    timestamp: 30000
   }],
   planDetails: [{
     rpuMonthly: 50.40,
     dataPlan: 3.5,
     timestamp: 34543
+  },
+  {
+    rpuMonthly: 20.50,
+    dataPlan: 2,
+    timestamp: 34529
   }]
 },
 {
@@ -69,8 +82,16 @@ var clients = [{
   email: "b_newport@gmail.com",
   phoneNumber: "6478849394",
   churnProbabilities: [{
-    probability: 45.2,
+    probability: 80,
     timestamp: 32043
+  },
+  {
+    probability: 90,
+    timestamp: 31043
+  },
+  {
+    probability: 45.2,
+    timestamp: 32048
   }],
   planDetails: [{
     rpuMonthly: 50.40,
