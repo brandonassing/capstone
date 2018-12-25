@@ -31,6 +31,10 @@ class Nav extends Component {
             <li className="nav-item">
               <a className="nav-link" data-toggle="tab" href="#clients" role="tab" aria-controls="clients" aria-selected="false">Clients</a>
             </li>
+            <li className="nav-item">
+              <a className="nav-link" data-toggle="tab" href="#admin-dashboard" role="tab" aria-controls="admin-dashboard" aria-selected="false">Admin</a>
+            </li>
+
           </ul>
         </div>
         <div id="profile-group" className="col">
