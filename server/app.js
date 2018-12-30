@@ -8,6 +8,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var clientsRouter = require('./routes/clients');
 
+const mongoose = require('mongoose');
+
 var app = express();
 
 // view engine setup
@@ -19,6 +21,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+mongoose.Promise = global.Promise;
+mongoose.connect("mongodb://se4450:se4450@ds145584.mlab.com:45584/capstone" || "mongodb://localhost:27017/post", {useNewUrlParser: true});
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);

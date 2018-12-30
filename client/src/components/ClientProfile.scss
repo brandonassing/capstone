@@ -16,12 +16,23 @@
   }
 }
 #client-profile-table {
+  thead {
+    th {
+      // padding: 0;
+    }
+  }
   tbody {
+    tr {
+      &:hover {
+        // TODO not working
+        border-radius: 10px;
+      }
+    }
     p {
       margin: 0;
     }
     td.churn-prob {
-      text-align: center;
+      // text-align: center;
       p {
         font-weight: bold;
         font-size: 20px;

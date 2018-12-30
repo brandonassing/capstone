@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 class ClientProfile extends Component {
 
   componentDidMount() {
-    fetch('/clients')
+    fetch('/clients/profiles')
       .then(res => res.json())
       .then(clients => this.props.storeClients(clients));
 
@@ -55,7 +55,7 @@ class ClientProfile extends Component {
                 }
                 return(
                   <tr key={client.clientId}>
-                    <th scope="row"><p>{client.clientId}</p></th>
+                    <td scope="row"><p>{client.clientId}</p></td>
                     <td><p>{client.firstName} {client.lastName}</p></td>
                     <td><p>{client.email}</p></td>
                     <td><p>{client.phoneNumber}</p></td>
