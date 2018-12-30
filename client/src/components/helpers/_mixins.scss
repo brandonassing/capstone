@@ -1,0 +1,9 @@
+@mixin square($size) {
+  height: $size;
+  width: $size;
+}
+
+@mixin logo($size) {
+  background-color: red;
+  @include square($size);
+}

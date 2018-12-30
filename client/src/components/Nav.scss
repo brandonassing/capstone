@@ -1,0 +1,43 @@
+@import './helpers/variables';
+@import './helpers/mixins';
+
+#navbar-body {
+  margin-bottom: $spacing-small;
+  #nav-group {
+    display: flex;
+    align-items: center;
+    #logo {
+      @include logo(40px);
+    }
+    .nav-pills {
+      margin-left: 15px;
+      a {
+        color: #A8C5C9;
+        &:hover {
+          color: #62797C;
+        }
+      }
+      .nav-link.active {
+        background-color: $primary-btn-color;
+        color: white;
+      }
+    }
+  }
+
+  #profile-group {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    #user-name {
+      color: white;
+      font-size: 20px;
+      margin: 0;
+      margin-right: 15px;
+    }
+    .btn-primary {
+      background-color: $primary-btn-color;
+      color: white;
+      border: none;
+    }
+  }
+}
