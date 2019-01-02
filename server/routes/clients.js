@@ -11,7 +11,8 @@ router.get('/', function(req, res, next) {
 
 router.route('/profiles')
 .get(function (req, res) {
-    Client.find().sort("-_id").exec(function (err, client) {
+  //.sort("-_id")
+    Client.find().limit(10).exec(function (err, client) {
         if (err) {
           return res.send(err);
         }
