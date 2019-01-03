@@ -10,6 +10,7 @@ class ClientProfile extends Component {
     super(props);
     this.loadMore = this.loadMore.bind(this);
     this.state = {
+      totalPages: 0,
       pageNo: 1,
       size: 10
     }
@@ -18,17 +19,26 @@ class ClientProfile extends Component {
   componentDidMount() {
     fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size)
       .then(res => res.json())
-      .then(resJson => this.props.refreshClients(resJson.message));
+      .then(resJson => {
+        this.props.refreshClients(resJson.message);
+        this.setState({
+          totalPages: resJson.pages
+        })
+      });
   }
 
   loadMore() {
-    //TODO use resJson.pages to disable load more
     this.setState({
       pageNo: this.state.pageNo + 1
     }, () => {
       fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size)
         .then(res => res.json())
-        .then(resJson => this.props.storeClients(resJson.message));
+        .then(resJson => {
+          this.props.storeClients(resJson.message);
+          this.setState({
+            totalPages: resJson.pages
+          });
+        });
     });
   }
 
@@ -86,7 +96,7 @@ class ClientProfile extends Component {
             }
           </tbody>
         </table>
-        <button type="button" className="btn btn-primary" onClick={this.loadMore}>View more</button>
+        <button type="button" className="btn btn-primary" onClick={this.loadMore} disabled={this.state.pageNo < this.state.totalPages ? false : true}>View more</button>
 
       </div>
     );
