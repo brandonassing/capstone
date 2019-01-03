@@ -44,7 +44,7 @@ class ClientProfile extends Component {
 
   render() {
     return (
-      <div>
+      <div id="clients-body">
         <div id="clients-header">
           <h2>Client profiles</h2>
           <input type="email" className="form-control" id="client-search" placeholder="Search" />
@@ -84,7 +84,7 @@ class ClientProfile extends Component {
                 }
                 return(
                   <tr key={client.clientId}>
-                    <td scope="row"><p>{client.clientId}</p></td>
+                    <td><p>{client.clientId}</p></td>
                     <td><p>{client.firstName} {client.lastName}</p></td>
                     <td><p>{client.email}</p></td>
                     <td><p>{client.phoneNumber}</p></td>
@@ -96,8 +96,9 @@ class ClientProfile extends Component {
             }
           </tbody>
         </table>
-        <button type="button" className="btn btn-primary" onClick={this.loadMore} disabled={this.state.pageNo < this.state.totalPages ? false : true}>View more</button>
-
+        <div className="btn-container">
+          <button id="load-more" type="button" className="btn btn-primary" onClick={this.loadMore} disabled={this.state.pageNo < this.state.totalPages ? false : true}>View more</button>
+        </div>
       </div>
     );
   }
