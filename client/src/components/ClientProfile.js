@@ -1,21 +1,50 @@
 import React, { Component } from 'react';
 import './ClientProfile.scss';
-import { storeClients } from '../actions/clientList';
+import { storeClients, refreshClients } from '../actions/clientList';
 
 import { connect } from 'react-redux';
 
 
 class ClientProfile extends Component {
+  constructor(props) {
+    super(props);
+    this.loadMore = this.loadMore.bind(this);
+    this.state = {
+      totalPages: 0,
+      pageNo: 1,
+      size: 10
+    }
+  }
 
   componentDidMount() {
-    fetch('/clients/profiles')
+    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size)
       .then(res => res.json())
-      .then(clients => this.props.storeClients(clients));
-
+      .then(resJson => {
+        this.props.refreshClients(resJson.message);
+        this.setState({
+          totalPages: resJson.pages
+        })
+      });
   }
+
+  loadMore() {
+    this.setState({
+      pageNo: this.state.pageNo + 1
+    }, () => {
+      fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size)
+        .then(res => res.json())
+        .then(resJson => {
+          this.props.storeClients(resJson.message);
+          this.setState({
+            totalPages: resJson.pages
+          });
+        });
+    });
+  }
+
   render() {
     return (
-      <div>
+      <div id="clients-body">
         <div id="clients-header">
           <h2>Client profiles</h2>
           <input type="email" className="form-control" id="client-search" placeholder="Search" />
@@ -55,7 +84,7 @@ class ClientProfile extends Component {
                 }
                 return(
                   <tr key={client.clientId}>
-                    <td scope="row"><p>{client.clientId}</p></td>
+                    <td><p>{client.clientId}</p></td>
                     <td><p>{client.firstName} {client.lastName}</p></td>
                     <td><p>{client.email}</p></td>
                     <td><p>{client.phoneNumber}</p></td>
@@ -67,6 +96,9 @@ class ClientProfile extends Component {
             }
           </tbody>
         </table>
+        <div className="btn-container">
+          <button id="load-more" type="button" className="btn btn-primary" onClick={this.loadMore} disabled={this.state.pageNo < this.state.totalPages ? false : true}>View more</button>
+        </div>
       </div>
     );
   }
@@ -75,6 +107,7 @@ class ClientProfile extends Component {
 const mapDispatchToProps = dispatch => {
   return {
     storeClients: clientData => dispatch(storeClients(clientData)),
+    refreshClients: clientData => dispatch(refreshClients(clientData))
   };
 };
 
