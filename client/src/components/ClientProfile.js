@@ -1,18 +1,37 @@
 import React, { Component } from 'react';
 import './ClientProfile.scss';
-import { storeClients } from '../actions/clientList';
+import { storeClients, refreshClients } from '../actions/clientList';
 
 import { connect } from 'react-redux';
 
 
 class ClientProfile extends Component {
+  constructor(props) {
+    super(props);
+    this.loadMore = this.loadMore.bind(this);
+    this.state = {
+      pageNo: 1,
+      size: 10
+    }
+  }
 
   componentDidMount() {
-    fetch('/clients/profiles')
+    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size)
       .then(res => res.json())
-      .then(clients => this.props.storeClients(clients));
-
+      .then(resJson => this.props.refreshClients(resJson.message));
   }
+
+  loadMore() {
+    //TODO use resJson.pages to disable load more
+    this.setState({
+      pageNo: this.state.pageNo + 1
+    }, () => {
+      fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size)
+        .then(res => res.json())
+        .then(resJson => this.props.storeClients(resJson.message));
+    });
+  }
+
   render() {
     return (
       <div>
@@ -67,6 +86,8 @@ class ClientProfile extends Component {
             }
           </tbody>
         </table>
+        <button type="button" className="btn btn-primary" onClick={this.loadMore}>View more</button>
+
       </div>
     );
   }
@@ -75,6 +96,7 @@ class ClientProfile extends Component {
 const mapDispatchToProps = dispatch => {
   return {
     storeClients: clientData => dispatch(storeClients(clientData)),
+    refreshClients: clientData => dispatch(refreshClients(clientData))
   };
 };
 
