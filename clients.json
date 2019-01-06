@@ -1,0 +1,279 @@
+{
+    "_id": {
+        "$oid": "5c28e842e3d8354eb8ce0929"
+    },
+    "clientId": "000001",
+    "firstName": "Bobby",
+    "lastName": "Newport",
+    "email": "b_newport@gmail.com",
+    "phoneNumber": "6478849394",
+    "churnProbabilities": [
+        {
+            "probability": 32.3,
+            "timestamp": "2018-11-18T03:24:00"
+        }
+    ],
+    "planDetails": [
+        {
+            "rpuMonthly": 50.4,
+            "dataPlan": 3.5,
+            "timestamp": "2018-12-17T03:24:00"
+        }
+    ]
+}
+{
+    "_id": {
+        "$oid": "5c28e842e3d8354eb8ce092a"
+    },
+    "clientId": "000005",
+    "firstName": "Bobby",
+    "lastName": "Newport",
+    "email": "b_newport@gmail.com",
+    "phoneNumber": "6478849394",
+    "churnProbabilities": [
+        {
+            "probability": 45.2,
+            "timestamp": "2018-07-17T03:24:00"
+        }
+    ],
+    "planDetails": [
+        {
+            "rpuMonthly": 50.4,
+            "dataPlan": 3.5,
+            "timestamp": "2018-12-17T03:24:00"
+        }
+    ]
+}
+{
+    "_id": {
+        "$oid": "5c28e842e3d8354eb8ce092b"
+    },
+    "clientId": "000006",
+    "firstName": "Bobby",
+    "lastName": "Newport",
+    "email": "b_newport@gmail.com",
+    "phoneNumber": "6478849394",
+    "churnProbabilities": [
+        {
+            "probability": 45.2,
+            "timestamp": "2018-10-17T03:24:00"
+        }
+    ],
+    "planDetails": [
+        {
+            "rpuMonthly": 50.4,
+            "dataPlan": 3.5,
+            "timestamp": "2018-12-17T03:24:00"
+        }
+    ]
+}
+{
+    "_id": {
+        "$oid": "5c28e842e3d8354eb8ce092c"
+    },
+    "clientId": "000003",
+    "firstName": "Bobby",
+    "lastName": "Newport",
+    "email": "b_newport@gmail.com",
+    "phoneNumber": "6478849394",
+    "churnProbabilities": [
+        {
+            "probability": 45.2,
+            "timestamp": "2018-09-17T03:24:00"
+        }
+    ],
+    "planDetails": [
+        {
+            "rpuMonthly": 50.4,
+            "dataPlan": 3.5,
+            "timestamp": "2018-12-17T03:24:00"
+        }
+    ]
+}
+{
+    "_id": {
+        "$oid": "5c28e842e3d8354eb8ce092d"
+    },
+    "clientId": "000009",
+    "firstName": "Bobby",
+    "lastName": "Newport",
+    "email": "b_newport@gmail.com",
+    "phoneNumber": "6478849394",
+    "churnProbabilities": [
+        {
+            "probability": 45.2,
+            "timestamp": "2018-01-27T03:24:00"
+        }
+    ],
+    "planDetails": [
+        {
+            "rpuMonthly": 50.4,
+            "dataPlan": 3.5,
+            "timestamp": "2018-12-17T03:24:00"
+        }
+    ]
+}
+{
+    "_id": {
+        "$oid": "5c28e842e3d8354eb8ce092e"
+    },
+    "clientId": "000008",
+    "firstName": "Bobby",
+    "lastName": "Newport",
+    "email": "b_newport@gmail.com",
+    "phoneNumber": "6478849394",
+    "churnProbabilities": [
+        {
+            "probability": 45.2,
+            "timestamp": "2018-03-05T03:24:00"
+        }
+    ],
+    "planDetails": [
+        {
+            "rpuMonthly": 50.4,
+            "dataPlan": 3.5,
+            "timestamp": "2018-12-17T03:24:00"
+        }
+    ]
+}
+{
+    "_id": {
+        "$oid": "5c28e842e3d8354eb8ce092f"
+    },
+    "clientId": "000004",
+    "firstName": "Bobby",
+    "lastName": "Newport",
+    "email": "b_newport@gmail.com",
+    "phoneNumber": "6478849394",
+    "churnProbabilities": [
+        {
+            "probability": 80,
+            "timestamp": "2018-04-21T03:24:00"
+        },
+        {
+            "probability": 90,
+            "timestamp": "2018-12-18T03:24:00"
+        },
+        {
+            "probability": 45.2,
+            "timestamp": "2018-12-17T03:24:00"
+        }
+    ],
+    "planDetails": [
+        {
+            "rpuMonthly": 50.4,
+            "dataPlan": 3.5,
+            "timestamp": "2018-12-17T03:24:00"
+        },
+        {
+            "rpuMonthly": 20.5,
+            "dataPlan": 2,
+            "timestamp": "2018-12-18T03:24:00"
+        }
+    ]
+}
+{
+    "_id": {
+        "$oid": "5c28e842e3d8354eb8ce0930"
+    },
+    "clientId": "000007",
+    "firstName": "Bobby",
+    "lastName": "Newport",
+    "email": "b_newport@gmail.com",
+    "phoneNumber": "6478849394",
+    "churnProbabilities": [
+        {
+            "probability": 45.2,
+            "timestamp": "2018-02-17T03:24:00"
+        }
+    ],
+    "planDetails": [
+        {
+            "rpuMonthly": 50.4,
+            "dataPlan": 3.5,
+            "timestamp": "2018-12-17T03:24:00"
+        }
+    ]
+}
+{
+    "_id": {
+        "$oid": "5c28e842e3d8354eb8ce0931"
+    },
+    "clientId": "000002",
+    "firstName": "Bobby",
+    "lastName": "Newport",
+    "email": "b_newport@gmail.com",
+    "phoneNumber": "6478849394",
+    "churnProbabilities": [
+        {
+            "probability": 45.2,
+            "timestamp": "2018-06-17T03:24:00"
+        }
+    ],
+    "planDetails": [
+        {
+            "rpuMonthly": 50.4,
+            "dataPlan": 3.5,
+            "timestamp": "2018-12-17T03:24:00"
+        }
+    ]
+}
+{
+    "_id": {
+        "$oid": "5c28e842e3d8354eb8ce0932"
+    },
+    "clientId": "000000",
+    "firstName": "Bobby",
+    "lastName": "Newport",
+    "email": "b_newport@gmail.com",
+    "phoneNumber": "6478849394",
+    "churnProbabilities": [
+        {
+            "probability": 80.3,
+            "timestamp": "2018-05-13T03:24:00"
+        },
+        {
+            "probability": 12.3,
+            "timestamp": "2018-05-16T03:24:00"
+        },
+        {
+            "probability": 45.2,
+            "timestamp": "2018-03-17T03:24:00"
+        }
+    ],
+    "planDetails": [
+        {
+            "rpuMonthly": 50.4,
+            "dataPlan": 3.5,
+            "timestamp": "2018-12-27T03:24:00"
+        },
+        {
+            "rpuMonthly": 20.5,
+            "dataPlan": 2,
+            "timestamp": "2018-12-17T03:24:00"
+        }
+    ]
+}
+{
+    "_id": {
+        "$oid": "5c28e8dee7179a7487998ade"
+    },
+    "clientId": "000010",
+    "firstName": "Bobby",
+    "lastName": "Newport",
+    "email": "b_newport@gmail.com",
+    "phoneNumber": "6478849394",
+    "churnProbabilities": [
+        {
+            "probability": 22.3,
+            "timestamp": "2018-10-17T03:24:00"
+        }
+    ],
+    "planDetails": [
+        {
+            "rpuMonthly": 70.4,
+            "dataPlan": 3.0,
+            "timestamp": "2018-12-17T03:24:00"
+        }
+    ]
+}

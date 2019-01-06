@@ -51,21 +51,23 @@ router.route('/profiles').get(function (req, res) {
 });
 
 router.route('/churn').get(function (req, res) {
-  Client.find({}, function (err, data) {
-    if (err) {
-      response = {
-        "error": true,
-        "message": "Error fetching data"
-      };
-    }
-    else {
-      response = {
-        "error": false,
-        "message": data
+  Client.find()
+    .select('churnProbabilities')
+    .exec(function (err, data) {
+      if (err) {
+        response = {
+          "error": true,
+          "message": "Error fetching data"
+        };
       }
-    }
-    res.json(response);
-  }).select('churnProbabilities'); 
+      else {
+        response = {
+          "error": false,
+          "message": data
+        }
+      }
+      res.json(response);
+    }); 
 });
 
 module.exports = router;
