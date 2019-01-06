@@ -22,7 +22,6 @@ class Nav extends Component {
       <div id="navbar-body" className="row">
         <div id="nav-group" className="col">
           <div id="logo">
-
           </div>
           <ul className="nav nav-pills" id="navTabs" role="tablist">
             <li className="nav-item">

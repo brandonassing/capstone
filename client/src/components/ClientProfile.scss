@@ -8,20 +8,24 @@
     padding-top: 15px;
     display: flex;
     justify-content: space-between;
+
     h2 {
       font-size: $tab-heading-font-size;
     }
+
     #client-search {
       width: 400px;
       @extend %input-field;
     }
   }
+
   #client-profile-table {
     thead {
       th {
         // padding: 0;
       }
     }
+
     tbody {
       tr {
         &:hover {
@@ -29,29 +33,36 @@
           border-radius: 10px;
         }
       }
+
       p {
         margin: 0;
       }
+
       td.churn-prob {
         // text-align: center;
         p {
           font-weight: bold;
           font-size: 20px;
         }
+
         p.bad {
           color: $churn-prob-bad;
         }
+
         p.med {
           color: $churn-prob-med;
         }
+
         p.good {
           color: $churn-prob-good;
         }
       }
     }
   }
+
   .btn-container {
     text-align: center;
+
     .btn-primary {
       background-color: $accent-color;
       color: white;
