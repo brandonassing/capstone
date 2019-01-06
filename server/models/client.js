@@ -9,12 +9,12 @@ var ClientSchema = new Schema({
   phoneNumber: String,
   churnProbabilities: [{
     probability: Number,
-    timestamp: Number
+    timestamp: Date
   }],
   planDetails: [{
     rpuMonthly: Number,
     dataPlan: Number,
-    timestamp: Number
+    timestamp: Date
   }]
 });
 
