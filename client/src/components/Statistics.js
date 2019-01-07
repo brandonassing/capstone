@@ -65,9 +65,10 @@ class Statistics extends Component {
       datasets: [{
         fill: false,
         label: "Churn probability",
-        backgroundColor: 'rgb(255, 99, 132)',
-        borderColor: 'rgb(255, 99, 132)',
+        borderColor: '#00baa1',
         data: this.state.probabilities,
+        borderCapStyle: "round",
+        borderJoinStyle: "round",
       }]
     };
     let lineOptions = {
@@ -76,15 +77,15 @@ class Statistics extends Component {
           type: 'time',
           time: {
             displayFormats: {
-              'millisecond': 'MMM DD',
-              'second': 'MMM DD',
-              'minute': 'MMM DD',
-              'hour': 'MMM DD',
-              'day': 'MMM DD',
-              'week': 'MMM DD',
-              'month': 'MMM DD',
-              'quarter': 'MMM DD',
-              'year': 'MMM DD',
+              'millisecond': 'MMM',
+              'second': 'MMM',
+              'minute': 'MMM',
+              'hour': 'MMM',
+              'day': 'MMM',
+              'week': 'MMM',
+              'month': 'MMM',
+              'quarter': 'MMM',
+              'year': 'MMM',
             },
             tooltipFormat: 'DD/MM/YY'
           }
@@ -92,7 +93,7 @@ class Statistics extends Component {
       },
       elements: {
         line: {
-          tension: 0, // disables bezier curves
+          tension: 0.05, // disables bezier curves
         }
       }
     };
@@ -100,9 +101,9 @@ class Statistics extends Component {
     let donutData = {
       datasets: [{
         data: this.getDonutData(),
-        backgroundColor: ["#34bc6e", "#fbeaae", "#e62325"]
+        backgroundColor: ["#00a78f", "#8ee9d4", "#e62325"]
       }],
-      labels: ["Good", "Med", "Bad"]
+      labels: ["Low", "Med", "High"]
     };
     let donutOptions = {
       cutoutPercentage: 50,
