@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './ClientProfile.scss';
 import { storeClients, refreshClients } from '../actions/clientList';
+import moment from 'moment';
 
 import { connect } from 'react-redux';
 
@@ -9,10 +10,12 @@ class ClientProfile extends Component {
   constructor(props) {
     super(props);
     this.loadMore = this.loadMore.bind(this);
+    this.search = this.search.bind(this);
     this.state = {
       totalPages: 0,
       pageNo: 1,
-      size: 10
+      size: 10,
+      searchKey: ""
     }
   }
 
@@ -42,12 +45,16 @@ class ClientProfile extends Component {
     });
   }
 
+  search() {
+
+  }
+
   render() {
     return (
       <div id="clients-body">
         <div id="clients-header">
           <h2>Client profiles</h2>
-          <input type="email" className="form-control" id="client-search" placeholder="Search" />
+          <input type="email" className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })}/>
         </div>
         <table id="client-profile-table" className="table table-hover">
           <thead>
@@ -68,7 +75,7 @@ class ClientProfile extends Component {
                 let churnClass = "";
 
                 for (let i = 0; i < client.churnProbabilities.length; i++) {
-                  if(client.churnProbabilities[i].timestamp > mostRecent) {
+                  if(moment(client.churnProbabilities[i].timestamp).isAfter(mostRecent)) {
                     mostRecent = client.churnProbabilities[i].timestamp;
                     mostRecentIndex = i;
                   }
