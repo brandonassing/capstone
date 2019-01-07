@@ -90,18 +90,28 @@ class Statistics extends Component {
             tooltipFormat: 'DD/MM/YY'
           }
         }],
+        yAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: 'Probability (%)'
+          }
+        }]
       },
       elements: {
         line: {
           tension: 0.05, // disables bezier curves
         }
+      },
+      legend: {
+        display: false
       }
     };
 
     let donutData = {
       datasets: [{
         data: this.getDonutData(),
-        backgroundColor: ["#00a78f", "#8ee9d4", "#e62325"]
+        backgroundColor: ["#00a78f", "#8ee9d4", "#e62325"],
+        hoverBackgroundColor: ["#00a78f", "#8ee9d4", "#e62325"]
       }],
       labels: ["Low", "Med", "High"]
     };
@@ -109,6 +119,9 @@ class Statistics extends Component {
       cutoutPercentage: 50,
       animation: {
         animateRotate: true
+      },
+      legend: {
+        position: "right"
       }
     };
 
@@ -119,16 +132,16 @@ class Statistics extends Component {
         </div>
         <div id="stats-content">
           <div id="line-graph">
-            <h3>Clients churn over time</h3>
+            <h3>Clients' churn over time</h3>
             <Line data={lineData} options={lineOptions} height={100} />
           </div>
           <div id="lower-group">
             <div id="donut-graph">
-              <h3>Clients churn distribution</h3>
+              <h3>Clients' churn distribution</h3>
               <Pie data={donutData} options={donutOptions} />
             </div>
             <div id="avg-group">
-              <h3>Clients churn averages</h3>
+              <h3>Clients' churn averages</h3>
               <div id="avg-cards">
                 <div className="avg">
 
