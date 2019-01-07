@@ -1,0 +1,52 @@
+@import './helpers/variables';
+@import './helpers/mixins';
+@import './helpers/placeholders';
+
+#stats-body {
+    #stats-header {
+        @extend %tab-heading;
+    }
+    #stats-content {
+        
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        #line-graph {
+            padding: $spacing-smaller;
+            h3 {
+                font-size: 20px;
+                font-weight: normal;
+            }
+            canvas.chartjs-render-monitor {
+                max-width: 100%;
+            }
+        }
+        #lower-group {
+            display: flex;
+            padding: $spacing-smaller;
+            #donut-graph {
+                width: 50%;
+                h3 {
+                    font-size: 15px;
+                    font-weight: normal;
+                }
+            }
+            #avg-group {
+                width: 50%;
+                h3 {
+                    font-size: 15px;
+                    font-weight: normal;
+                }
+                #avg-cards {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    .avg {
+                        padding: 10px;
+                    }
+                }
+                
+            }
+        }
+    }
+}

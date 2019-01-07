@@ -4,15 +4,7 @@
 
 #clients-body {
   #clients-header {
-    padding-bottom: 15px;
-    padding-top: 15px;
-    display: flex;
-    justify-content: space-between;
-
-    h2 {
-      font-size: $tab-heading-font-size;
-    }
-
+    @extend %tab-heading;
     #client-search {
       width: 400px;
       @extend %input-field;

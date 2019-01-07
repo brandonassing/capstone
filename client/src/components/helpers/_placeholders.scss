@@ -2,3 +2,13 @@
   background-color: $input-background-color;
   border: none;
 }
+
+%tab-heading {
+  padding-bottom: 15px;
+  padding-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  h2 {
+    font-size: $tab-heading-font-size;
+  }
+}
