@@ -13,9 +13,9 @@
         flex-direction: column;
         #line-graph {
             padding: $spacing-smaller;
+            padding-top: 0;
             h3 {
-                font-size: 20px;
-                font-weight: normal;
+                @extend %stat-data-heading
             }
             canvas.chartjs-render-monitor {
                 max-width: 100%;
@@ -27,16 +27,19 @@
             #donut-graph {
                 width: 50%;
                 h3 {
-                    font-size: 15px;
-                    font-weight: normal;
+                    @extend %stat-data-heading
+                }
+                padding-right: $spacing-smaller;
+                canvas.chartjs-render-monitor {
+                    max-width: 100%;
                 }
             }
             #avg-group {
                 width: 50%;
                 h3 {
-                    font-size: 15px;
-                    font-weight: normal;
+                    @extend %stat-data-heading
                 }
+                padding-left: $spacing-smaller;
                 #avg-cards {
                     display: flex;
                     flex-direction: column;
