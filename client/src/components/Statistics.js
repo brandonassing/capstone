@@ -65,7 +65,7 @@ class Statistics extends Component {
       datasets: [{
         fill: false,
         label: "Churn probability",
-        borderColor: '#00baa1',
+        borderColor: '#51C4C6',
         data: this.state.probabilities,
         borderCapStyle: "round",
         borderJoinStyle: "round",
@@ -110,8 +110,8 @@ class Statistics extends Component {
     let donutData = {
       datasets: [{
         data: this.getDonutData(),
-        backgroundColor: ["#00a78f", "#8ee9d4", "#e62325"],
-        hoverBackgroundColor: ["#00a78f", "#8ee9d4", "#e62325"]
+        backgroundColor: ["#00A78F", "#8EE9D4", "#E62325"],
+        hoverBackgroundColor: ["#55AE9E", "#90DFDA", "#D90001"]
       }],
       labels: ["Low", "Med", "High"]
     };
