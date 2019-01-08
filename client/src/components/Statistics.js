@@ -2,15 +2,16 @@ import React, { Component } from 'react';
 import './Statistics.scss';
 import { Line, Pie } from 'react-chartjs-2';
 import moment from 'moment';
-
+import { connect } from 'react-redux';
+import { storeChurns } from '../actions/churnList';
 
 class Statistics extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      churns: [],
-      timestamps: [],
-      probabilities: []
+      churnWeek: 0,
+      churnMonth: 0,
+      churnYear: 0
     }
 
     this.getDonutData = this.getDonutData.bind(this);
@@ -31,7 +32,7 @@ class Statistics extends Component {
           timestamps.push(churns[i].timestamp);
           probabilities.push(churns[i].probability);
         }
-        this.setState({
+        this.props.storeChurns({
           churns: churns,
           timestamps: timestamps,
           probabilities: probabilities
@@ -44,7 +45,7 @@ class Statistics extends Component {
     let med = 0;
     let bad = 0;
 
-    this.state.probabilities.forEach((e) => {
+    this.props.probabilities.forEach((e) => {
       if (e >= 0 && e < 40) {
         good++;
       }
@@ -61,12 +62,12 @@ class Statistics extends Component {
 
   render() {
     let lineData = {
-      labels: this.state.timestamps,
+      labels: this.props.timestamps,
       datasets: [{
         fill: false,
         label: "Churn probability",
         borderColor: '#51C4C6',
-        data: this.state.probabilities,
+        data: this.props.probabilities,
         borderCapStyle: "round",
         borderJoinStyle: "round",
       }]
@@ -125,6 +126,16 @@ class Statistics extends Component {
       }
     };
 
+    let churnWeek = 0;
+    let churnMonth = 0;
+    let churnYear = 0;
+
+    // churnWeek = this.props.churns.reduce((acc, churn) => {
+    //   if (churn.timestamp == ) {
+    //     return 
+    //   }
+    // });
+
     return (
       <div id="stats-body">
         <div id="stats-header">
@@ -144,13 +155,16 @@ class Statistics extends Component {
               <h3>Clients' churn averages</h3>
               <div id="avg-cards">
                 <div className="avg">
-
+                  <h4>This week</h4>
+                  <p>{churnWeek}</p>
                 </div>
                 <div className="avg">
-
+                  <h4>This month</h4>
+                  <p>{churnMonth}</p>
                 </div>
                 <div className="avg">
-
+                  <h4>This year</h4>
+                  <p>{churnYear}</p>
                 </div>
               </div>
             </div>
@@ -162,20 +176,18 @@ class Statistics extends Component {
   }
 }
 
-export default Statistics;
+const mapDispatchToProps = dispatch => {
+  return {
+    storeChurns: churnData => dispatch(storeChurns(churnData)),
+  };
+};
 
+const mapStateToProps = state => {
+  return {
+    churns: state.churnReducer.churns,
+    timestamps: state.churnReducer.timestamps,
+    probabilities: state.churnReducer.probabilities
+  };
+};
 
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     storeClients: clientData => dispatch(storeClients(clientData)),
-//     refreshClients: clientData => dispatch(refreshClients(clientData))
-//   };
-// };
-
-// const mapStateToProps = state => {
-//   return {
-//     clientProfiles: state.clientReducer.clients
-//   };
-// };
-
-// export default connect(mapStateToProps, mapDispatchToProps)(Statistics)
+export default connect(mapStateToProps, mapDispatchToProps)(Statistics)

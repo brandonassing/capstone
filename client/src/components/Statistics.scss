@@ -42,10 +42,11 @@
                 padding-left: $spacing-smaller;
                 #avg-cards {
                     display: flex;
-                    flex-direction: column;
                     justify-content: space-between;
                     .avg {
                         padding: 10px;
+                        background-color: #F7F7F7;
+                        width: 30%;
                     }
                 }
                 
