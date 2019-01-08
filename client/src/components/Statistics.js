@@ -128,7 +128,7 @@ class Statistics extends Component {
     return (
       <div id="stats-body">
         <div id="stats-header">
-          <h2>Statistics</h2>
+          <h2>Churn statistics</h2>
         </div>
         <div id="stats-content">
           <div id="line-graph">
