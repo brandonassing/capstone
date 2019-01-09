@@ -33,7 +33,6 @@ class Statistics extends Component {
           timestamps.push(churns[i].timestamp);
           probabilities.push(churns[i].probability);
         }
-        console.log(churns);
         this.props.storeChurns({
           churns: churns,
           timestamps: timestamps,
