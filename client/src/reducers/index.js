@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux';
 import { clientReducer } from './clientList';
+import { churnReducer } from './churnList';
 export default combineReducers({
-  clientReducer: clientReducer
+  clientReducer: clientReducer,
+  churnReducer: churnReducer
 });

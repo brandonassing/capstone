@@ -5,10 +5,19 @@
 
 %tab-heading {
   padding-bottom: 15px;
-  padding-top: 15px;
   display: flex;
   justify-content: space-between;
   h2 {
-    font-size: $tab-heading-font-size;
+    font-size: 30px;
+    font-family: 'Roboto Condensed', sans-serif;
+    margin: 0;
+    font-weight: normal;
   }
+}
+
+%stat-data-heading {
+  color: #5f5757;
+  font-size: 20px;
+  font-family: 'Oswald', sans-serif;
+  font-weight: normal;
 }
