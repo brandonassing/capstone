@@ -16,6 +16,7 @@ class Statistics extends Component {
 
     this.getDonutData = this.getDonutData.bind(this);
   }
+
   componentDidMount() {
     fetch('/clients/churn')
       .then(res => res.json())
@@ -32,6 +33,7 @@ class Statistics extends Component {
           timestamps.push(churns[i].timestamp);
           probabilities.push(churns[i].probability);
         }
+        console.log(churns);
         this.props.storeChurns({
           churns: churns,
           timestamps: timestamps,
@@ -126,15 +128,48 @@ class Statistics extends Component {
       }
     };
 
-    let churnWeek = 0;
-    let churnMonth = 0;
-    let churnYear = 0;
+    let totalChurnWeek = 0, weekDenom = 0;
+    let totalChurnMonth = 0, monthDenom = 0;
+    let totalChurnYear = 0, yearDenom = 0;
 
-    // churnWeek = this.props.churns.reduce((acc, churn) => {
-    //   if (churn.timestamp == ) {
-    //     return 
-    //   }
-    // });
+    for (let i = 0; i < this.props.churns.length; i++) {
+      if (moment(this.props.churns[i].timestamp).isSame(new Date(), 'week')) {
+        totalChurnWeek += this.props.churns[i].probability;
+        weekDenom++;
+      }
+      if (moment(this.props.churns[i].timestamp).isSame(new Date(), 'month')) {
+        totalChurnMonth += this.props.churns[i].probability;
+        monthDenom++;
+      }
+      if (moment(this.props.churns[i].timestamp).isSame(new Date(), 'year')) {
+        totalChurnYear += this.props.churns[i].probability;
+        yearDenom++;
+      }
+    }
+
+    let weekJSX;
+    if (weekDenom !== 0) {
+      weekJSX = <p>{totalChurnWeek / weekDenom}</p>
+    }
+    else {
+      weekJSX = <p>No data</p>
+    }
+
+    let monthJSX;
+    if (monthDenom !== 0) {
+      monthJSX = <p>{totalChurnMonth / monthDenom}</p>
+    }
+    else {
+      monthJSX = <p>No data</p>
+    }
+
+    let yearJSX;
+    if (yearDenom !== 0) {
+      yearJSX = <p>{totalChurnYear / yearDenom}</p>
+    }
+    else {
+      yearJSX = <p>No data</p>
+    }
 
     return (
       <div id="stats-body">
@@ -156,15 +191,15 @@ class Statistics extends Component {
               <div id="avg-cards">
                 <div className="avg">
                   <h4>This week</h4>
-                  <p>{churnWeek}</p>
+                  {weekJSX}
                 </div>
                 <div className="avg">
                   <h4>This month</h4>
-                  <p>{churnMonth}</p>
+                  {monthJSX}
                 </div>
                 <div className="avg">
                   <h4>This year</h4>
-                  <p>{churnYear}</p>
+                  {yearJSX}
                 </div>
               </div>
             </div>
