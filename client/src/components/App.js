@@ -2,22 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import { Route } from 'react-router-dom';
 
-import { connect } from 'react-redux';
-
 import Login from './Login';
 import Home from './Home';
-
-// const mapStateToProps = state => {
-//   return {
-//     // show: state.videoReducer.data.show
-//   };
-// };
-//
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     // changeVid: vidData => dispatch(changeVid(vidData))
-//   };
-// };
 
 class App extends Component {
   render() {
@@ -30,4 +16,3 @@ class App extends Component {
   }
 }
 export default App;
-// export default connect(mapStateToProps, mapDispatchToProps)(App);
