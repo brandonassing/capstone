@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './ClientProfile.scss';
 import { storeClients, refreshClients } from '../actions/clientList';
 import moment from 'moment';
+import ReactTable from "react-table";
+import 'react-table/react-table.css'
 
 import { connect } from 'react-redux';
 
@@ -50,12 +52,34 @@ class ClientProfile extends Component {
   }
 
   render() {
+    const data = this.props.clientProfiles;
+    const columns = [{
+      Header: 'Id',
+      accessor: 'clientId' // String-based value accessors!
+    }, {
+      Header: 'Name',
+      accessor: 'firstName'
+    }, {
+      Header: 'Email',
+      accessor: 'email'
+    }, {
+      Header: 'Phone number',
+      accessor: 'phoneNumber'
+    }];
+
     return (
       <div id="clients-body">
         <div id="clients-header">
           <h2>Client profiles</h2>
-          <input type="email" className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })}/>
+          <input type="email" className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} />
         </div>
+        <ReactTable
+          data={data}
+          columns={columns}
+          showPagination={false}
+          minRows={10}
+        />
+
         <table id="client-profile-table" className="table table-hover">
           <thead>
             <tr>
@@ -75,7 +99,7 @@ class ClientProfile extends Component {
                 let churnClass = "";
 
                 for (let i = 0; i < client.churnProbabilities.length; i++) {
-                  if(moment(client.churnProbabilities[i].timestamp).isAfter(mostRecent)) {
+                  if (moment(client.churnProbabilities[i].timestamp).isAfter(mostRecent)) {
                     mostRecent = client.churnProbabilities[i].timestamp;
                     mostRecentIndex = i;
                   }
@@ -89,7 +113,7 @@ class ClientProfile extends Component {
                 else if (client.churnProbabilities[mostRecentIndex].probability >= 75 && client.churnProbabilities[mostRecentIndex].probability <= 100) {
                   churnClass = "bad";
                 }
-                return(
+                return (
                   <tr key={client.clientId}>
                     <td><p>{client.clientId}</p></td>
                     <td><p>{client.firstName} {client.lastName}</p></td>
