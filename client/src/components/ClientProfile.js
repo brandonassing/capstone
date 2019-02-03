@@ -13,6 +13,7 @@ class ClientProfile extends Component {
     super(props);
     this.loadMore = this.loadMore.bind(this);
     this.search = this.search.bind(this);
+    this.getData = this.getData.bind(this);
     this.state = {
       totalPages: 0,
       pageNo: 1,
@@ -35,20 +36,29 @@ class ClientProfile extends Component {
   loadMore() {
     this.setState({
       pageNo: this.state.pageNo + 1
-    }, () => {
-      fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size)
-        .then(res => res.json())
-        .then(resJson => {
-          this.props.storeClients(resJson.message);
-          this.setState({
-            totalPages: resJson.pages
-          });
-        });
-    });
+    }, () => this.getData(false));
   }
 
-  search() {
+  search(e) {
+    if (e.key === 'Enter') {
+      this.setState({
+        totalPages: 0,
+        pageNo: 1,
+        size: 10
+      }, () => this.getData(true));
+    }
+  }
 
+  getData(refresh) {
+    fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size)
+      .then(res => res.json())
+      .then(resJson => {
+        // call redux refresh vs store
+        refresh ? this.props.refreshClients(resJson.message) : this.props.storeClients(resJson.message);
+        this.setState({
+          totalPages: resJson.pages
+        });
+      });
   }
 
   render() {
@@ -79,7 +89,7 @@ class ClientProfile extends Component {
         return stringNum
       },
       Cell: col => <p>{col.value}</p>,
-      minWidth: 100
+      minWidth: 150
     }, {
       Header: () => <p># plans</p>,
       id: 'plans',
@@ -123,7 +133,7 @@ class ClientProfile extends Component {
       <div id="clients-body">
         <div id="clients-header">
           <h2>Client profiles</h2>
-          <input type="email" className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} />
+          <input type="email" className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
         </div>
         <ReactTable
           data={data}
