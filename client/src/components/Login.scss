@@ -32,9 +32,7 @@
     #login-form {
       background-color: $main-content-color;
       padding: $spacing-small;
-      border: {
-        radius: 10px;
-      }
+      @include border-curved($border-radius);
       input {
         @extend %input-field;
       }

@@ -53,33 +53,39 @@ class ClientProfile extends Component {
 
   render() {
     const data = this.props.clientProfiles;
+
     const columns = [{
       Header: () => <p>Id</p>,
       accessor: 'clientId',
       Cell: col => <p>{col.value}</p>,
-      resizable: false
+      minWidth: 100
     }, {
       Header: () => <p>Name</p>,
       id: 'name',
       accessor: d => `${d.firstName} ${d.lastName}`,
       Cell: col => <p>{col.value}</p>,
-      resizable: false
+      minWidth: 200
     }, {
       Header: () => <p>Email</p>,
       accessor: 'email',
       Cell: col => <p>{col.value}</p>,
-      resizable: false
+      minWidth: 250
     }, {
       Header: () => <p>Phone Number</p>,
-      accessor: 'phoneNumber',
+      id: "phoneNumber",
+      accessor: d => {
+        let num = d.phoneNumber;
+        let stringNum = "(" + num.slice(0, 3) + ")" + " " + num.slice(3, 6) + "-" + num.slice(6);
+        return stringNum
+      },
       Cell: col => <p>{col.value}</p>,
-      resizable: false
+      minWidth: 100
     }, {
       Header: () => <p># plans</p>,
       id: 'plans',
       accessor: d => d.planDetails.length,
       Cell: col => <p>{col.value}</p>,
-      resizable: false
+      minWidth: 80
     }, {
       Header: () => <p>Churn</p>,
       id: 'churn',
@@ -96,7 +102,7 @@ class ClientProfile extends Component {
         return d.churnProbabilities[mostRecentIndex].probability;
       },
       Cell: col => {
-        let churnClass="";
+        let churnClass = "";
         if (col.value >= 0 && col.value < 40) {
           churnClass = "good";
         }
@@ -106,9 +112,10 @@ class ClientProfile extends Component {
         else if (col.value >= 75 && col.value <= 100) {
           churnClass = "bad";
         }
-        return(<p className={churnClass}>{col.value}</p>);
+        return (<p className={churnClass}>{col.value}</p>);
       },
       className: 'churn-prob',
+      minWidth: 100,
       resizable: false
     }];
 
@@ -123,55 +130,14 @@ class ClientProfile extends Component {
           columns={columns}
           showPagination={false}
           minRows={10}
-        />
-
-        <table id="client-profile-table" className="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">id</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Phone number</th>
-              <th scope="col"># plans</th>
-              <th scope="col">Latest churn</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              this.props.clientProfiles.map((client) => {
-                let mostRecent = 0;
-                let mostRecentIndex = 0;
-                let churnClass = "";
-
-                for (let i = 0; i < client.churnProbabilities.length; i++) {
-                  if (moment(client.churnProbabilities[i].timestamp).isAfter(mostRecent)) {
-                    mostRecent = client.churnProbabilities[i].timestamp;
-                    mostRecentIndex = i;
-                  }
-                }
-                if (client.churnProbabilities[mostRecentIndex].probability >= 0 && client.churnProbabilities[mostRecentIndex].probability < 40) {
-                  churnClass = "good";
-                }
-                else if (client.churnProbabilities[mostRecentIndex].probability >= 40 && client.churnProbabilities[mostRecentIndex].probability < 75) {
-                  churnClass = "med";
-                }
-                else if (client.churnProbabilities[mostRecentIndex].probability >= 75 && client.churnProbabilities[mostRecentIndex].probability <= 100) {
-                  churnClass = "bad";
-                }
-                return (
-                  <tr key={client.clientId}>
-                    <td><p>{client.clientId}</p></td>
-                    <td><p>{client.firstName} {client.lastName}</p></td>
-                    <td><p>{client.email}</p></td>
-                    <td><p>{client.phoneNumber}</p></td>
-                    <td><p>{client.planDetails.length}</p></td>
-                    <td className="churn-prob"><p className={churnClass}>{client.churnProbabilities[mostRecentIndex].probability}</p></td>
-                  </tr>
-                );
-              })
+          getTdProps={() => ({
+            style: {
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
             }
-          </tbody>
-        </table>
+          })}
+        />
         <div className="btn-container">
           <button id="load-more" type="button" className="btn btn-primary" onClick={this.loadMore} disabled={this.state.pageNo < this.state.totalPages ? false : true}>View more</button>
         </div>

@@ -1,4 +1,5 @@
 @import './helpers/variables';
+@import './helpers/mixins';
 
 #home-body {
   background-color: $body-color;
@@ -22,9 +23,7 @@
     min-width: 1000px;
     background-color: $main-content-color;
     padding: $spacing-small;
-    border: {
-      radius: 10px;
-    }
+    @include border-curved($border-radius);
 
   }
   padding-bottom: 5vh;

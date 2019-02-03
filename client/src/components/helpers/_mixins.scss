@@ -7,3 +7,7 @@
   background-color: red;
   @include square($size);
 }
+
+@mixin border-curved($radius) {
+  border-radius: $radius;
+}
