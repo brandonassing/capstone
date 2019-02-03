@@ -22,7 +22,7 @@ class Login extends Component {
           <div id="login-logo">
           </div>
           <div>
-            <h1>CHURNalytics</h1>
+            <h1>LEADsense</h1>
           </div>
         </div>
         <div id="login-form-wrarpper">

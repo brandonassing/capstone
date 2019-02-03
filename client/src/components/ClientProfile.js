@@ -91,41 +91,50 @@ class ClientProfile extends Component {
       Cell: col => <p>{col.value}</p>,
       minWidth: 150
     }, {
-      Header: () => <p># plans</p>,
-      id: 'plans',
-      accessor: d => d.planDetails.length,
+      Header: () => <p># calls</p>,
+      id: 'calls',
+      accessor: d => d.calls.length,
       Cell: col => <p>{col.value}</p>,
       minWidth: 80
     }, {
-      Header: () => <p>Churn</p>,
-      id: 'churn',
+      Header: () => <p>Value</p>,
+      id: 'value',
       accessor: d => {
-        let mostRecent = 0;
-        let mostRecentIndex = 0;
+        let highest = 0;
 
-        for (let i = 0; i < d.churnProbabilities.length; i++) {
-          if (moment(d.churnProbabilities[i].timestamp).isAfter(mostRecent)) {
-            mostRecent = d.churnProbabilities[i].timestamp;
-            mostRecentIndex = i;
+        for (let i = 0; i < d.calls.length; i++) {
+          if (d.calls[i].dollarValue > highest) {
+            highest = d.calls[i].dollarValue;
           }
         }
-        return d.churnProbabilities[mostRecentIndex].probability;
+        return highest;
+
+        // let mostRecent = 0;
+        // let mostRecentIndex = 0;
+
+        // for (let i = 0; i < d.calls.length; i++) {
+        //   if (moment(d.calls[i].timestamp).isAfter(mostRecent)) {
+        //     mostRecent = d.calls[i].timestamp;
+        //     mostRecentIndex = i;
+        //   }
+        // }
+        // return d.calls[mostRecentIndex].dollarValue;
       },
       Cell: col => {
-        let churnClass = "";
-        if (col.value >= 0 && col.value < 40) {
-          churnClass = "good";
+        let tierClass = "";
+        if (col.value >= 0 && col.value < 1000) {
+          tierClass = "low";
         }
-        else if (col.value >= 40 && col.value < 75) {
-          churnClass = "med";
+        else if (col.value >= 1000 && col.value < 20000) {
+          tierClass = "med";
         }
-        else if (col.value >= 75 && col.value <= 100) {
-          churnClass = "bad";
+        else if (col.value >= 20000) {
+          tierClass = "high";
         }
-        return (<p className={churnClass}>{col.value}</p>);
+        return (<p className={tierClass}>${col.value}</p>);
       },
-      className: 'churn-prob',
-      minWidth: 100,
+      className: 'value-metric',
+      minWidth: 150,
       resizable: false
     }];
 

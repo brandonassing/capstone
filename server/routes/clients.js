@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-// var clients = require('../devSamples/clients').clients;
-var Client = require('../models/client');
+//var Client = require('../models/client');
+var Client = require('../models/client-lead-profiles');
 
 router.get('/', function (req, res, next) {
   res.json({
@@ -83,9 +83,9 @@ router.route('/profiles/search').get(function (req, res) {
   });
 });
 
-router.route('/churn').get(function (req, res) {
+router.route('/calls').get(function (req, res) {
   Client.find()
-    .select('churnProbabilities')
+    .select('calls')
     .exec(function (err, data) {
       if (err) {
         response = {
