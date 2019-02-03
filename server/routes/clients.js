@@ -9,6 +9,7 @@ router.get('/', function (req, res, next) {
   });
 });
 
+// Uses custom pagination setup. In future use mongoose-paginate
 router.route('/profiles').get(function (req, res) {
   var pageNo = parseInt(req.query.pageNo);
   var size = parseInt(req.query.size);
@@ -22,7 +23,7 @@ router.route('/profiles').get(function (req, res) {
   }
   query.skip = size * (pageNo - 1);
   query.limit = size;
-  // Find some documents
+
   Client.estimatedDocumentCount({}, function (err, totalCount) {
     if (err) {
       response = {
@@ -50,7 +51,7 @@ router.route('/profiles').get(function (req, res) {
   });
 });
 
-router.route('/profiles/search').get(function(req, res) {
+router.route('/profiles/search').get(function (req, res) {
   var pageNo = parseInt(req.query.pageNo);
   var size = parseInt(req.query.size);
   var searchKey = req.query.searchKey;
@@ -64,25 +65,22 @@ router.route('/profiles/search').get(function(req, res) {
   }
   query.skip = size * (pageNo - 1);
   query.limit = size;
-  
-    Client.find({$text: { $search: searchKey, $caseSensitive: false }}, {}, query, function (err, data) {
-      var totalCount = data.length;
-      // Mongo command to fetch all data from collection.
-      if (err) {
-        response = {
-          "error": true,
-          "message": "Error fetching data"
-        };
-      } else {
-        var totalPages = Math.ceil(totalCount / size);
-        response = {
-          "error": false,
-          "message": data,
-          "pages": totalPages
-        };
-      }
-      res.json(response);
-    });
+
+  Client.paginate({ $text: { $search: searchKey, $caseSensitive: false } }, { page: pageNo, limit: size }, function (err, data) {
+    if (err) {
+      response = {
+        "error": true,
+        "message": "Error fetching data"
+      };
+    } else {
+      response = {
+        "error": false,
+        "message": data.docs,
+        "pages": data.pages
+      };
+    }
+    res.json(response);
+  });
 });
 
 router.route('/churn').get(function (req, res) {
@@ -102,7 +100,7 @@ router.route('/churn').get(function (req, res) {
         }
       }
       res.json(response);
-    }); 
+    });
 });
 
 module.exports = router;
