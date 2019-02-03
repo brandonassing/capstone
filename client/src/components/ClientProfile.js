@@ -55,16 +55,60 @@ class ClientProfile extends Component {
     const data = this.props.clientProfiles;
     const columns = [{
       Header: 'Id',
-      accessor: 'clientId' // String-based value accessors!
+      accessor: 'clientId',
+      Cell: col => <p>{col.value}</p>,
+      resizable: false
     }, {
       Header: 'Name',
-      accessor: 'firstName'
+      id: 'name',
+      accessor: d => `${d.firstName} ${d.lastName}`,
+      resizable: false
     }, {
       Header: 'Email',
-      accessor: 'email'
+      accessor: 'email',
+      Cell: col => <p>{col.value}</p>,
+      resizable: false
     }, {
       Header: 'Phone number',
-      accessor: 'phoneNumber'
+      accessor: 'phoneNumber',
+      Cell: col => <p>{col.value}</p>,
+      resizable: false
+    }, {
+      Header: '# plans',
+      id: 'plans',
+      accessor: d => d.planDetails.length,
+      Cell: col => <p>{col.value}</p>,
+      resizable: false
+    }, {
+      Header: 'Latest churn',
+      id: 'churn',
+      accessor: d => {
+        let mostRecent = 0;
+        let mostRecentIndex = 0;
+
+        for (let i = 0; i < d.churnProbabilities.length; i++) {
+          if (moment(d.churnProbabilities[i].timestamp).isAfter(mostRecent)) {
+            mostRecent = d.churnProbabilities[i].timestamp;
+            mostRecentIndex = i;
+          }
+        }
+        return d.churnProbabilities[mostRecentIndex].probability;
+      },
+      Cell: col => {
+        let churnClass="";
+        if (col.value >= 0 && col.value < 40) {
+          churnClass = "good";
+        }
+        else if (col.value >= 40 && col.value < 75) {
+          churnClass = "med";
+        }
+        else if (col.value >= 75 && col.value <= 100) {
+          churnClass = "bad";
+        }
+        return(<p className={churnClass}>{col.value}</p>);
+      },
+      className: 'churn-prob',
+      resizable: false
     }];
 
     return (
