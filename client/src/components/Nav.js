@@ -4,7 +4,7 @@ import './Nav.scss';
 
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { storeChurns } from '../actions/churnList';
+import { storeMetrics } from '../actions/metricList';
 class Nav extends Component {
   constructor(props) {
     super(props);
@@ -15,25 +15,25 @@ class Nav extends Component {
   }
 
   getStats() {
-    fetch('/clients/churn')
+    fetch('/clients/calls')
       .then(res => res.json())
       .then(resJson => {
-        let churns = [];
+        let calls = [];
         let timestamps = [];
-        let probabilities = [];
+        let metrics = [];
         for (let i = 0; i < resJson.message.length; i++) {
-          churns = [...churns, ...resJson.message[i].churnProbabilities];
+          calls = [...calls, ...resJson.message[i].calls];
         }
-        churns.sort((a, b) => (moment(a.timestamp).isAfter(b.timestamp)) ? 1 : ((moment(b.timestamp).isAfter(a.timestamp)) ? -1 : 0));
+        calls.sort((a, b) => (moment(a.timestamp).isAfter(b.timestamp)) ? 1 : ((moment(b.timestamp).isAfter(a.timestamp)) ? -1 : 0));
 
-        for (let i = 0; i < churns.length; i++) {
-          timestamps.push(churns[i].timestamp);
-          probabilities.push(churns[i].probability);
+        for (let i = 0; i < calls.length; i++) {
+          timestamps.push(calls[i].timestamp);
+          metrics.push(calls[i].dollarValue);
         }
-        this.props.storeChurns({
-          churns: churns,
+        this.props.storeMetrics({
+          calls: calls,
           timestamps: timestamps,
-          probabilities: probabilities
+          metrics: metrics
         });
       });
   }
@@ -75,7 +75,7 @@ class Nav extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    storeChurns: churnData => dispatch(storeChurns(churnData)),
+    storeMetrics: data => dispatch(storeMetrics(data)),
   };
 };
 
