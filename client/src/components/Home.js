@@ -17,7 +17,7 @@ class Home extends Component {
         </div>
         <div className="tab-content shadow" id="nav-tab-content">
           <div className="tab-pane fade show active" id="stats" role="tabpanel" aria-labelledby="stats-tab">
-            {/* <Statistics /> */}
+            <Statistics />
           </div>
           <div className="tab-pane fade" id="clients" role="tabpanel" aria-labelledby="client-tab">
             <ClientProfile />
