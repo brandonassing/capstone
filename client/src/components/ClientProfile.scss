@@ -51,22 +51,22 @@
             .rt-td {
               border: none;
             }
-            .rt-td.churn-prob {
+            .rt-td.value-metric {
               p {
                 font-weight: bold;
                 font-size: 25px;
               }
       
-              p.bad {
-                color: $churn-prob-bad;
+              p.low {
+                color: $value-low-color;
               }
       
               p.med {
-                color: $churn-prob-med;
+                color: $value-med-color;
               }
       
-              p.good {
-                color: $churn-prob-good;
+              p.high {
+                color: $value-high-color;
               }
             }
           }
