@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-// var clients = require('../devSamples/clients').clients;
-var Client = require('../models/client');
+//var Client = require('../models/client');
+var Client = require('../models/client-lead-profiles');
 
 router.get('/', function (req, res, next) {
   res.json({
