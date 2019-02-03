@@ -50,6 +50,41 @@ router.route('/profiles').get(function (req, res) {
   });
 });
 
+router.route('/profiles/search').get(function(req, res) {
+  var pageNo = parseInt(req.query.pageNo);
+  var size = parseInt(req.query.size);
+  var searchKey = req.query.searchKey;
+  var query = {};
+  if (pageNo < 0 || pageNo === 0) {
+    response = {
+      "error": true,
+      "message": "invalid page number, should start with 1"
+    };
+    return res.json(response);
+  }
+  query.skip = size * (pageNo - 1);
+  query.limit = size;
+  
+    Client.find({$text: { $search: searchKey, $caseSensitive: false }}, {}, query, function (err, data) {
+      var totalCount = data.length;
+      // Mongo command to fetch all data from collection.
+      if (err) {
+        response = {
+          "error": true,
+          "message": "Error fetching data"
+        };
+      } else {
+        var totalPages = Math.ceil(totalCount / size);
+        response = {
+          "error": false,
+          "message": data,
+          "pages": totalPages
+        };
+      }
+      res.json(response);
+    });
+});
+
 router.route('/churn').get(function (req, res) {
   Client.find()
     .select('churnProbabilities')

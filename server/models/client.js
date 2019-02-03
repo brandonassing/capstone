@@ -18,4 +18,6 @@ var ClientSchema = new Schema({
   }]
 });
 
+ClientSchema.index({ firstName: 'text', lastName: 'text', email: 'text', phoneNumber: 'text' });
+
 module.exports = mongoose.model('Client', ClientSchema);
