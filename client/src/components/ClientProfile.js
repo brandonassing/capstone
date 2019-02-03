@@ -54,33 +54,34 @@ class ClientProfile extends Component {
   render() {
     const data = this.props.clientProfiles;
     const columns = [{
-      Header: 'Id',
+      Header: () => <p>Id</p>,
       accessor: 'clientId',
       Cell: col => <p>{col.value}</p>,
       resizable: false
     }, {
-      Header: 'Name',
+      Header: () => <p>Name</p>,
       id: 'name',
       accessor: d => `${d.firstName} ${d.lastName}`,
+      Cell: col => <p>{col.value}</p>,
       resizable: false
     }, {
-      Header: 'Email',
+      Header: () => <p>Email</p>,
       accessor: 'email',
       Cell: col => <p>{col.value}</p>,
       resizable: false
     }, {
-      Header: 'Phone number',
+      Header: () => <p>Phone Number</p>,
       accessor: 'phoneNumber',
       Cell: col => <p>{col.value}</p>,
       resizable: false
     }, {
-      Header: '# plans',
+      Header: () => <p># plans</p>,
       id: 'plans',
       accessor: d => d.planDetails.length,
       Cell: col => <p>{col.value}</p>,
       resizable: false
     }, {
-      Header: 'Latest churn',
+      Header: () => <p>Churn</p>,
       id: 'churn',
       accessor: d => {
         let mostRecent = 0;
