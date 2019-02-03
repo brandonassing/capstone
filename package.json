@@ -15,5 +15,6 @@
   "bugs": {
     "url": "https://github.com/brandonassing/capstone/issues"
   },
-  "homepage": "https://github.com/brandonassing/capstone#readme"
+  "homepage": "https://github.com/brandonassing/capstone#readme",
+  "dependencies": {}
 }
