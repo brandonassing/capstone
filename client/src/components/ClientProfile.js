@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './ClientProfile.scss';
-import { storeClients, refreshClients } from '../actions/clientList';
-import moment from 'moment';
+import { storeClients, refreshClients, updateClient } from '../actions/clientList';
 import ReactTable from "react-table";
 import 'react-table/react-table.css'
 
@@ -63,8 +62,36 @@ class ClientProfile extends Component {
 
   render() {
     const data = this.props.clientProfiles;
-
     const columns = [{
+      accessor: 'visited',
+      Cell: (col) => {
+        return (
+          <input
+            type="checkbox"
+            className="checkbox"
+            checked={col.value}
+            onChange={() => {
+              fetch('/clients/profiles/' + col.original._id, {
+                method: 'PUT',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  visited: !col.value
+                })
+              })
+                .then(res => res.json())
+                .then(resJson => {
+                  this.props.updateClient(resJson.message);
+                });
+            }}
+          />
+        );
+      },
+      minWidth: 50
+    },
+    {
       Header: () => <p>Id</p>,
       accessor: 'clientId',
       Cell: col => <p>{col.value}</p>,
@@ -168,7 +195,8 @@ class ClientProfile extends Component {
 const mapDispatchToProps = dispatch => {
   return {
     storeClients: clientData => dispatch(storeClients(clientData)),
-    refreshClients: clientData => dispatch(refreshClients(clientData))
+    refreshClients: clientData => dispatch(refreshClients(clientData)),
+    updateClient: client => dispatch(updateClient(client))
   };
 };
 

@@ -51,6 +51,23 @@ router.route('/profiles').get(function (req, res) {
   });
 });
 
+router.route('/profiles/:client_id').put(function(req, res) {
+  Client.findByIdAndUpdate(req.params.client_id, req.body, { new: true }, function(err, model) {
+    if (err) {
+      response = {
+        "error": true,
+        "message": "Error fetching data: " + err
+      };
+    } else {
+      response = {
+        "error": false,
+        "message": model
+      }
+    }
+    res.json(response);
+  });
+});
+
 router.route('/profiles/search').get(function (req, res) {
   var pageNo = parseInt(req.query.pageNo);
   var size = parseInt(req.query.size);
