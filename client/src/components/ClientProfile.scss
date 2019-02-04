@@ -31,6 +31,9 @@
             font-size: 16px;
             margin: 0;  
             font-weight: bold;
+            &.center {
+              text-align: center;
+            }
           }
           border: none;
         }
@@ -43,7 +46,11 @@
           margin: 5px;
           .rt-tr {
             @include border-curved(5px);
-            background-color: $body-color;
+            &:hover {
+              background-color: $dark-grey;
+              cursor: pointer;
+            }
+            background-color: $light-grey;
             p {
               margin: 0;
               font-size: 18px;
@@ -80,13 +87,26 @@
       }
     }
   }
-
+  
   .btn-container {
     text-align: center;
     margin-top: 10px;
     .btn-primary {
       background-color: $accent-color;
       color: white;
+      border: none;
+    }
+  }
+}
+
+// Not working inside #clients-body
+.modal-footer {
+  .btn-primary {
+    background-color: $accent-color;
+    color: white;
+    border: none;
+    &:not(:disabled):not(.disabled):active{
+      background-color: $accent-color;
       border: none;
     }
   }

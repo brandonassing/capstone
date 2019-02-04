@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import './ClientProfile.scss';
 import { storeClients, refreshClients, updateClient } from '../actions/clientList';
 import ReactTable from "react-table";
-import 'react-table/react-table.css'
+import 'react-table/react-table.css';
+import moment from 'moment';
+import { Modal } from 'react-bootstrap';
 
 import { connect } from 'react-redux';
 
@@ -13,12 +15,25 @@ class ClientProfile extends Component {
     this.loadMore = this.loadMore.bind(this);
     this.search = this.search.bind(this);
     this.getData = this.getData.bind(this);
+
+    this.handleShow = this.handleShow.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+
     this.state = {
       totalPages: 0,
       pageNo: 1,
       size: 10,
-      searchKey: ""
+      searchKey: "",
+      showModal: false,
+      activeClient: {}
     }
+  }
+  handleClose() {
+    this.setState({ showModal: false, activeClient: {} });
+  }
+
+  handleShow(client) {
+    this.setState({ showModal: true, activeClient: client });
   }
 
   componentDidMount() {
@@ -63,6 +78,7 @@ class ClientProfile extends Component {
   render() {
     const data = this.props.clientProfiles;
     const columns = [{
+      Header: () => <p className="center">Visited</p>,
       accessor: 'visited',
       Cell: (col) => {
         return (
@@ -71,25 +87,30 @@ class ClientProfile extends Component {
             className="checkbox"
             checked={col.value}
             onChange={() => {
-              fetch('/clients/profiles/' + col.original._id, {
-                method: 'PUT',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  visited: !col.value
+              this.setState({
+                showModal: false,
+                activeClient: {}
+              }, () => {
+                fetch('/clients/profiles/' + col.original._id, {
+                  method: 'PUT',
+                  headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    visited: !col.value
+                  })
                 })
-              })
-                .then(res => res.json())
-                .then(resJson => {
-                  this.props.updateClient(resJson.message);
-                });
+                  .then(res => res.json())
+                  .then(resJson => {
+                    this.props.updateClient(resJson.message);
+                  });
+              });
             }}
           />
         );
       },
-      minWidth: 50
+      minWidth: 75
     },
     {
       Header: () => <p>Id</p>,
@@ -135,17 +156,6 @@ class ClientProfile extends Component {
           }
         }
         return highest;
-
-        // let mostRecent = 0;
-        // let mostRecentIndex = 0;
-
-        // for (let i = 0; i < d.calls.length; i++) {
-        //   if (moment(d.calls[i].timestamp).isAfter(mostRecent)) {
-        //     mostRecent = d.calls[i].timestamp;
-        //     mostRecentIndex = i;
-        //   }
-        // }
-        // return d.calls[mostRecentIndex].dollarValue;
       },
       Cell: col => {
         let tierClass = "";
@@ -183,7 +193,37 @@ class ClientProfile extends Component {
               justifyContent: 'center'
             }
           })}
+          getTrProps={(state, rowInfo) => {
+            return {
+              onClick: (e) => {
+                this.handleShow(rowInfo.original)
+              }
+            }
+          }}
         />
+        <Modal show={this.state.showModal} onHide={this.handleClose} centered={true}>
+          <Modal.Header closeButton>
+            <Modal.Title>{this.state.activeClient.firstName} {this.state.activeClient.lastName}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {
+              !!this.state.activeClient.calls ?
+                this.state.activeClient.calls.map((item) => {
+                  // TODO error: duplicate keys. Maybe add key for each call
+                  return (
+                  <div key={item.timestamp}>
+                    <span>{moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</span>
+                    <span> - ${item.dollarValue}</span>
+                  </div>);
+                })
+                :
+                ""
+            }
+          </Modal.Body>
+          <Modal.Footer>
+            <button id="modal-close" type="button" className="btn btn-primary" onClick={this.handleClose}>Close</button>
+          </Modal.Footer>
+        </Modal>
         <div className="btn-container">
           <button id="load-more" type="button" className="btn btn-primary" onClick={this.loadMore} disabled={this.state.pageNo < this.state.totalPages ? false : true}>View more</button>
         </div>
