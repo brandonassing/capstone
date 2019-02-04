@@ -87,20 +87,25 @@ class ClientProfile extends Component {
             className="checkbox"
             checked={col.value}
             onChange={() => {
-              fetch('/clients/profiles/' + col.original._id, {
-                method: 'PUT',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  visited: !col.value
+              this.setState({
+                showModal: false,
+                activeClient: {}
+              }, () => {
+                fetch('/clients/profiles/' + col.original._id, {
+                  method: 'PUT',
+                  headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    visited: !col.value
+                  })
                 })
-              })
-                .then(res => res.json())
-                .then(resJson => {
-                  this.props.updateClient(resJson.message);
-                });
+                  .then(res => res.json())
+                  .then(resJson => {
+                    this.props.updateClient(resJson.message);
+                  });
+              });
             }}
           />
         );
