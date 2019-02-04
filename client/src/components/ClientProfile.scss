@@ -50,6 +50,12 @@
             }
             .rt-td {
               border: none;
+              input {
+                &[type="checkbox"] {
+                  display: block;
+                  margin: auto;
+                }
+              }
             }
             .rt-td.value-metric {
               p {
