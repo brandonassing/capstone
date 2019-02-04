@@ -10,7 +10,6 @@ const initialStateMetricReducer = {
 export const metricReducer = (state = initialStateMetricReducer, action) => {
   switch(action.type){
     case STORE_METRICS:
-    console.log(action.data);
       return {
         ...state,
         metrics: action.data.metrics,
