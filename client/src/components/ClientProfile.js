@@ -78,41 +78,6 @@ class ClientProfile extends Component {
   render() {
     const data = this.props.clientProfiles;
     const columns = [{
-      Header: () => <p className="center">Visited</p>,
-      accessor: 'visited',
-      Cell: (col) => {
-        return (
-          <input
-            type="checkbox"
-            className="checkbox"
-            checked={col.value}
-            onChange={() => {
-              this.setState({
-                showModal: false,
-                activeClient: {}
-              }, () => {
-                fetch('/clients/profiles/' + col.original._id, {
-                  method: 'PUT',
-                  headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    visited: !col.value
-                  })
-                })
-                  .then(res => res.json())
-                  .then(resJson => {
-                    this.props.updateClient(resJson.message);
-                  });
-              });
-            }}
-          />
-        );
-      },
-      minWidth: 75
-    },
-    {
       Header: () => <p>Id</p>,
       accessor: 'clientId',
       Cell: col => <p>{col.value}</p>,
@@ -214,6 +179,7 @@ class ClientProfile extends Component {
                   <div key={item.timestamp}>
                     <span>{moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</span>
                     <span> - ${item.dollarValue}</span>
+                    <span> - {item.status}</span>
                   </div>);
                 })
                 :
