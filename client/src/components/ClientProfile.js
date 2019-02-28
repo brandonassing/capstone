@@ -37,7 +37,7 @@ class ClientProfile extends Component {
   }
 
   componentDidMount() {
-    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size)
+    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=inactive')
       .then(res => res.json())
       .then(resJson => {
         this.props.refreshClients(resJson.message);
@@ -64,7 +64,7 @@ class ClientProfile extends Component {
   }
 
   getData(refresh) {
-    fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size)
+    fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=inactive')
       .then(res => res.json())
       .then(resJson => {
         // call redux refresh vs store
