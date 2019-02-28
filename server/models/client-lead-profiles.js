@@ -9,11 +9,12 @@ var ClientSchema = new Schema({
   email: String,
   phoneNumber: String,
   adderss: String,
-  visited: Boolean,
   calls: [{
     serviceType: String,    
     dollarValue: Number,
-    timestamp: Date
+    timestamp: Date,
+    status: String,
+    invoice: Number
   }]
 });
 
