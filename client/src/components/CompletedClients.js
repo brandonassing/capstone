@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import './ClientProfile.scss';
-import { storeClients, refreshClients, updateClient } from '../actions/clientList';
+import './CompletedClients.scss';
+import { storeClientsCompleted, refreshClientsCompleted, updateClientCompleted } from '../actions/clientList';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import moment from 'moment';
@@ -9,7 +9,7 @@ import { Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 
-class ClientProfile extends Component {
+class CompletedClients extends Component {
   constructor(props) {
     super(props);
     this.loadMore = this.loadMore.bind(this);
@@ -37,7 +37,7 @@ class ClientProfile extends Component {
   }
 
   componentDidMount() {
-    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=inactive')
+    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=completed')
       .then(res => res.json())
       .then(resJson => {
         this.props.refreshClients(resJson.message);
@@ -64,7 +64,7 @@ class ClientProfile extends Component {
   }
 
   getData(refresh) {
-    fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=inactive')
+    fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=completed')
       .then(res => res.json())
       .then(resJson => {
         // call redux refresh vs store
@@ -141,10 +141,10 @@ class ClientProfile extends Component {
     }];
 
     return (
-      <div id="clients-body">
-        <div id="clients-header">
-          <h2>Prospect profiles</h2>
-          <input type="email" className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
+      <div id="completed-body">
+        <div id="completed-header">
+          <h2>Client invoices</h2>
+          <input type="email" className="form-control" id="completed-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
         </div>
         <ReactTable
           data={data}
@@ -200,16 +200,16 @@ class ClientProfile extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    storeClients: clientData => dispatch(storeClients(clientData)),
-    refreshClients: clientData => dispatch(refreshClients(clientData)),
-    updateClient: client => dispatch(updateClient(client))
+    storeClients: clientData => dispatch(storeClientsCompleted(clientData)),
+    refreshClients: clientData => dispatch(refreshClientsCompleted(clientData)),
+    updateClient: client => dispatch(updateClientCompleted(client))
   };
 };
 
 const mapStateToProps = state => {
   return {
-    clientProfiles: state.clientReducer.clients
+    clientProfiles: state.clientReducer.clientsCompleted
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClientProfile)
+export default connect(mapStateToProps, mapDispatchToProps)(CompletedClients)
