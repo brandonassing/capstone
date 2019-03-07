@@ -98,7 +98,7 @@ class ClientProfile extends Component {
       id: "phoneNumber",
       accessor: d => {
         let num = d.phoneNumber;
-        let stringNum = "(" + num.slice(0, 3) + ")" + " " + num.slice(3, 6) + "-" + num.slice(6);
+        let stringNum = "(" + num.slice(0, 3) + ") " + num.slice(3, 6) + "-" + num.slice(6);
         return stringNum
       },
       Cell: col => <p>{col.value}</p>,
@@ -176,11 +176,12 @@ class ClientProfile extends Component {
                 this.state.activeClient.calls.map((item) => {
                   // TODO error: duplicate keys. Maybe add key for each call
                   return (
-                  <div key={item.timestamp}>
-                    <span>{moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</span>
-                    <span> - ${item.dollarValue}</span>
-                    <span> - {item.status}</span>
-                  </div>);
+                    <div key={item.timestamp}>
+                      <span>{item.serviceType}</span>
+                      <span> - {moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</span>
+                      <span> - ${item.dollarValue}</span>
+                      <span> - {item.status}</span>
+                    </div>);
                 })
                 :
                 ""
