@@ -18,50 +18,48 @@ const fs = require('fs');
 // Must download the sox CLI to run first. For MAC, use home brew to download: https://brewinstall.org/Install-sox-on-Mac-with-Brew/
 var sox = require('sox');
 
-
 // Imports the Google Cloud client library
 const speech = require('@google-cloud/speech').v1p1beta1;
 
-// Config format for each phone call 
+// Create a speech client
+const client = new speech.SpeechClient();
 
+// Speech client configuration settings: 
+const clientConfig = {
+  encoding: 'LINEAR16',
+  sampleRateHertz: 16000,
+  languageCode: 'en-US',
+  enableSpeakerDiarization: true,
+  audioChannelCount: 2,
+  enableSeparateRecognitionPerChannel: true,
+  diarizationSpeakerCount: 2,
+  model: 'phone_call'
+};
 
+// -----------------------------------------------------------------------------
 // Run the script
 main()
-
 
 async function main(){
 console.log("Loading script")
 
-
 const jsonArray= await csv().fromFile(csvFilePath);
-console.log("First url of array: " + JSON.stringify(jsonArray[0]['Audio URL']))
-
 var dest = "./downloads/audioFile.mp3"
-var url = jsonArray[2]['Audio URL']
-
-console.log("Url: " + url)
-
-
-// Configure the 
+var url = jsonArray[0]['Audio URL']
 
 await download(url, dest, function(x){
-  console.log("yo")
 
   // Convert the audio file into text
-  speechTranscribeDiarization()
-
-})
-
-
+  convertMP3toWAV()
+  })
 }
 
+// Download the CSV file from call source
 async function download(url, dest, cb) {
   var file = fs.createWriteStream(dest);
   var request = https.get(url, function(response) {
     response.pipe(file);
-    console.log("yo something happened")
     file.on('finish', function() {
-
       file.close(cb);  // close() is async, call cb after close completes.
     });
   }).on('error', function(err) { // Handle errors
@@ -73,23 +71,24 @@ async function download(url, dest, cb) {
 
 
 
+// Use the SoX CLI to convert the mp3 file (from call source) into a .wav format
+async function convertMP3toWAV() {
 
-//speechTranscribeDiarization() // ------------------------------------------------
+  // Define variable locations
+  var mp3File = './downloads/audioFile.mp3'
+  var outputDestiation = './transcodes/converted.wav'
+  var googleBucketAddress = './transcodes/converted.wav'
 
-
-// Demo Application for google speech to text API
-async function speechTranscribeDiarization() {
-
-   sox.identify('./downloads/audioFile.mp3', function(err, results) {
+  sox.identify(mp3File, function(err, results) {
     
+      // Preview the details about the mp3 file:
       console.log("Inside details: " + JSON.stringify(results))
-      // these options are all default, you can leave any of them off
       
-      var job = sox.transcode('./downloads/audioFile.mp3', './transcodes/converted.wav', {
+      var job = sox.transcode(mp3File, outputDestiation, {
         sampleRate: 16000,
         format: 'wav',
         channelCount: 2,
-        bitRate: 16384,
+       // bitRate: 16384,
         compressionQuality: 8, // see `man soxformat` search for '-C' for more info
       });
       job.on('error', function(err) {
@@ -98,74 +97,43 @@ async function speechTranscribeDiarization() {
       job.on('progress', function(amountDone, amountTotal) {
         console.log("progress", amountDone, amountTotal);
       });
-      job.on('src', function(info) {
-        console.log("here; " + JSON.stringify(info))
-        /* info looks like:
-        {
-          format: 'wav',
-          duration: 1.5,
-          sampleCount: 66150,
-          channelCount: 1,
-          bitRate: 722944,
-          sampleRate: 44100,
-        }
-        */
-      });
+      job.on('src', function(info) {});
       job.on('dest', function(info) {
-        console.log("here 2; " + JSON.stringify(info))
-        /* info looks like:
-        {
-          sampleRate: 44100,
-          format: 'mp3',
-          channelCount: 2,
-          sampleCount: 67958,
-          duration: 1.540998,
-          bitRate: 196608,
-        }
-        */
+        console.log("WAV file details: " + JSON.stringify(info))
       });
       job.on('end', function() {
-        console.log("all done");
-
-        //speechTranscribeDiarization2()
-
-
-        upload2Bucket("./transcodes/converted.wav")
-
-
+        console.log("Conversion complete.");
+        // Upload the file location to Google Cloud Storage
+        upload2GoogleBucket(googleBucketAddress)
       });
       job.start();
-
     });
+}
 
-  }
+// Upload the convert file to Google Cloud Storage
+// All audio files over 1 minute must be from GCS for the Google Speech to Text API. 
+async function upload2GoogleBucket(localUrl){
 
-
-//upload2Bucket("./transcodes/converted.wav") // -------------------------------------------------
-
-async function upload2Bucket(localUrl){
-
-  // Creates a client
+  // Create a storage client
   const storage = new Storage();
 
-  /**
-   * TODO(developer): Uncomment the following lines before running the sample.
-   */
+  // Specify the bucket name for all files
   const bucketName = "formatedwavfiles"
-  // const filename = 'Local file to upload, e.g. ./local/path/to/file.txt';
 
   // Uploads a local file to tshe bucket
   await storage.bucket(bucketName).upload(localUrl, {
     // Support for HTTP requests made with `Accept-Encoding: gzip`
-    gzip: false,
+    gzip: false
+    /*
     metadata: {
       // Enable long-lived HTTP caching headers
       // Use only if the contents of the file will never change
       // (If the contents will change, use cacheControl: 'no-cache')
       //cacheControl: 'public, max-age=31536000',
      // cacheControl: 'no-transform',
-      contentEncoding: 'gzip'
+     // contentEncoding: 'gzip'
     },
+    */
   });
 
 console.log(`${localUrl} uploaded to ${bucketName}.`);
@@ -180,70 +148,35 @@ await storage
 
 console.log(`gs://${bucketName}/${name} is now public.`);
 
-speechTranscribeDiarization2()
+googleSpeech2Text(name)
   
 }
 
 
-//speechTranscribeDiarization2()
+// Call the google speech to text API, referencing an audio file in GCS
+async function googleSpeech2Text(name) {
 
-  // Demo Application for google speech to text API
-async function speechTranscribeDiarization2() {
-  // [START speech_transcribe_diarization_beta]
-  const fs = require('fs');
-
-  // Imports the Google Cloud client library
- // const speech = require('@google-cloud/speech').v1p1beta1;
-
-  // Creates a client
-  const client = new speech.SpeechClient();
-
-
-  const config = {
-    encoding: 'LINEAR16',
-    sampleRateHertz: 16000,
-    languageCode: 'en-US',
-    enableSpeakerDiarization: true,
-    audioChannelCount: 2,
-    enableSeparateRecognitionPerChannel: true,
-    diarizationSpeakerCount: 2,
-    model: 'phone_call',
-    //'Accept-Encoding': 'gzip'
-  };
-
-  var fileName = "./transcodes/converted.wav"
-  //var link = fs.readFileSync(fileName).toString('base64')
-
- // upload2Bucket(file)
-  //fs.readFileSync(fileName).toString('base64'),
-  
-// "https://www.googleapis.com/download/storage/v1/b/formatedwavfiles/o/converted.wav?generation=1552244080798592&alt=media"
   const audio = {
-    uri:  "gs://formatedwavfiles/converted.wav" 
+    uri:  "gs://formatedwavfiles/" + name
   };
-  
   
   const request = {
-    config: config,
+    config: clientConfig,
     audio: audio,
   };
   
-  // Detects speech in the audio file. This creates a recognition job that you
-  // can wait for now, or get its result later.
+  // Make the API call:
   const [operation] = await client.longRunningRecognize(request);
   // Get a Promise representation of the final result of the job
   const [response] = await operation.promise();
   const transcription = response.results
-
     .map(result => result.alternatives[0].transcript)
     .join('\n');
 
+  // Display the results:
   const result = response.results[response.results.length - 1];
   const wordsInfo = result.alternatives[0].words;
   for(var i = 0; i<= wordsInfo.length - 1; i++){
     console.log("Word object " + i + ": " + JSON.stringify(wordsInfo[i]))
   }
-  
 }
-
-//speechTranscribeDiarization2()
