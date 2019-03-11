@@ -36,6 +36,9 @@ const clientConfig = {
   model: 'phone_call'
 };
 
+// Grab the mongo schema:
+var Transcription = require("./models/transcription.js")
+
 // -----------------------------------------------------------------------------
 // Run the script
 main()
@@ -44,18 +47,29 @@ async function main(){
 console.log("Loading script")
 
 const jsonArray= await csv().fromFile(csvFilePath);
-var dest = "./downloads/audioFile.mp3"
-var url = jsonArray[0]['Audio URL']
 
-await download(url, dest, function(x){
+// Access the metadata of the call object: 
+var metadata = jsonArray[0]
 
-  // Convert the audio file into text
-  convertMP3toWAV()
-  })
+var dest = "./downloads/" + metadata['Call Id'] + ".mp3"
+var callId = metadata['Call Id']
+var url = metadata['Audio URL']
+
+// Check if the call is a service or sale
+//if(metadata["Prospect/Non-Prospect"] == 'Service' || metadata["Prospect/Non-Prospect"] == 'Sales'){
+  await download(url, dest, callId, metadata, function(x){
+
+    // Convert the audio file into text
+    convertMP3toWAV(dest, callId, metadata)
+    //convert2Flac()
+  
+    })
+  //}
 }
 
+
 // Download the CSV file from call source
-async function download(url, dest, cb) {
+async function download(url, dest,callId, metadata, cb) {
   var file = fs.createWriteStream(dest);
   var request = https.get(url, function(response) {
     response.pipe(file);
@@ -69,15 +83,46 @@ async function download(url, dest, cb) {
 };
 
 
+async function convert2Flac(){
+
+  const ffmpeg = require('fluent-ffmpeg');
+  let track = './downloads/audioFile.mp3';//your path to source file
+
+  ffmpeg(track)
+  .toFormat('flac')
+  .audioChannels(2)
+  .audioFrequency(16000)
+  .audioBitrate('128k')
+  .on('error', (err) => {
+      console.log('An error occurred: ' + err.message);
+  })
+  .on('progress', (progress) => {
+      // console.log(JSON.stringify(progress));
+      console.log('Processing: ' + progress.targetSize + ' KB converted');
+  })
+  .on('end', () => {
+      console.log('Processing finished !');
+
+    // Upload to google bucket:
+    var googleBucketAddress = "./transcodes/please.flac"
+    upload2GoogleBucket(googleBucketAddress)
+
+  })
+  .save('./transcodes/please.flac');//path where you want to save your file
+
+
+}
+
+
 
 
 // Use the SoX CLI to convert the mp3 file (from call source) into a .wav format
-async function convertMP3toWAV() {
+async function convertMP3toWAV(dest, callId, metadata) {
 
   // Define variable locations
-  var mp3File = './downloads/audioFile.mp3'
-  var outputDestiation = './transcodes/converted.wav'
-  var googleBucketAddress = './transcodes/converted.wav'
+  var mp3File = dest
+  var outputDestiation = './wavFiles/' + callId + ".wav"
+
 
   sox.identify(mp3File, function(err, results) {
     
@@ -104,7 +149,7 @@ async function convertMP3toWAV() {
       job.on('end', function() {
         console.log("Conversion complete.");
         // Upload the file location to Google Cloud Storage
-        upload2GoogleBucket(googleBucketAddress)
+        upload2GoogleBucket(outputDestiation, callId, metadata)
       });
       job.start();
     });
@@ -112,7 +157,7 @@ async function convertMP3toWAV() {
 
 // Upload the convert file to Google Cloud Storage
 // All audio files over 1 minute must be from GCS for the Google Speech to Text API. 
-async function upload2GoogleBucket(localUrl){
+async function upload2GoogleBucket(localUrl, callId, metadata){
 
   // Create a storage client
   const storage = new Storage();
@@ -138,7 +183,7 @@ async function upload2GoogleBucket(localUrl){
 
 console.log(`${localUrl} uploaded to ${bucketName}.`);
 
-var name = "converted.wav"
+var name = callId + ".wav"
 
 // Makes the file public
 await storage
@@ -148,13 +193,13 @@ await storage
 
 console.log(`gs://${bucketName}/${name} is now public.`);
 
-googleSpeech2Text(name)
+googleSpeech2Text(name, metadata)
   
 }
 
 
 // Call the google speech to text API, referencing an audio file in GCS
-async function googleSpeech2Text(name) {
+async function googleSpeech2Text(name, metadata) {
 
   const audio = {
     uri:  "gs://formatedwavfiles/" + name
@@ -176,7 +221,49 @@ async function googleSpeech2Text(name) {
   // Display the results:
   const result = response.results[response.results.length - 1];
   const wordsInfo = result.alternatives[0].words;
+
+  var hash = {}
+
+
   for(var i = 0; i<= wordsInfo.length - 1; i++){
-    console.log("Word object " + i + ": " + JSON.stringify(wordsInfo[i]))
+    if(hash[wordsInfo[i].word]){
+      let temp = hash[wordsInfo[i].word]
+      temp.count += 1
+      hash[wordsInfo[i].word] = temp
+
+    }else{
+      let temp = {}
+      temp.word = wordsInfo[i].word
+      temp.count = 1
+      hash[wordsInfo[i].word] = temp
+      console.log("Just set: " + JSON.stringify(hash[wordsInfo[i].word]))
+    }
   }
+
+  console.log("The finished hash: " + JSON.stringify(hash))
+
+  // Convert JSON object into arrays of json objects
+  var list = []
+
+  Object.keys(hash).forEach(function(key) {
+    list.push(hash[key])
+  });
+  
+
+
+  // Build the JSON object to send to mongo
+  var mongoObj = {}
+
+  mongoObj.transcription = list
+  mongoObj.callId = parseInt(name)
+  mongoObj.date = metadata["Date"]
+  mongoObj.time = parseInt(metadata["Time"])
+  mongoObj.duration = metadata["Duration"]
+  mongoObj.prospect = metadata["Prospect/Non-Prospect"]
+  mongoObj.callStatus = metadata["Call Status"]
+  mongoObj.callerNumber = parseInt(metadata["Caller Number"])
+
+
+  // Save to Mongo:
+
 }
