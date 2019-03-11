@@ -51,7 +51,7 @@ const clientConfig = {
 };
 
 // Grab the mongo schema:
-var Transcription = require("./models/transcription.js")
+const Transcription = require("./models/transcription.js")
 
 // Express app stuff: -----------------------------------------------------------------------------
 var app = express();
@@ -315,17 +315,15 @@ async function googleSpeech2Text(name, metadata) {
   console.log("Final schema object: " + JSON.stringify(newTranscription))
 
   // Save to Mongo:
-  router.post("/", function(req, res){
+ 
     newTranscription.save((err, vm) =>{
       if(err){
 
         console.log("Error: " + err)
       }else{
-        console.log("Saved!")
+        console.log("Saved: " + JSON.stringify(vm))
       }
 
     })
-
-  })
 
 }
