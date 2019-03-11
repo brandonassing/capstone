@@ -14,12 +14,26 @@ const projectId = 'leadsense-230423';
 const https = require('https');
 const fs = require('fs');
 
+// For parsing bodies
+const express = require("express");
+
+const BodyParser = require("body-parser");
+
+
 // For indentifying audio files:
 // Must download the sox CLI to run first. For MAC, use home brew to download: https://brewinstall.org/Install-sox-on-Mac-with-Brew/
 var sox = require('sox');
 
 // Imports the Google Cloud client library
 const speech = require('@google-cloud/speech').v1p1beta1;
+
+// Import Mongo stuff
+const mongoose = require('mongoose')
+const MongoClient = require("mongodb").MongoClient;
+const ObjectId = require("mongodb").ObjectID;
+var creds = require("./config/config.js")
+mongoose.Promise = global.Promise
+
 
 // Create a speech client
 const client = new speech.SpeechClient();
@@ -39,9 +53,42 @@ const clientConfig = {
 // Grab the mongo schema:
 var Transcription = require("./models/transcription.js")
 
+// Express app stuff: -----------------------------------------------------------------------------
+var app = express();
+var router = express.Router()
+app.use(BodyParser.json());
+app.use(BodyParser.urlencoded({ extended: true }));
+var querystring = require("querystring");
+
+console.log("My password: " + (creds.password))
+console.log("My username: " + encodeURIComponent(creds.username))
+
+
+
+
+const dbUri = "mongodb://main:se4455@main-shard-00-00-gkrza.mongodb.net:27017,main-shard-00-01-gkrza.mongodb.net:27017,main-shard-00-02-gkrza.mongodb.net:27017/test?ssl=true&replicaSet=Main-shard-0&authSource=admin&retryWrites=true";
+
+const options = {
+  dbName: "Main",
+  useNewUrlParser: true,
+  reconnectTries: Number.MAX_VALUE,
+  poolSize: 10
+};
+
+mongoose.connect(dbUri, options).then(
+  () => {
+    console.log("Database connection established!");
+
+    // Run the program once successfully established: 
+    main()
+  },
+  err => {
+    console.log("Error connecting Database instance due to: ", err);
+  }
+);
+
+
 // -----------------------------------------------------------------------------
-// Run the script
-main()
 
 async function main(){
 console.log("Loading script")
@@ -263,7 +310,22 @@ async function googleSpeech2Text(name, metadata) {
   mongoObj.callStatus = metadata["Call Status"]
   mongoObj.callerNumber = parseInt(metadata["Caller Number"])
 
+  let newTranscription = new Transcription(mongoObj)
+
+  console.log("Final schema object: " + JSON.stringify(newTranscription))
 
   // Save to Mongo:
+  router.post("/", function(req, res){
+    newTranscription.save((err, vm) =>{
+      if(err){
+
+        console.log("Error: " + err)
+      }else{
+        console.log("Saved!")
+      }
+
+    })
+
+  })
 
 }

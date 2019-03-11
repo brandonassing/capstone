@@ -16,7 +16,7 @@ var TranscriptionSchema = new Schema({
 })
 
 
-module.exports = mongoose.model('Transcription', TranscriptionSchema)
+module.exports = mongoose.model('Transcriptions', TranscriptionSchema)
 
 
 
