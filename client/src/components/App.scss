@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Oswald|Roboto+Condensed');
+@import './helpers/variables';
+@import './helpers/mixins';
+@import './helpers/placeholders';
 
 .App {
   text-align: center;
@@ -34,5 +37,26 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+// Shared modal styles
+.modal-body {
+  max-height: 50vh;
+  overflow: auto;
+  p {
+    margin-bottom: 5px;
+  }
+}
+
+.modal-footer {
+  .btn-primary {
+    background-color: $accent-color;
+    color: white;
+    border: none;
+    &:not(:disabled):not(.disabled):active{
+      background-color: $accent-color;
+      border: none;
+    }
   }
 }

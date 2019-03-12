@@ -75,6 +75,12 @@ class CompletedClients extends Component {
       });
   }
 
+  compareDate() {
+    return function (a, b) {
+      return moment(a).isBefore(moment(b));
+    };
+  }
+
   render() {
     const data = this.props.clientProfiles;
     const columns = [{
@@ -172,16 +178,19 @@ class CompletedClients extends Component {
           </Modal.Header>
           <Modal.Body>
             {
+              // TODO sort not working
               !!this.state.activeClient.calls ?
-                this.state.activeClient.calls.map((item) => {
+                this.state.activeClient.calls.sort(this.compareDate()).map((item, index) => {
                   // TODO error: duplicate keys. Maybe add key for each call
                   return (
-                  <div key={item.timestamp}>
-                    <p>{moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</p>
-                    <p>Estimate - ${item.dollarValue}</p>
-                    <p>Status - {item.status}</p>
-                    <p>Invoice - ${item.invoice}</p>
-                  </div>);
+                    <div key={item.timestamp}>
+                      <p>Call time: {moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</p>
+                      <p>Job type: {item.serviceType}</p>
+                      <p>Estimate: <strong>${item.dollarValue}</strong></p>
+                      <p>Status: {item.status}</p>
+                      {item.status === "completed" ? <p>Invoice: <strong>${item.invoice}</strong></p> : ""}
+                      {index < this.state.activeClient.calls.length - 1 ? <hr /> : ""}
+                    </div>);
                 })
                 :
                 ""
