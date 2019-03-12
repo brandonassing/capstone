@@ -4,7 +4,7 @@ import { storeClients, refreshClients, updateClient } from '../actions/clientLis
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import moment from 'moment';
-import { Modal } from 'react-bootstrap';
+import { Modal, Dropdown, DropdownButton } from 'react-bootstrap';
 
 import { connect } from 'react-redux';
 
@@ -74,6 +74,35 @@ class ClientProfile extends Component {
         });
       });
   }
+
+  // TODO might need to prevent update
+  setWorker = (worker, call_id) => {
+    let calls = this.state.activeClient.calls;
+    
+    for (let i = 0; i < calls.length; i++) {
+      if (calls[i]._id === call_id) {
+        calls[i].status = worker === "" ? "inactive" : "active";
+        calls[i].worker = worker;
+      }
+    }
+
+    console.log(calls);
+
+    fetch('/clients/profiles/' + this.state.activeClient._id, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        calls: calls,
+      })
+    })
+      .then(res => res.json())
+      .then(resJson => {
+        // this.props.updateClient(resJson.message);
+      });
+  };
 
   render() {
     const data = this.props.clientProfiles;
@@ -171,17 +200,38 @@ class ClientProfile extends Component {
             <Modal.Title>{this.state.activeClient.firstName} {this.state.activeClient.lastName}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {
+          {
+              // TODO sort not working; maybe sort by status (ie: completed first)
               !!this.state.activeClient.calls ?
-                this.state.activeClient.calls.map((item) => {
-                  // TODO error: duplicate keys. Maybe add key for each call
+                this.state.activeClient.calls.map((item, index) => {
                   return (
-                    <div key={item.timestamp}>
-                      <span>{item.serviceType}</span>
-                      <span> - {moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</span>
-                      <span> - ${item.dollarValue}</span>
-                      <span> - {item.status}</span>
-                    </div>);
+                    <div key={item._id}>
+                      <div className="selection-content">
+                        <div className="call-details">
+                          <p>Call time: {moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</p>
+                          <p>Job type: {item.serviceType}</p>
+                          {item.status === "completed" ? <p>Dispatched: {item.worker}</p> : ""}
+                          <p>Status: {item.status}</p>
+                          <p>Estimate: <strong>${item.dollarValue}</strong></p>
+                          {item.status === "completed" ? <p>Invoice: <strong>${item.invoice}</strong></p> : ""}
+                        </div>
+                        {item.status !== "completed" ?
+                          <div className="worker-dropdown">
+                            <DropdownButton id="dropdown-basic-button" title={item.worker !== "" ? item.worker : "Dispatch worker"}>
+                              <Dropdown.Item value="" onClick={(e) => {this.setWorker("", item._id)}}><strong>Set inactive</strong></Dropdown.Item>
+                              <Dropdown.Item value="Jon F." onClick={(e) => {this.setWorker("Jon F.", item._id)}}>Jon F.</Dropdown.Item>
+                              <Dropdown.Item value="Brandon A." onClick={(e) => {this.setWorker("Brandon A.", item._id)}}>Brandon A.</Dropdown.Item>
+                              <Dropdown.Item value="Yanick H." onClick={(e) => {this.setWorker("Yanick H.", item._id)}}>Yanick H.</Dropdown.Item>
+                              <Dropdown.Item value="Krishan P." onClick={(e) => {this.setWorker("Krishan P.", item._id)}}>Krishan P.</Dropdown.Item>
+                              <Dropdown.Item value="Jake R." onClick={(e) => {this.setWorker("Jake R.", item._id)}}>Jake R.</Dropdown.Item>
+                            </DropdownButton>
+                          </div>
+                          :
+                          ""}
+                      </div>
+                      {index < this.state.activeClient.calls.length - 1 ? <hr /> : ""}
+                    </div>
+                  );
                 })
                 :
                 ""
