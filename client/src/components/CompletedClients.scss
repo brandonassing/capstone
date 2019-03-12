@@ -98,16 +98,3 @@
     }
   }
 }
-
-// Not working inside #clients-body
-.modal-footer {
-  .btn-primary {
-    background-color: $accent-color;
-    color: white;
-    border: none;
-    &:not(:disabled):not(.disabled):active{
-      background-color: $accent-color;
-      border: none;
-    }
-  }
-}
