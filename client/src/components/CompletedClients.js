@@ -178,16 +178,16 @@ class CompletedClients extends Component {
           </Modal.Header>
           <Modal.Body>
             {
-              // TODO sort not working
+              // TODO sort not working; maybe sort by status (ie: completed first)
               !!this.state.activeClient.calls ?
                 this.state.activeClient.calls.sort(this.compareDate()).map((item, index) => {
-                  // TODO error: duplicate keys. Maybe add key for each call
                   return (
-                    <div key={item.timestamp}>
+                    <div key={item._id}>
                       <p>Call time: {moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</p>
                       <p>Job type: {item.serviceType}</p>
-                      <p>Estimate: <strong>${item.dollarValue}</strong></p>
+                      {item.status !== "inactive" ? <p>Dispatched: {item.worker}</p> : ""}
                       <p>Status: {item.status}</p>
+                      <p>Estimate: <strong>${item.dollarValue}</strong></p>
                       {item.status === "completed" ? <p>Invoice: <strong>${item.invoice}</strong></p> : ""}
                       {index < this.state.activeClient.calls.length - 1 ? <hr /> : ""}
                     </div>);

@@ -98,3 +98,12 @@
     }
   }
 }
+
+.modal-body {
+  @extend %modal-body;
+  @extend %worker-select;
+}
+
+.modal-footer {
+  @extend %modal-footer;
+}

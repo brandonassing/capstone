@@ -10,6 +10,7 @@ var ClientSchema = new Schema({
   phoneNumber: String,
   adderss: String,
   calls: [{
+    worker: String,
     serviceType: String,    
     dollarValue: Number,
     timestamp: Date,
