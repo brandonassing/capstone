@@ -17,7 +17,7 @@ const fs = require('fs');
 // Import the json 2 csv converter
 const Json2csvParser = require('json2csv').Parser;
 //const fields = ['transcription', 'callId', 'date', 'time', 'duration','prospect','callStatus','callerNumber'];
-const fields = ["Call Id", "Words"]
+const fields = ["Call Id", "Words","Prospect"]
 
 const myCSV = []
 
@@ -97,6 +97,7 @@ mongoose.connect(dbUri, options).then(
 var once = false
 var i = 0
 var jsonArray;
+var lastLink = false
 
 async function main(){
 console.log("Loading script")
@@ -105,12 +106,10 @@ console.log("Loading script")
 if(!once){
   jsonArray = await csv().fromFile(csvFilePath);
 }
-
 once = true
 
-
 // loop through all call url files
-var lastLink = false
+
 
 // Access the metadata of the call object: 
 var metadata = jsonArray[i]
@@ -118,13 +117,17 @@ var dest = "./downloads/" + metadata['Call Id'] + ".mp3"
 var callId = metadata['Call Id']
 var url = metadata['Audio URL']
 
+if(metadata["Prospect/Non-Prospect"] == "Sales" || metadata["Prospect/Non-Prospect"] == "Service"){
+
+
+
 // Check if the call is a service or sale
 //if(metadata["Prospect/Non-Prospect"] == 'Service' || metadata["Prospect/Non-Prospect"] == 'Sales'){
   await download(url, dest, callId, metadata, function(x){
 
     console.log("download mp3 #: " + i)
 
-    if(i == 0){
+    if(i == 1){
       console.log("Last file")
       lastLink = true
     }
@@ -147,7 +150,14 @@ var url = metadata['Audio URL']
     })
   //}
 
+  }else{
 
+    // Check if there is another call
+    if(i < jsonArray.length - 1){
+      i++
+      main()
+    }
+  }
   
 
 }
@@ -291,7 +301,7 @@ console.log(`gs://${bucketName}/${name} is now public.`);
 
 // Call the google speech to text API, referencing an audio file in GCS
 async function googleSpeech2Text(name,lastLink, metadata, cb3) {
-  console.log("inside speech to text")
+  console.log("inside speech to text: " + name)
 
   const audio = {
     uri:  "gs://formatedwavfiles/" + name
@@ -371,6 +381,7 @@ async function googleSpeech2Text(name,lastLink, metadata, cb3) {
   let temp = {}
   temp["Call Id"] = metadata["Call Id"]
   temp.Words = sentence
+  temp.Prospect = metadata["Prospect/Non-Prospect"]
 
   myCSV.push(temp)
 
@@ -386,7 +397,7 @@ async function googleSpeech2Text(name,lastLink, metadata, cb3) {
 
  
 
-    fs.writeFile("temp.csv", csv, function(err, data) {
+    fs.writeFile("Transcription.csv", csv, function(err, data) {
       if (err) console.log(err);
       console.log("Successfully Written to File.");
     });
