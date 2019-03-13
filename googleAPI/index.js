@@ -16,7 +16,9 @@ const fs = require('fs');
 
 // Import the json 2 csv converter
 const Json2csvParser = require('json2csv').Parser;
-const fields = ['transcription', 'callId', 'date', 'time', 'duration','prospect','callStatus','callerNumber'];
+//const fields = ['transcription', 'callId', 'date', 'time', 'duration','prospect','callStatus','callerNumber'];
+const fields = ["Call Id", "Words"]
+
 const myCSV = []
 
 
@@ -92,18 +94,26 @@ mongoose.connect(dbUri, options).then(
 */
 // -----------------------------------------------------------------------------
 
+var once = false
+var i = 0
+var jsonArray;
+
 async function main(){
 console.log("Loading script")
 
-const jsonArray= await csv().fromFile(csvFilePath);
+
+if(!once){
+  jsonArray = await csv().fromFile(csvFilePath);
+}
+
+once = true
+
 
 // loop through all call url files
 var lastLink = false
-for(var i = 0; i<= 0; i++){
 
 // Access the metadata of the call object: 
 var metadata = jsonArray[i]
-
 var dest = "./downloads/" + metadata['Call Id'] + ".mp3"
 var callId = metadata['Call Id']
 var url = metadata['Audio URL']
@@ -114,14 +124,21 @@ var url = metadata['Audio URL']
 
     console.log("download mp3 #: " + i)
 
-    if(i == 2){
+    if(i == 0){
       console.log("Last file")
       lastLink = true
     }
 
     // Convert the audio file into text
     convertMP3toWAV(dest, callId,lastLink, metadata, function(){
-      console.log("Callback finished!")
+     // console.log("Callback finished!")
+
+     if(!lastLink){
+       console.log("not over yet")
+       i++
+       main()
+     }
+
     })
     //convert2Flac()
 
@@ -129,7 +146,10 @@ var url = metadata['Audio URL']
   
     })
   //}
-  }
+
+
+  
+
 }
 
 
@@ -263,7 +283,6 @@ await storage
 console.log(`gs://${bucketName}/${name} is now public.`);
 
  googleSpeech2Text(name,lastLink, metadata, function(){
-  console.log("waitng......")
   cb2()
  })
   
@@ -295,6 +314,14 @@ async function googleSpeech2Text(name,lastLink, metadata, cb3) {
   const result = response.results[response.results.length - 1];
   const wordsInfo = result.alternatives[0].words;
 
+  var sentence = ""
+
+  for(var i = 0; i<= wordsInfo.length - 1; i++){
+    console.log("Saving this word: " + wordsInfo[i].word)
+    sentence += wordsInfo[i].word + " "
+  }
+
+  /*
   var hash = {}
 
 
@@ -316,7 +343,7 @@ async function googleSpeech2Text(name,lastLink, metadata, cb3) {
  // console.log("The finished hash: " + JSON.stringify(hash))
 
   // Convert JSON object into arrays of json objects
-  var list = []
+  var list = ""
 
   Object.keys(hash).forEach(function(key) {
     list.push(hash[key])
@@ -327,7 +354,7 @@ async function googleSpeech2Text(name,lastLink, metadata, cb3) {
   // Build the JSON object to send to mongo
   var mongoObj = {}
 
-  mongoObj.transcription = list
+  mongoObj.transcription = JSON.stringify(list)
   mongoObj.callId = parseInt(name)
   mongoObj.date = metadata["Date"]
   mongoObj.time = parseInt(metadata["Time"])
@@ -335,26 +362,36 @@ async function googleSpeech2Text(name,lastLink, metadata, cb3) {
   mongoObj.prospect = metadata["Prospect/Non-Prospect"]
   mongoObj.callStatus = metadata["Call Status"]
   mongoObj.callerNumber = parseInt(metadata["Caller Number"])
+  */
 
  //let newTranscription = new Transcription(mongoObj)
 
-  console.log("Final schema object: " + JSON.stringify(mongoObj))
+  //console.log("Final schema object: " + JSON.stringify(mongoObj))
 
-  myCSV.push(mongoObj)
+  let temp = {}
+  temp["Call Id"] = metadata["Call Id"]
+  temp.Words = sentence
+
+  myCSV.push(temp)
+
+  console.log("Final: " + JSON.stringify(myCSV))
 
   // Check if that was the last song:
   if(lastLink){
-    console.log("Last link confirmed!")
-    // Download the csv
-    try {
-      const csv = json2csv(myCSV);
-      var file = new File(csv, "list.csv", {type: "text/plain;charset=utf-8"});
-      FileSaver.saveAs(file);
+    //const opts ={fields}
+    const parser = new Json2csvParser({fields});
+    const csv = parser.parse(myCSV);
 
-      console.log("Successfully downloaded CSV");
-    } catch (err) {
-      console.error("Error downloading csv: " + err);
-    }
+    console.log("Last link confirmed!")
+
+ 
+
+    fs.writeFile("temp.csv", csv, function(err, data) {
+      if (err) console.log(err);
+      console.log("Successfully Written to File.");
+    });
+    
+
   }
 
   cb3()
