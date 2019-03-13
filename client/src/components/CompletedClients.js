@@ -188,6 +188,7 @@ class CompletedClients extends Component {
                       <p>Job type: {item.serviceType}</p>
                       {item.status !== "inactive" ? <p>Dispatched: {item.worker}</p> : ""}
                       <p>Status: {item.status}</p>
+                      <p>Invoice probability: <strong>{item.opportunityProbability * 100}%</strong></p>
                       <p>Estimate: <strong>${item.estimateValue}</strong></p>
                       {item.status === "completed" ? <p>Invoice: <strong>${item.invoice}</strong></p> : ""}
                       {index < this.state.activeClient.calls.length - 1 ? <hr /> : ""}
