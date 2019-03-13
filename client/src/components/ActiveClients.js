@@ -154,30 +154,32 @@ class ActiveClients extends Component {
       Cell: col => <p>{col.value}</p>,
       minWidth: 50
     }, {
-      Header: () => <p>Active value</p>,
+      Header: () => <p>Value estimate</p>,
       id: 'value',
       accessor: d => {
-        let totalActive = 0;
+        let max = 0;
 
         for (let i = 0; i < d.calls.length; i++) {
           if (d.calls[i].status === "active") {
-            totalActive += d.calls[i].estimateValue;
+            if (d.calls[i].estimateValue > max) {
+              max = d.calls[i].estimateValue;
+            }
           }
         }
-        return totalActive;
+        return max;
       },
       Cell: col => {
         let tierClass = "";
-        if (col.value >= 0 && col.value < 1000) {
+        if (col.value === 1) {
           tierClass = "low";
         }
-        else if (col.value >= 1000 && col.value < 20000) {
+        else if (col.value === 2) {
           tierClass = "med";
         }
-        else if (col.value >= 20000) {
+        else if (col.value === 3) {
           tierClass = "high";
         }
-        return (<p className={tierClass}>${col.value}</p>);
+        return (<p className={tierClass}>{col.value === 1 ? "Low" : col.value === 2 ? "Med" : "High"}</p>);
       },
       className: 'value-metric',
       minWidth: 100,
@@ -230,8 +232,8 @@ class ActiveClients extends Component {
                           <p>Job type: {item.serviceType}</p>
                           {item.status === "completed" ? <p>Dispatched: {item.worker}</p> : ""}
                           <p>Status: {item.status}</p>
-                          <p>Invoice probability: <strong>{item.opportunityProbability * 100}%</strong></p>
-                          <p>Estimate: <strong>${item.estimateValue}</strong></p>
+                          <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
+                          <p>Value estimate: <strong className={item.estimateValue === 1 ? "low" : item.estimateValue === 2 ? "med" : "high"}>{item.estimateValue === 1 ? "Low" : item.estimateValue === 2 ? "Med" : "High"}</strong></p>
                           {item.status === "completed" ? <p>Invoice: <strong>${item.invoice}</strong></p> : ""}
                         </div>
                         {item.status !== "completed" ?

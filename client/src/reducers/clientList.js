@@ -73,6 +73,7 @@ export const clientReducer = (state = initialStateClientReducer, action) => {
         return item._id === action.data._id;
       });
 
+      // TODO bug: completed is getting entries that it shouldn't (ie set to inactive; shows up in completed)
       if (action.inProspects && action.inActive) {
         return {
           ...state,
