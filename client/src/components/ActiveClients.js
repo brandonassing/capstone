@@ -120,21 +120,16 @@ class ActiveClients extends Component {
       Header: () => <p>Id</p>,
       accessor: 'clientId',
       Cell: col => <p>{col.value}</p>,
-      minWidth: 75
+      minWidth: 100
     }, {
       Header: () => <p>Name</p>,
       id: 'name',
       accessor: d => `${d.firstName} ${d.lastName}`,
       Cell: col => <p>{col.value}</p>,
-      minWidth: 100
+      minWidth: 200
     }, {
       Header: () => <p>Email</p>,
       accessor: 'email',
-      Cell: col => <p>{col.value}</p>,
-      minWidth: 150
-    }, {
-      Header: () => <p>Address</p>,
-      accessor: 'address',
       Cell: col => <p>{col.value}</p>,
       minWidth: 250
     }, {
@@ -146,15 +141,15 @@ class ActiveClients extends Component {
         return stringNum
       },
       Cell: col => <p>{col.value}</p>,
-      minWidth: 100
+      minWidth: 150
     }, {
       Header: () => <p># calls</p>,
       id: 'calls',
       accessor: d => d.calls.length,
       Cell: col => <p>{col.value}</p>,
-      minWidth: 50
+      minWidth: 80
     }, {
-      Header: () => <p>Value estimate</p>,
+      Header: () => <p>Max value estimate</p>,
       id: 'value',
       accessor: d => {
         let max = 0;
@@ -182,7 +177,7 @@ class ActiveClients extends Component {
         return (<p className={tierClass}>{col.value === 1 ? "Low" : col.value === 2 ? "Med" : "High"}</p>);
       },
       className: 'value-metric',
-      minWidth: 100,
+      minWidth: 150,
       resizable: false
     }];
 

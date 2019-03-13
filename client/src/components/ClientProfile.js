@@ -148,7 +148,7 @@ class ClientProfile extends Component {
       Cell: col => <p>{col.value}</p>,
       minWidth: 50
     }, {
-      Header: () => <p>Opportunity probability</p>,
+      Header: () => <p>Probability of invoice</p>,
       id: 'prob',
       accessor: d => {
         let sum = 0;
@@ -178,7 +178,7 @@ class ClientProfile extends Component {
       minWidth: 100,
       resizable: false
     }, {
-      Header: () => <p>Value estimate</p>,
+      Header: () => <p>Max value estimate</p>,
       id: 'value',
       accessor: d => {
         let max = 0;
