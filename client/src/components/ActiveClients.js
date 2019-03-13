@@ -85,6 +85,18 @@ class ActiveClients extends Component {
       }
     }
 
+    let inProspects = false;
+    let inActive = false;
+
+    for (let i = 0; i < calls.length; i++) {
+      if (calls[i].status === "inactive") {
+        inProspects = true;
+      }
+      if (calls[i].status === "active") {
+        inActive = true;
+      }
+    };
+
     fetch('/clients/profiles/' + this.state.activeClient._id, {
       method: 'PUT',
       headers: {
@@ -97,7 +109,8 @@ class ActiveClients extends Component {
     })
       .then(res => res.json())
       .then(resJson => {
-       this.props.updateClientAll(resJson.message);
+        // this.getData(true)
+        this.props.updateClientAll({client: resJson.message, inProspects: inProspects, inActive: inActive});
       });
   };
 
@@ -252,7 +265,7 @@ const mapDispatchToProps = dispatch => {
     storeClients: clientData => dispatch(storeClientsActive(clientData)),
     refreshClients: clientData => dispatch(refreshClientsActive(clientData)),
     updateClient: client => dispatch(updateClientActive(client)),
-    updateClientAll: client => dispatch(updateClientAll(client))
+    updateClientAll: clientData => dispatch(updateClientAll(clientData))
   };
 };
 
