@@ -100,7 +100,7 @@ class CompletedClients extends Component {
       Cell: col => <p>{col.value}</p>,
       minWidth: 250
     }, {
-      Header: () => <p>Phone Number</p>,
+      Header: () => <p>Phone number</p>,
       id: "phoneNumber",
       accessor: d => {
         let num = d.phoneNumber;
@@ -116,17 +116,15 @@ class CompletedClients extends Component {
       Cell: col => <p>{col.value}</p>,
       minWidth: 80
     }, {
-      Header: () => <p>Value</p>,
-      id: 'value',
+      Header: () => <p>Total invoice</p>,
+      id: 'invoice',
       accessor: d => {
-        let highest = 0;
+        let totalInvoice = 0;
 
         for (let i = 0; i < d.calls.length; i++) {
-          if (d.calls[i].dollarValue > highest) {
-            highest = d.calls[i].dollarValue;
-          }
+          totalInvoice += d.calls[i].invoice;
         }
-        return highest;
+        return totalInvoice;
       },
       Cell: col => {
         let tierClass = "";
@@ -174,7 +172,10 @@ class CompletedClients extends Component {
         />
         <Modal show={this.state.showModal} onHide={this.handleClose} centered={true}>
           <Modal.Header closeButton>
-            <Modal.Title>{this.state.activeClient.firstName} {this.state.activeClient.lastName}</Modal.Title>
+            <Modal.Title>
+              <h2>{this.state.activeClient.firstName} {this.state.activeClient.lastName}</h2>
+              <h3>{this.state.activeClient.address}</h3>
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             {

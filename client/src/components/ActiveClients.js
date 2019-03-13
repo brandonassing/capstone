@@ -77,7 +77,7 @@ class ActiveClients extends Component {
 
   setWorker = (worker, call_id) => {
     let calls = this.state.activeClient.calls;
-    
+
     for (let i = 0; i < calls.length; i++) {
       if (calls[i]._id === call_id) {
         calls[i].status = worker === "" ? "inactive" : "active";
@@ -110,7 +110,7 @@ class ActiveClients extends Component {
       .then(res => res.json())
       .then(resJson => {
         // this.getData(true)
-        this.props.updateClientAll({client: resJson.message, inProspects: inProspects, inActive: inActive});
+        this.props.updateClientAll({ client: resJson.message, inProspects: inProspects, inActive: inActive });
       });
   };
 
@@ -120,20 +120,25 @@ class ActiveClients extends Component {
       Header: () => <p>Id</p>,
       accessor: 'clientId',
       Cell: col => <p>{col.value}</p>,
-      minWidth: 100
+      minWidth: 75
     }, {
       Header: () => <p>Name</p>,
       id: 'name',
       accessor: d => `${d.firstName} ${d.lastName}`,
       Cell: col => <p>{col.value}</p>,
-      minWidth: 200
+      minWidth: 100
     }, {
       Header: () => <p>Email</p>,
       accessor: 'email',
       Cell: col => <p>{col.value}</p>,
+      minWidth: 150
+    }, {
+      Header: () => <p>Address</p>,
+      accessor: 'address',
+      Cell: col => <p>{col.value}</p>,
       minWidth: 250
     }, {
-      Header: () => <p>Phone Number</p>,
+      Header: () => <p>Phone number</p>,
       id: "phoneNumber",
       accessor: d => {
         let num = d.phoneNumber;
@@ -141,25 +146,25 @@ class ActiveClients extends Component {
         return stringNum
       },
       Cell: col => <p>{col.value}</p>,
-      minWidth: 150
+      minWidth: 100
     }, {
       Header: () => <p># calls</p>,
       id: 'calls',
       accessor: d => d.calls.length,
       Cell: col => <p>{col.value}</p>,
-      minWidth: 80
+      minWidth: 50
     }, {
-      Header: () => <p>Value</p>,
+      Header: () => <p>Active value</p>,
       id: 'value',
       accessor: d => {
-        let highest = 0;
+        let totalActive = 0;
 
         for (let i = 0; i < d.calls.length; i++) {
-          if (d.calls[i].dollarValue > highest) {
-            highest = d.calls[i].dollarValue;
+          if (d.calls[i].status === "active") {
+            totalActive += d.calls[i].dollarValue;
           }
         }
-        return highest;
+        return totalActive;
       },
       Cell: col => {
         let tierClass = "";
@@ -175,7 +180,7 @@ class ActiveClients extends Component {
         return (<p className={tierClass}>${col.value}</p>);
       },
       className: 'value-metric',
-      minWidth: 150,
+      minWidth: 100,
       resizable: false
     }];
 
@@ -207,7 +212,10 @@ class ActiveClients extends Component {
         />
         <Modal show={this.state.showModal} onHide={this.handleClose} centered={true}>
           <Modal.Header closeButton>
-            <Modal.Title>{this.state.activeClient.firstName} {this.state.activeClient.lastName}</Modal.Title>
+            <Modal.Title>
+              <h2>{this.state.activeClient.firstName} {this.state.activeClient.lastName}</h2>
+              <h3>{this.state.activeClient.address}</h3>
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             {
@@ -228,12 +236,12 @@ class ActiveClients extends Component {
                         {item.status !== "completed" ?
                           <div className="worker-dropdown">
                             <DropdownButton id="dropdown-basic-button" title={item.worker !== "" ? item.worker : "Dispatch worker"}>
-                              <Dropdown.Item value="" onClick={(e) => {this.setWorker("", item._id)}}><strong>Set inactive</strong></Dropdown.Item>
-                              <Dropdown.Item value="Jon F." onClick={(e) => {this.setWorker("Jon F.", item._id)}}>Jon F.</Dropdown.Item>
-                              <Dropdown.Item value="Brandon A." onClick={(e) => {this.setWorker("Brandon A.", item._id)}}>Brandon A.</Dropdown.Item>
-                              <Dropdown.Item value="Yanick H." onClick={(e) => {this.setWorker("Yanick H.", item._id)}}>Yanick H.</Dropdown.Item>
-                              <Dropdown.Item value="Krishan P." onClick={(e) => {this.setWorker("Krishan P.", item._id)}}>Krishan P.</Dropdown.Item>
-                              <Dropdown.Item value="Jake R." onClick={(e) => {this.setWorker("Jake R.", item._id)}}>Jake R.</Dropdown.Item>
+                              <Dropdown.Item value="" onClick={(e) => { this.setWorker("", item._id) }}><strong>Set inactive</strong></Dropdown.Item>
+                              <Dropdown.Item value="Jon F." onClick={(e) => { this.setWorker("Jon F.", item._id) }}>Jon F.</Dropdown.Item>
+                              <Dropdown.Item value="Brandon A." onClick={(e) => { this.setWorker("Brandon A.", item._id) }}>Brandon A.</Dropdown.Item>
+                              <Dropdown.Item value="Yanick H." onClick={(e) => { this.setWorker("Yanick H.", item._id) }}>Yanick H.</Dropdown.Item>
+                              <Dropdown.Item value="Krishan P." onClick={(e) => { this.setWorker("Krishan P.", item._id) }}>Krishan P.</Dropdown.Item>
+                              <Dropdown.Item value="Jake R." onClick={(e) => { this.setWorker("Jake R.", item._id) }}>Jake R.</Dropdown.Item>
                             </DropdownButton>
                           </div>
                           :
