@@ -43,6 +43,15 @@
   overflow: auto;
   p {
     margin-bottom: 5px;
+    strong.low {
+      color: $value-low-color;
+    }
+    strong.med {
+      color: $value-med-color;
+    }
+    strong.high {
+      color: $value-high-color;
+    }
   }
 }
 
