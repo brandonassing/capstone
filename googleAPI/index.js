@@ -14,6 +14,12 @@ const projectId = 'leadsense-230423';
 const https = require('https');
 const fs = require('fs');
 
+// Import the json 2 csv converter
+const Json2csvParser = require('json2csv').Parser;
+const fields = ['transcription', 'callId', 'date', 'time', 'duration','prospect','callStatus','callerNumber'];
+const myCSV = []
+
+
 // For parsing bodies
 const express = require("express");
 
@@ -60,12 +66,8 @@ app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true }));
 var querystring = require("querystring");
 
-console.log("My password: " + (creds.password))
-console.log("My username: " + encodeURIComponent(creds.username))
-
-
-
-
+main()
+/*
 const dbUri = "mongodb://main:se4455@main-shard-00-00-gkrza.mongodb.net:27017,main-shard-00-01-gkrza.mongodb.net:27017,main-shard-00-02-gkrza.mongodb.net:27017/test?ssl=true&replicaSet=Main-shard-0&authSource=admin&retryWrites=true";
 
 const options = {
@@ -87,7 +89,7 @@ mongoose.connect(dbUri, options).then(
   }
 );
 
-
+*/
 // -----------------------------------------------------------------------------
 
 async function main(){
@@ -95,8 +97,12 @@ console.log("Loading script")
 
 const jsonArray= await csv().fromFile(csvFilePath);
 
+// loop through all call url files
+var lastLink = false
+for(var i = 0; i<= 0; i++){
+
 // Access the metadata of the call object: 
-var metadata = jsonArray[0]
+var metadata = jsonArray[i]
 
 var dest = "./downloads/" + metadata['Call Id'] + ".mp3"
 var callId = metadata['Call Id']
@@ -106,12 +112,24 @@ var url = metadata['Audio URL']
 //if(metadata["Prospect/Non-Prospect"] == 'Service' || metadata["Prospect/Non-Prospect"] == 'Sales'){
   await download(url, dest, callId, metadata, function(x){
 
+    console.log("download mp3 #: " + i)
+
+    if(i == 2){
+      console.log("Last file")
+      lastLink = true
+    }
+
     // Convert the audio file into text
-    convertMP3toWAV(dest, callId, metadata)
+    convertMP3toWAV(dest, callId,lastLink, metadata, function(){
+      console.log("Callback finished!")
+    })
     //convert2Flac()
+
+    // if
   
     })
   //}
+  }
 }
 
 
@@ -164,14 +182,14 @@ async function convert2Flac(){
 
 
 // Use the SoX CLI to convert the mp3 file (from call source) into a .wav format
-async function convertMP3toWAV(dest, callId, metadata) {
+async function convertMP3toWAV(dest, callId,lastLink, metadata, cb) {
 
   // Define variable locations
   var mp3File = dest
   var outputDestiation = './wavFiles/' + callId + ".wav"
 
 
-  sox.identify(mp3File, function(err, results) {
+   sox.identify(mp3File, function(err, results) {
     
       // Preview the details about the mp3 file:
       console.log("Inside details: " + JSON.stringify(results))
@@ -196,7 +214,11 @@ async function convertMP3toWAV(dest, callId, metadata) {
       job.on('end', function() {
         console.log("Conversion complete.");
         // Upload the file location to Google Cloud Storage
-        upload2GoogleBucket(outputDestiation, callId, metadata)
+         upload2GoogleBucket(outputDestiation, callId,lastLink, metadata, function(){
+
+          cb()
+         })
+         
       });
       job.start();
     });
@@ -204,7 +226,7 @@ async function convertMP3toWAV(dest, callId, metadata) {
 
 // Upload the convert file to Google Cloud Storage
 // All audio files over 1 minute must be from GCS for the Google Speech to Text API. 
-async function upload2GoogleBucket(localUrl, callId, metadata){
+async function upload2GoogleBucket(localUrl, callId,lastLink, metadata, cb2){
 
   // Create a storage client
   const storage = new Storage();
@@ -240,13 +262,17 @@ await storage
 
 console.log(`gs://${bucketName}/${name} is now public.`);
 
-googleSpeech2Text(name, metadata)
+ googleSpeech2Text(name,lastLink, metadata, function(){
+  console.log("waitng......")
+  cb2()
+ })
   
 }
 
 
 // Call the google speech to text API, referencing an audio file in GCS
-async function googleSpeech2Text(name, metadata) {
+async function googleSpeech2Text(name,lastLink, metadata, cb3) {
+  console.log("inside speech to text")
 
   const audio = {
     uri:  "gs://formatedwavfiles/" + name
@@ -283,11 +309,11 @@ async function googleSpeech2Text(name, metadata) {
       temp.word = wordsInfo[i].word
       temp.count = 1
       hash[wordsInfo[i].word] = temp
-      console.log("Just set: " + JSON.stringify(hash[wordsInfo[i].word]))
+     // console.log("Just set: " + JSON.stringify(hash[wordsInfo[i].word]))
     }
   }
 
-  console.log("The finished hash: " + JSON.stringify(hash))
+ // console.log("The finished hash: " + JSON.stringify(hash))
 
   // Convert JSON object into arrays of json objects
   var list = []
@@ -310,20 +336,28 @@ async function googleSpeech2Text(name, metadata) {
   mongoObj.callStatus = metadata["Call Status"]
   mongoObj.callerNumber = parseInt(metadata["Caller Number"])
 
-  let newTranscription = new Transcription(mongoObj)
+ //let newTranscription = new Transcription(mongoObj)
 
-  console.log("Final schema object: " + JSON.stringify(newTranscription))
+  console.log("Final schema object: " + JSON.stringify(mongoObj))
 
-  // Save to Mongo:
- 
-    newTranscription.save((err, vm) =>{
-      if(err){
+  myCSV.push(mongoObj)
 
-        console.log("Error: " + err)
-      }else{
-        console.log("Saved: " + JSON.stringify(vm))
-      }
+  // Check if that was the last song:
+  if(lastLink){
+    console.log("Last link confirmed!")
+    // Download the csv
+    try {
+      const csv = json2csv(myCSV);
+      var file = new File(csv, "list.csv", {type: "text/plain;charset=utf-8"});
+      FileSaver.saveAs(file);
 
-    })
+      console.log("Successfully downloaded CSV");
+    } catch (err) {
+      console.error("Error downloading csv: " + err);
+    }
+  }
+
+  cb3()
+
 
 }
