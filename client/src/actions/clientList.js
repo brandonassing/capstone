@@ -55,7 +55,9 @@ export const updateClientCompleted = client => ({
   data: client
 })
 
-export const updateClientAll = client => ({
+export const updateClientAll = clientData => ({
   type: UPDATE_CLIENT_ALL,
-  data: client
+  data: clientData.client,
+  inProspects: clientData.inProspects,
+  inActive: clientData.inActive
 })
