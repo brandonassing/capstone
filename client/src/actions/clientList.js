@@ -7,6 +7,7 @@ export const UPDATE_CLIENT_ACTIVE = "UPDATE_CLIENT_ACTIVE";
 export const STORE_CLIENTS_COMPLETED = "STORE_CLIENTS_COMPLETED";
 export const REFRESH_CLIENTS_COMPLETED = "REFRESH_CLIENTS_COMPLETED";
 export const UPDATE_CLIENT_COMPLETED = "UPDATE_CLIENT_COMPLETED";
+export const UPDATE_CLIENT_ALL = "UPDATE_CLIENT_ALL";
 
 
 export const storeClients = clientData => ({
@@ -51,5 +52,10 @@ export const refreshClientsCompleted = clientData => ({
 
 export const updateClientCompleted = client => ({
   type: UPDATE_CLIENT_COMPLETED,
+  data: client
+})
+
+export const updateClientAll = client => ({
+  type: UPDATE_CLIENT_ALL,
   data: client
 })
