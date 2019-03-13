@@ -1,4 +1,4 @@
-import { STORE_CLIENTS, REFRESH_CLIENTS, UPDATE_CLIENT, STORE_CLIENTS_ACTIVE, REFRESH_CLIENTS_ACTIVE, UPDATE_CLIENT_ACTIVE, STORE_CLIENTS_COMPLETED, REFRESH_CLIENTS_COMPLETED, UPDATE_CLIENT_COMPLETED } from '../actions/clientList';
+import { STORE_CLIENTS, REFRESH_CLIENTS, UPDATE_CLIENT, STORE_CLIENTS_ACTIVE, REFRESH_CLIENTS_ACTIVE, UPDATE_CLIENT_ACTIVE, STORE_CLIENTS_COMPLETED, REFRESH_CLIENTS_COMPLETED, UPDATE_CLIENT_COMPLETED, UPDATE_CLIENT_ALL } from '../actions/clientList';
 const initialStateClientReducer = {
   clients: [],
   clientsActive: [],
@@ -60,6 +60,22 @@ export const clientReducer = (state = initialStateClientReducer, action) => {
       });
       return {
         ...state,
+        clientsCompleted: [...state.clientsCompleted.slice(0, indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
+      }
+    case UPDATE_CLIENT_ALL:
+      index = state.clients.findIndex(item => {
+        return item._id === action.data._id;
+      });
+      indexCompleted = state.clientsCompleted.findIndex(item => {
+        return item._id === action.data._id;
+      });
+      indexActive = state.clientsActive.findIndex(item => {
+        return item._id === action.data._id;
+      });
+      return {
+        ...state,
+        clients: [...state.clients.slice(0, index), action.data, ...state.clients.slice(index + 1)],
+        clientsActive: [...state.clientsActive.slice(0, indexActive), action.data, ...state.clientsActive.slice(indexActive + 1)],
         clientsCompleted: [...state.clientsCompleted.slice(0, indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
       }
     default: return state;

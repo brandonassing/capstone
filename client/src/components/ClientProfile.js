@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './ClientProfile.scss';
-import { storeClients, refreshClients, updateClient } from '../actions/clientList';
+import { storeClients, refreshClients, updateClient, updateClientAll } from '../actions/clientList';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import moment from 'moment';
@@ -75,7 +75,6 @@ class ClientProfile extends Component {
       });
   }
 
-  // TODO might need to prevent update
   setWorker = (worker, call_id) => {
     let calls = this.state.activeClient.calls;
     
@@ -84,9 +83,7 @@ class ClientProfile extends Component {
         calls[i].status = worker === "" ? "inactive" : "active";
         calls[i].worker = worker;
       }
-    }
-
-    console.log(calls);
+    };
 
     fetch('/clients/profiles/' + this.state.activeClient._id, {
       method: 'PUT',
@@ -100,7 +97,7 @@ class ClientProfile extends Component {
     })
       .then(res => res.json())
       .then(resJson => {
-        // this.props.updateClient(resJson.message);
+        this.props.updateClientAll(resJson.message);
       });
   };
 
@@ -253,7 +250,8 @@ const mapDispatchToProps = dispatch => {
   return {
     storeClients: clientData => dispatch(storeClients(clientData)),
     refreshClients: clientData => dispatch(refreshClients(clientData)),
-    updateClient: client => dispatch(updateClient(client))
+    updateClient: client => dispatch(updateClient(client)),
+    updateClientAll: client => dispatch(updateClientAll(client))
   };
 };
 
