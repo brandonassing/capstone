@@ -2,10 +2,10 @@
 @import './helpers/mixins';
 @import './helpers/placeholders';
 
-#clients-body {
-  #clients-header {
+#completed-body {
+  #completed-header {
     @extend %tab-heading;
-    #client-search {
+    #completed-search {
       width: 400px;
       @extend %input-field;
     }
@@ -101,7 +101,6 @@
 
 .modal-body {
   @extend %modal-body;
-  @extend %worker-select;
 }
 
 .modal-footer {

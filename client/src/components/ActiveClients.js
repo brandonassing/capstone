@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import './ClientProfile.scss';
-import { storeClients, refreshClients, updateClient, updateClientAll } from '../actions/clientList';
+import './ActiveClients.scss';
+import { storeClientsActive, refreshClientsActive, updateClientActive, updateClientAll } from '../actions/clientList';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import moment from 'moment';
@@ -9,7 +9,7 @@ import { Modal, Dropdown, DropdownButton } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 
-class ClientProfile extends Component {
+class ActiveClients extends Component {
   constructor(props) {
     super(props);
     this.loadMore = this.loadMore.bind(this);
@@ -37,7 +37,7 @@ class ClientProfile extends Component {
   }
 
   componentDidMount() {
-    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=inactive')
+    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=active')
       .then(res => res.json())
       .then(resJson => {
         this.props.refreshClients(resJson.message);
@@ -64,7 +64,7 @@ class ClientProfile extends Component {
   }
 
   getData(refresh) {
-    fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=inactive')
+    fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=active')
       .then(res => res.json())
       .then(resJson => {
         // call redux refresh vs store
@@ -83,7 +83,7 @@ class ClientProfile extends Component {
         calls[i].status = worker === "" ? "inactive" : "active";
         calls[i].worker = worker;
       }
-    };
+    }
 
     let inProspects = false;
     let inActive = false;
@@ -109,6 +109,7 @@ class ClientProfile extends Component {
     })
       .then(res => res.json())
       .then(resJson => {
+        // this.getData(true)
         this.props.updateClientAll({client: resJson.message, inProspects: inProspects, inActive: inActive});
       });
   };
@@ -179,10 +180,10 @@ class ClientProfile extends Component {
     }];
 
     return (
-      <div id="clients-body">
-        <div id="clients-header">
-          <h2>Prospect profiles</h2>
-          <input type="email" className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
+      <div id="active-body">
+        <div id="active-header">
+          <h2>Active clients</h2>
+          <input type="email" className="form-control" id="active-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
         </div>
         <ReactTable
           data={data}
@@ -209,7 +210,7 @@ class ClientProfile extends Component {
             <Modal.Title>{this.state.activeClient.firstName} {this.state.activeClient.lastName}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          {
+            {
               // TODO sort not working; maybe sort by status (ie: completed first)
               !!this.state.activeClient.calls ?
                 this.state.activeClient.calls.map((item, index) => {
@@ -245,6 +246,7 @@ class ClientProfile extends Component {
                 :
                 ""
             }
+
           </Modal.Body>
           <Modal.Footer>
             <button id="modal-close" type="button" className="btn btn-primary" onClick={this.handleClose}>Close</button>
@@ -260,17 +262,17 @@ class ClientProfile extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    storeClients: clientData => dispatch(storeClients(clientData)),
-    refreshClients: clientData => dispatch(refreshClients(clientData)),
-    updateClient: client => dispatch(updateClient(client)),
+    storeClients: clientData => dispatch(storeClientsActive(clientData)),
+    refreshClients: clientData => dispatch(refreshClientsActive(clientData)),
+    updateClient: client => dispatch(updateClientActive(client)),
     updateClientAll: clientData => dispatch(updateClientAll(clientData))
   };
 };
 
 const mapStateToProps = state => {
   return {
-    clientProfiles: state.clientReducer.clients
+    clientProfiles: state.clientReducer.clientsActive
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClientProfile)
+export default connect(mapStateToProps, mapDispatchToProps)(ActiveClients)

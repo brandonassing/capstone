@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb://se4450:se4450@ds145694.mlab.com:45694/main" || "mongodb://localhost:27017/post", {useNewUrlParser: true});
+mongoose.connect("mongodb+srv://main:se4450@main-ia8yw.mongodb.net/test?retryWrites=true" || "mongodb://localhost:27017/post", {dbName: "Main", useNewUrlParser: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
