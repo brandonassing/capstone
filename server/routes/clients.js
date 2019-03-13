@@ -24,31 +24,52 @@ router.route('/profiles').get(function (req, res) {
   query.skip = size * (pageNo - 1);
   query.limit = size;
 
-  Client.estimatedDocumentCount({}, function (err, totalCount) {
-    if (err) {
-      response = {
-        "error": true,
-        "message": "Error fetching data"
-      };
-    }
-    Client.find({}, {}, query, function (err, data) {
-      // Mongo command to fetch all data from collection.
+  // CLIENTS FILTERED BY CALL STATUS
+  if (!!req.query.callStatus) {
+    Client.paginate({ calls: {$elemMatch: {status: req.query.callStatus}} }, { page: pageNo, limit: size }, function (err, data) {
       if (err) {
         response = {
           "error": true,
           "message": "Error fetching data"
         };
       } else {
-        var totalPages = Math.ceil(totalCount / size);
         response = {
           "error": false,
-          "message": data,
-          "pages": totalPages
+          "message": data.docs,
+          "pages": data.pages
         };
       }
       res.json(response);
     });
-  });
+  }
+  // ALL CLIENTS
+  else {
+    Client.estimatedDocumentCount({}, function (err, totalCount) {
+      if (err) {
+        response = {
+          "error": true,
+          "message": "Error fetching data"
+        };
+      }
+      Client.find({}, {}, query, function (err, data) {
+        // Mongo command to fetch all data from collection.
+        if (err) {
+          response = {
+            "error": true,
+            "message": "Error fetching data"
+          };
+        } else {
+          var totalPages = Math.ceil(totalCount / size);
+          response = {
+            "error": false,
+            "message": data,
+            "pages": totalPages
+          };
+        }
+        res.json(response);
+      });
+    });
+  }
 });
 
 router.route('/profiles/:client_id').put(function(req, res) {
@@ -83,21 +104,40 @@ router.route('/profiles/search').get(function (req, res) {
   query.skip = size * (pageNo - 1);
   query.limit = size;
 
-  Client.paginate({ $text: { $search: searchKey, $caseSensitive: false } }, { page: pageNo, limit: size }, function (err, data) {
-    if (err) {
-      response = {
-        "error": true,
-        "message": "Error fetching data"
-      };
-    } else {
-      response = {
-        "error": false,
-        "message": data.docs,
-        "pages": data.pages
-      };
-    }
-    res.json(response);
-  });
+  if (!!req.query.callStatus) {
+    Client.paginate({ $text: { $search: searchKey, $caseSensitive: false }, calls: {$elemMatch: {status: req.query.callStatus}} }, { page: pageNo, limit: size }, function (err, data) {
+      if (err) {
+        response = {
+          "error": true,
+          "message": "Error fetching data"
+        };
+      } else {
+        response = {
+          "error": false,
+          "message": data.docs,
+          "pages": data.pages
+        };
+      }
+      res.json(response);
+    });
+  }
+  else {
+    Client.paginate({ $text: { $search: searchKey, $caseSensitive: false } }, { page: pageNo, limit: size }, function (err, data) {
+      if (err) {
+        response = {
+          "error": true,
+          "message": "Error fetching data"
+        };
+      } else {
+        response = {
+          "error": false,
+          "message": data.docs,
+          "pages": data.pages
+        };
+      }
+      res.json(response);
+    });
+  }
 });
 
 router.route('/calls').get(function (req, res) {

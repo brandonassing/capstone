@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Oswald|Roboto+Condensed');
+@import './helpers/variables';
+@import './helpers/mixins';
+@import './helpers/placeholders';
 
 .App {
   text-align: center;

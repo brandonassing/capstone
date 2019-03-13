@@ -21,3 +21,42 @@
   font-family: 'Oswald', sans-serif;
   font-weight: normal;
 }
+
+%modal-body {
+  max-height: 50vh;
+  min-height: 25vh;
+  overflow: auto;
+  p {
+    margin-bottom: 5px;
+  }
+}
+
+%worker-select {
+  .selection-content {
+    display: flex;
+    justify-content: space-between;
+    .worker-dropdown {
+      .btn-primary {
+        background-color: $accent-color;
+        color: white;
+        border: none;
+      }
+      .dropdown-menu {
+        max-height: 200px;
+        overflow: auto;      
+      }
+    }
+  }
+}
+
+%modal-footer {
+  .btn-primary {
+    background-color: $accent-color;
+    color: white;
+    border: none;
+    &:not(:disabled):not(.disabled):active{
+      background-color: $accent-color;
+      border: none;
+    }
+  }
+}

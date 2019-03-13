@@ -2,10 +2,10 @@
 @import './helpers/mixins';
 @import './helpers/placeholders';
 
-#clients-body {
-  #clients-header {
+#active-body {
+  #active-header {
     @extend %tab-heading;
-    #client-search {
+    #active-search {
       width: 400px;
       @extend %input-field;
     }
