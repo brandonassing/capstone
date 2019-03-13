@@ -31,7 +31,7 @@ class Statistics extends Component {
 
         for (let i = 0; i < calls.length; i++) {
           timestamps.push(calls[i].timestamp);
-          metrics.push(calls[i].dollarValue);
+          metrics.push(calls[i].estimateValue);
         }
         this.props.storeMetrics({
           calls: calls,
@@ -133,15 +133,15 @@ class Statistics extends Component {
 
     for (let i = 0; i < this.props.calls.length; i++) {
       if (moment(this.props.calls[i].timestamp).isSame(new Date(), 'week')) {
-        totalMetricWeek += this.props.calls[i].dollarValue;
+        totalMetricWeek += this.props.calls[i].estimateValue;
         weekDenom++;
       }
       if (moment(this.props.calls[i].timestamp).isSame(new Date(), 'month')) {
-        totalMetricMonth += this.props.calls[i].dollarValue;
+        totalMetricMonth += this.props.calls[i].estimateValue;
         monthDenom++;
       }
       if (moment(this.props.calls[i].timestamp).isSame(new Date(), 'year')) {
-        totalMetricYear += this.props.calls[i].dollarValue;
+        totalMetricYear += this.props.calls[i].estimateValue;
         yearDenom++;
       }
     }
