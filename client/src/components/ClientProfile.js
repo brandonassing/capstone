@@ -160,7 +160,7 @@ class ClientProfile extends Component {
 
         for (let i = 0; i < d.calls.length; i++) {
           if (d.calls[i].status === "inactive") {
-            totalProspect += d.calls[i].dollarValue;
+            totalProspect += d.calls[i].estimateValue;
           }
         }
         return totalProspect;
@@ -229,7 +229,7 @@ class ClientProfile extends Component {
                           <p>Job type: {item.serviceType}</p>
                           {item.status === "completed" ? <p>Dispatched: {item.worker}</p> : ""}
                           <p>Status: {item.status}</p>
-                          <p>Estimate: <strong>${item.dollarValue}</strong></p>
+                          <p>Estimate: <strong>${item.estimateValue}</strong></p>
                           {item.status === "completed" ? <p>Invoice: <strong>${item.invoice}</strong></p> : ""}
                         </div>
                         {item.status !== "completed" ?

@@ -28,7 +28,7 @@ class Nav extends Component {
 
         for (let i = 0; i < calls.length; i++) {
           timestamps.push(calls[i].timestamp);
-          metrics.push(calls[i].dollarValue);
+          metrics.push(calls[i].estimateValue);
         }
         this.props.storeMetrics({
           calls: calls,
