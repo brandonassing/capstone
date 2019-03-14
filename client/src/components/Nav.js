@@ -20,7 +20,8 @@ class Nav extends Component {
       .then(resJson => {
         let calls = [];
         let timestamps = [];
-        let metrics = [];
+        let probabilities = [];
+        let estimateValues = [];
         for (let i = 0; i < resJson.message.length; i++) {
           calls = [...calls, ...resJson.message[i].calls];
         }
@@ -28,12 +29,15 @@ class Nav extends Component {
 
         for (let i = 0; i < calls.length; i++) {
           timestamps.push(calls[i].timestamp);
-          metrics.push(calls[i].estimateValue);
+          probabilities.push(Math.round(calls[i].opportunityProbability * 100));
+          estimateValues.push(calls[i].estimateValue);
+
         }
         this.props.storeMetrics({
           calls: calls,
           timestamps: timestamps,
-          metrics: metrics
+          probabilities: probabilities,
+          estimateValues: estimateValues
         });
       });
   }
