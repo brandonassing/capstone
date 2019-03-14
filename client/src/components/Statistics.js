@@ -23,7 +23,8 @@ class Statistics extends Component {
       .then(resJson => {
         let calls = [];
         let timestamps = [];
-        let metrics = [];
+        let probabilities = [];
+        let estimateValues = [];
         for (let i = 0; i < resJson.message.length; i++) {
           calls = [...calls, ...resJson.message[i].calls];
         }
@@ -31,12 +32,14 @@ class Statistics extends Component {
 
         for (let i = 0; i < calls.length; i++) {
           timestamps.push(calls[i].timestamp);
-          metrics.push(calls[i].estimateValue);
+          probabilities.push(Math.round(calls[i].opportunityProbability * 100));
+          estimateValues.push(calls[i].estimateValue);
         }
         this.props.storeMetrics({
           calls: calls,
           timestamps: timestamps,
-          metrics: metrics
+          probabilities: probabilities,
+          estimateValues: estimateValues
         });
       });
   }
@@ -45,19 +48,17 @@ class Statistics extends Component {
     let low = 0;
     let med = 0;
     let high = 0;
-
-    this.props.metrics.forEach((e) => {
-      if (e >= 0 && e < 1000) {
+    this.props.estimateValues.forEach((e) => {
+      if (e === 1) {
         low++;
       }
-      else if (e >= 1000 && e < 20000) {
+      else if (e === 2) {
         med++;
       }
-      else if (e >= 20000) {
+      else if (e === 3) {
         high++;
       }
     });
-
     return [high, med, low];
   }
 
@@ -68,7 +69,7 @@ class Statistics extends Component {
         fill: false,
         label: "Call value",
         borderColor: '#51C4C6',
-        data: this.props.metrics,
+        data: this.props.probabilities,
         borderCapStyle: "round",
         borderJoinStyle: "round",
       }]
@@ -95,7 +96,7 @@ class Statistics extends Component {
         yAxes: [{
           scaleLabel: {
             display: true,
-            labelString: 'Value ($)'
+            labelString: 'Probability (%)'
           }
         }]
       },
@@ -133,15 +134,15 @@ class Statistics extends Component {
 
     for (let i = 0; i < this.props.calls.length; i++) {
       if (moment(this.props.calls[i].timestamp).isSame(new Date(), 'week')) {
-        totalMetricWeek += this.props.calls[i].estimateValue;
+        totalMetricWeek += this.props.calls[i].opportunityProbability;
         weekDenom++;
       }
       if (moment(this.props.calls[i].timestamp).isSame(new Date(), 'month')) {
-        totalMetricMonth += this.props.calls[i].estimateValue;
+        totalMetricMonth += this.props.calls[i].opportunityProbability;
         monthDenom++;
       }
       if (moment(this.props.calls[i].timestamp).isSame(new Date(), 'year')) {
-        totalMetricYear += this.props.calls[i].estimateValue;
+        totalMetricYear += this.props.calls[i].opportunityProbability;
         yearDenom++;
       }
     }
@@ -177,12 +178,12 @@ class Statistics extends Component {
         </div>
         <div id="stats-content">
           <div id="line-graph">
-            <h3>Clients' value over time</h3>
+            <h3>Clients' invoice probability over time</h3>
             <Line data={lineData} options={lineOptions} height={100} />
           </div>
           <div id="lower-group">
             <div id="donut-graph">
-              <h3>Clients' value distribution</h3>
+              <h3>Clients' value estimate distribution</h3>
               <Pie data={donutData} options={donutOptions} />
             </div>
             <div id="avg-group">
@@ -220,7 +221,8 @@ const mapStateToProps = state => {
   return {
     calls: state.metricReducer.calls,
     timestamps: state.metricReducer.timestamps,
-    metrics: state.metricReducer.metrics
+    probabilities: state.metricReducer.probabilities,
+    estimateValues: state.metricReducer.estimateValues
   };
 };
 

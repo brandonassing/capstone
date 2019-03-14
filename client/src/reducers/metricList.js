@@ -1,6 +1,7 @@
 import { STORE_METRICS } from '../actions/metricList';
 const initialStateMetricReducer = {
-    metrics: [],
+    probabilities: [],
+    estimateValues: [],
     timestamps: [],
     calls: [],
     metricWeek: 0,
@@ -12,7 +13,8 @@ export const metricReducer = (state = initialStateMetricReducer, action) => {
     case STORE_METRICS:
       return {
         ...state,
-        metrics: action.data.metrics,
+        estimateValues: action.data.estimateValues,
+        probabilities: action.data.probabilities,
         timestamps: action.data.timestamps,
         calls: action.data.calls
       };
