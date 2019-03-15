@@ -73,13 +73,13 @@ export const clientReducer = (state = initialStateClientReducer, action) => {
         return item._id === action.data._id;
       });
 
-      // TODO bug: completed is getting entries that it shouldn't (ie set to inactive; shows up in completed)
+      let oldCompleted = state.clientsCompleted;
       if (action.inProspects && action.inActive) {
         return {
           ...state,
           clients: [...state.clients.slice(0, index === -1 ? 0 : index), action.data, ...state.clients.slice(index + 1)],
           clientsActive: [...state.clientsActive.slice(0, indexActive === -1 ? 0 : indexActive), action.data, ...state.clientsActive.slice(indexActive + 1)],
-          clientsCompleted: [...state.clientsCompleted.slice(0, indexCompleted === -1 ? 0 : indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
+          clientsCompleted: indexCompleted === -1 ? oldCompleted : [...state.clientsCompleted.slice(0, indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
         }
       }
       else if (action.inProspects) {
@@ -87,7 +87,7 @@ export const clientReducer = (state = initialStateClientReducer, action) => {
           ...state,
           clients: [...state.clients.slice(0, index === -1 ? 0 : index), action.data, ...state.clients.slice(index + 1)],
           clientsActive: [...state.clientsActive.slice(0, indexActive), ...state.clientsActive.slice(indexActive + 1)],
-          clientsCompleted: [...state.clientsCompleted.slice(0, indexCompleted === -1 ? 0 : indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
+          clientsCompleted: indexCompleted === -1 ? oldCompleted : [...state.clientsCompleted.slice(0, indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
         }
       }
       else if (action.inActive) {
@@ -95,7 +95,7 @@ export const clientReducer = (state = initialStateClientReducer, action) => {
           ...state,
           clients: [...state.clients.slice(0, index), ...state.clients.slice(index + 1)],
           clientsActive: [...state.clientsActive.slice(0, indexActive === -1 ? 0 : indexActive), action.data, ...state.clientsActive.slice(indexActive + 1)],
-          clientsCompleted: [...state.clientsCompleted.slice(0, indexCompleted === -1 ? 0 : indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
+          clientsCompleted: indexCompleted === -1 ? oldCompleted : [...state.clientsCompleted.slice(0, indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
         }
       }
       // should not be reached
