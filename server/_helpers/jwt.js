@@ -9,9 +9,9 @@ function jwt() {
         path: [
             // public routes that don't require authentication
             '/api/users/auth',
-            '/api/users',
-            '/api/clients/profiles',
-            '/api/clients/calls'
+            // '/api/users',
+            // '/api/clients/profiles',
+            // '/api/clients/calls'
         ]
     });
 }
