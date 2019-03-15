@@ -12,6 +12,16 @@ const mongoose = require('mongoose');
 
 var app = express();
 
+// Login config
+const cors = require('cors');
+const jwt = require('./_helpers/jwt');
+// TODO error handling not working. Not going through error-handler.js
+const errorHandler = require('./_helpers/error-handler');
+
+app.use(cors());
+app.use(jwt());
+// app.use(errorHandler);
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
