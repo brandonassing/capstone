@@ -8,9 +8,14 @@ import CompletedClients from './CompletedClients';
 import Statistics from './Statistics';
 import AdminDashboard from './AdminDashboard';
 
+import { userActions } from '../actions/user';
+import { connect } from 'react-redux';
 
 class Home extends Component {
-
+  componentDidMount() {
+    this.props.getAll();
+  }
+  
   render() {
     return (
       <div id="home-body">
@@ -39,5 +44,20 @@ class Home extends Component {
     );
   }
 }
+const mapDispatchToProps = dispatch => {
+  return {
+    getAll: () => dispatch(userActions.getAll())
+  };
+};
 
-export default Home;
+const mapStateToProps = state => {
+  // const { userReducer, authenticationReducer } = state;
+  // const { user } = authenticationReducer;
+  // return {
+  //   user,
+  //   userReducer
+  // };
+  return {};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

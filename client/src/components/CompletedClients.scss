@@ -99,6 +99,10 @@
   }
 }
 
+.modal-header {
+  @extend %modal-header;
+}
+
 .modal-body {
   @extend %modal-body;
 }

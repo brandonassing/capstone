@@ -12,7 +12,8 @@ var ClientSchema = new Schema({
   calls: [{
     worker: String,
     serviceType: String,    
-    dollarValue: Number,
+    estimateValue: Number,
+    opportunityProbability: Number,
     timestamp: Date,
     status: String,
     invoice: Number

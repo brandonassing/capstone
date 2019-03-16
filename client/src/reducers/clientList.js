@@ -1,4 +1,5 @@
-import { STORE_CLIENTS, REFRESH_CLIENTS, UPDATE_CLIENT, STORE_CLIENTS_ACTIVE, REFRESH_CLIENTS_ACTIVE, UPDATE_CLIENT_ACTIVE, STORE_CLIENTS_COMPLETED, REFRESH_CLIENTS_COMPLETED, UPDATE_CLIENT_COMPLETED, UPDATE_CLIENT_ALL } from '../actions/clientList';
+import { clientConsts } from '../constants/clientConstants';
+
 const initialStateClientReducer = {
   clients: [],
   clientsActive: [],
@@ -6,17 +7,17 @@ const initialStateClientReducer = {
 };
 export const clientReducer = (state = initialStateClientReducer, action) => {
   switch (action.type) {
-    case STORE_CLIENTS:
+    case clientConsts.STORE_CLIENTS:
       return {
         ...state,
         clients: [...state.clients, ...action.data]
       };
-    case REFRESH_CLIENTS:
+    case clientConsts.REFRESH_CLIENTS:
       return {
         ...state,
         clients: action.data
       }
-    case UPDATE_CLIENT:
+    case clientConsts.UPDATE_CLIENT:
       let index = state.clients.findIndex(item => {
         return item._id === action.data._id;
       });
@@ -25,17 +26,17 @@ export const clientReducer = (state = initialStateClientReducer, action) => {
         clients: [...state.clients.slice(0, index), action.data, ...state.clients.slice(index + 1)]
       }
 
-    case STORE_CLIENTS_ACTIVE:
+    case clientConsts.STORE_CLIENTS_ACTIVE:
       return {
         ...state,
         clientsActive: [...state.clientsActive, ...action.data]
       };
-    case REFRESH_CLIENTS_ACTIVE:
+    case clientConsts.REFRESH_CLIENTS_ACTIVE:
       return {
         ...state,
         clientsActive: action.data
       }
-    case UPDATE_CLIENT_ACTIVE:
+    case clientConsts.UPDATE_CLIENT_ACTIVE:
       let indexActive = state.clientsActive.findIndex(item => {
         return item._id === action.data._id;
       });
@@ -44,17 +45,17 @@ export const clientReducer = (state = initialStateClientReducer, action) => {
         clientsActive: [...state.clientsActive.slice(0, indexActive), action.data, ...state.clientsActive.slice(indexActive + 1)]
       }
 
-    case STORE_CLIENTS_COMPLETED:
+    case clientConsts.STORE_CLIENTS_COMPLETED:
       return {
         ...state,
         clientsCompleted: [...state.clientsCompleted, ...action.data]
       };
-    case REFRESH_CLIENTS_COMPLETED:
+    case clientConsts.REFRESH_CLIENTS_COMPLETED:
       return {
         ...state,
         clientsCompleted: action.data
       }
-    case UPDATE_CLIENT_COMPLETED:
+    case clientConsts.UPDATE_CLIENT_COMPLETED:
       let indexCompleted = state.clientsCompleted.findIndex(item => {
         return item._id === action.data._id;
       });
@@ -62,7 +63,7 @@ export const clientReducer = (state = initialStateClientReducer, action) => {
         ...state,
         clientsCompleted: [...state.clientsCompleted.slice(0, indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
       }
-    case UPDATE_CLIENT_ALL:
+    case clientConsts.UPDATE_CLIENT_ALL:
       index = state.clients.findIndex(item => {
         return item._id === action.data._id;
       });
@@ -73,12 +74,13 @@ export const clientReducer = (state = initialStateClientReducer, action) => {
         return item._id === action.data._id;
       });
 
+      let oldCompleted = state.clientsCompleted;
       if (action.inProspects && action.inActive) {
         return {
           ...state,
           clients: [...state.clients.slice(0, index === -1 ? 0 : index), action.data, ...state.clients.slice(index + 1)],
           clientsActive: [...state.clientsActive.slice(0, indexActive === -1 ? 0 : indexActive), action.data, ...state.clientsActive.slice(indexActive + 1)],
-          clientsCompleted: [...state.clientsCompleted.slice(0, indexCompleted === -1 ? 0 : indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
+          clientsCompleted: indexCompleted === -1 ? oldCompleted : [...state.clientsCompleted.slice(0, indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
         }
       }
       else if (action.inProspects) {
@@ -86,7 +88,7 @@ export const clientReducer = (state = initialStateClientReducer, action) => {
           ...state,
           clients: [...state.clients.slice(0, index === -1 ? 0 : index), action.data, ...state.clients.slice(index + 1)],
           clientsActive: [...state.clientsActive.slice(0, indexActive), ...state.clientsActive.slice(indexActive + 1)],
-          clientsCompleted: [...state.clientsCompleted.slice(0, indexCompleted === -1 ? 0 : indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
+          clientsCompleted: indexCompleted === -1 ? oldCompleted : [...state.clientsCompleted.slice(0, indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
         }
       }
       else if (action.inActive) {
@@ -94,7 +96,7 @@ export const clientReducer = (state = initialStateClientReducer, action) => {
           ...state,
           clients: [...state.clients.slice(0, index), ...state.clients.slice(index + 1)],
           clientsActive: [...state.clientsActive.slice(0, indexActive === -1 ? 0 : indexActive), action.data, ...state.clientsActive.slice(indexActive + 1)],
-          clientsCompleted: [...state.clientsCompleted.slice(0, indexCompleted === -1 ? 0 : indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
+          clientsCompleted: indexCompleted === -1 ? oldCompleted : [...state.clientsCompleted.slice(0, indexCompleted), action.data, ...state.clientsCompleted.slice(indexCompleted + 1)]
         }
       }
       // should not be reached

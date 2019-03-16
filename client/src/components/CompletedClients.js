@@ -7,6 +7,7 @@ import moment from 'moment';
 import { Modal } from 'react-bootstrap';
 
 import { connect } from 'react-redux';
+import { authHeader } from '../_helpers/auth';
 
 
 class CompletedClients extends Component {
@@ -37,7 +38,10 @@ class CompletedClients extends Component {
   }
 
   componentDidMount() {
-    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=completed')
+    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=completed', {
+      method: 'GET',
+      headers: authHeader()
+    })
       .then(res => res.json())
       .then(resJson => {
         this.props.refreshClients(resJson.message);
@@ -64,7 +68,10 @@ class CompletedClients extends Component {
   }
 
   getData(refresh) {
-    fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=completed')
+    fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=completed', {
+      method: 'GET',
+      headers: authHeader()
+    })
       .then(res => res.json())
       .then(resJson => {
         // call redux refresh vs store
@@ -100,7 +107,7 @@ class CompletedClients extends Component {
       Cell: col => <p>{col.value}</p>,
       minWidth: 250
     }, {
-      Header: () => <p>Phone Number</p>,
+      Header: () => <p>Phone number</p>,
       id: "phoneNumber",
       accessor: d => {
         let num = d.phoneNumber;
@@ -116,17 +123,15 @@ class CompletedClients extends Component {
       Cell: col => <p>{col.value}</p>,
       minWidth: 80
     }, {
-      Header: () => <p>Value</p>,
-      id: 'value',
+      Header: () => <p>Total invoice</p>,
+      id: 'invoice',
       accessor: d => {
-        let highest = 0;
+        let totalInvoice = 0;
 
         for (let i = 0; i < d.calls.length; i++) {
-          if (d.calls[i].dollarValue > highest) {
-            highest = d.calls[i].dollarValue;
-          }
+          totalInvoice += d.calls[i].invoice;
         }
-        return highest;
+        return totalInvoice;
       },
       Cell: col => {
         let tierClass = "";
@@ -174,7 +179,10 @@ class CompletedClients extends Component {
         />
         <Modal show={this.state.showModal} onHide={this.handleClose} centered={true}>
           <Modal.Header closeButton>
-            <Modal.Title>{this.state.activeClient.firstName} {this.state.activeClient.lastName}</Modal.Title>
+            <Modal.Title>
+              <h2>{this.state.activeClient.firstName} {this.state.activeClient.lastName}</h2>
+              <h3>{this.state.activeClient.address}</h3>
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             {
@@ -187,7 +195,8 @@ class CompletedClients extends Component {
                       <p>Job type: {item.serviceType}</p>
                       {item.status !== "inactive" ? <p>Dispatched: {item.worker}</p> : ""}
                       <p>Status: {item.status}</p>
-                      <p>Estimate: <strong>${item.dollarValue}</strong></p>
+                      <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
+                      <p>Value estimate: <strong className={item.estimateValue === 1 ? "low" : item.estimateValue === 2 ? "med" : "high"}>{item.estimateValue === 1 ? "Low" : item.estimateValue === 2 ? "Med" : "High"}</strong></p>
                       {item.status === "completed" ? <p>Invoice: <strong>${item.invoice}</strong></p> : ""}
                       {index < this.state.activeClient.calls.length - 1 ? <hr /> : ""}
                     </div>);
