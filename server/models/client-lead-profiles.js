@@ -15,7 +15,15 @@ var ClientSchema = new Schema({
     opportunityProbability: Number,
     timestamp: Date,
     status: String,
-    invoice: Number
+    invoice: [{
+      date: Date,
+      quantity: Number,
+      itemCode: String,
+      description: String,
+      discount: Number,
+      amountAfterDiscount: Number,
+      tech: String
+    }]
   }]
 });
 
