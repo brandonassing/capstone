@@ -10,6 +10,7 @@ import { removeUsers } from '../_actions/user';
 
 import { authHeader } from '../_helpers/auth';
 import { handleError } from '../_helpers/errors';
+const logo = require('../assets/Logo.png');
 
 class Nav extends Component {
   constructor(props) {
@@ -64,7 +65,8 @@ class Nav extends Component {
     return (
       <div id="navbar-body" className="row">
         <div id="nav-group" className="col">
-          <div id="logo">
+          <div className="nav-logo">
+            <img src={logo} alt="logo" />
           </div>
           <ul className="nav nav-pills" id="navTabs" role="tablist">
             <li className="nav-item">

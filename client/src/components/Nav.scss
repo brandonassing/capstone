@@ -5,8 +5,8 @@
   #nav-group {
     display: flex;
     align-items: center;
-    #logo {
-      @include logo(40px);
+    .nav-logo {
+      @include nav-logo(40px);
     }
     .nav-pills {
       margin-left: 15px;

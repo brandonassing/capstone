@@ -3,6 +3,7 @@ import './Login.scss';
 import { connect } from 'react-redux';
 import { userActions } from '../_actions/user';
 
+const logo = require('../assets/Logo.png');
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -29,7 +30,8 @@ class Login extends Component {
     return (
       <div id="login-body">
         <div id="login-nav">
-          <div id="login-logo">
+          <div className="nav-logo">
+            <img src={logo} alt="logo" />
           </div>
           <div>
             <h1>LEADsense</h1>
@@ -44,7 +46,7 @@ class Login extends Component {
               </div>
               <div className="form-group">
                 <label htmlFor="password-login-input">Password</label>
-                <input type="password" className="form-control" id="password-login-input" placeholder="Password" value={this.state.password} onChange={(e) => { this.setState({ password: e.target.value }) }} />
+                <input type="password" className="form-control" id="password-login-input" placeholder="Enter password" value={this.state.password} onChange={(e) => { this.setState({ password: e.target.value }) }} />
               </div>
               <div id="invalid-login" hidden={!this.props.loginFail}>
                 <p className="form-text">Invalid username or password</p>
