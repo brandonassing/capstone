@@ -1,7 +1,9 @@
-import { userConstants } from '../constants/userConstants';
+import { userConstants } from '../_constants/userConstants';
 
 export function userReducer (state = {}, action) {
   switch (action.type) {
+    case userConstants.REMOVE:
+      return {}
     case userConstants.GETALL_REQUEST:
       return {
         loading: true

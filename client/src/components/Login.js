@@ -41,13 +41,15 @@ class Login extends Component {
               <div className="form-group">
                 <label htmlFor="email-login-input">Email address</label>
                 <input className="form-control" id="email-login-input" aria-describedby="emailHelp" placeholder="Enter email" value={this.state.username} onChange={(e) => { this.setState({ username: e.target.value }) }} />
-                <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
               </div>
               <div className="form-group">
                 <label htmlFor="password-login-input">Password</label>
                 <input type="password" className="form-control" id="password-login-input" placeholder="Password" value={this.state.password} onChange={(e) => { this.setState({ password: e.target.value }) }} />
               </div>
-              <button type="submit" className="btn btn-primary">Login</button>
+              <div id="invalid-login" hidden={!this.props.loginFail}>
+                <p className="form-text">Invalid username or password</p>
+              </div>
+              <button type="submit" className="btn btn-primary" disabled={!this.state.username && !this.state.password}>Login</button>
             </form>
           </div>
         </div>
@@ -57,9 +59,10 @@ class Login extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const { loggingIn } = state.authenticationReducer;
+  const { loggingIn, loginFail } = state.authenticationReducer;
   return {
-    loggingIn
+    loggingIn,
+    loginFail
   };
 }
 

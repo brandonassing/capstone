@@ -1,4 +1,4 @@
-import { clientConsts } from '../constants/clientConstants';
+import { clientConsts } from '../_constants/clientConstants';
 
 const initialStateClientReducer = {
   clients: [],
@@ -7,6 +7,12 @@ const initialStateClientReducer = {
 };
 export const clientReducer = (state = initialStateClientReducer, action) => {
   switch (action.type) {
+    case clientConsts.REMOVE_ALL_CLIENTS:
+      return {
+        clients: [],
+        clientsActive: [],
+        clientsCompleted: []
+      };
     case clientConsts.STORE_CLIENTS:
       return {
         ...state,
