@@ -14,13 +14,13 @@
     display: flex;
     align-items: center;
 
-    #login-logo {
-      @include logo(40px);
+    .nav-logo {
+      @include nav-logo(40px);
     }
 
     h1 {
       margin: 0;
-      margin-left: 15px;
+      margin-left: 10px;
       font-size: 25px;
       color: white;
     }
