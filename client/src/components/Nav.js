@@ -5,6 +5,9 @@ import './Nav.scss';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { storeMetrics } from '../actions/metricList';
+
+import { authHeader } from '../_helpers/auth';
+
 class Nav extends Component {
   constructor(props) {
     super(props);
@@ -15,12 +18,16 @@ class Nav extends Component {
   }
 
   getStats() {
-    fetch('/clients/calls')
+    fetch('/clients/calls', {
+      method: 'GET',
+      headers: authHeader()
+    })
       .then(res => res.json())
       .then(resJson => {
         let calls = [];
         let timestamps = [];
-        let metrics = [];
+        let probabilities = [];
+        let estimateValues = [];
         for (let i = 0; i < resJson.message.length; i++) {
           calls = [...calls, ...resJson.message[i].calls];
         }
@@ -28,22 +35,23 @@ class Nav extends Component {
 
         for (let i = 0; i < calls.length; i++) {
           timestamps.push(calls[i].timestamp);
-          metrics.push(calls[i].dollarValue);
+          probabilities.push(Math.round(calls[i].opportunityProbability * 100));
+          estimateValues.push(calls[i].estimateValue);
+
         }
         this.props.storeMetrics({
           calls: calls,
           timestamps: timestamps,
-          metrics: metrics
+          probabilities: probabilities,
+          estimateValues: estimateValues
         });
       });
   }
 
   componentDidMount() {
-    fetch('/users')
-      .then(res => res.json())
-      .then(users => this.setState({
-        user: users[0]
-      }));
+    this.setState({
+      user: this.props.user
+    })
   }
   render() {
     return (
@@ -85,4 +93,10 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(Nav);
+const mapStateToProps = state => {
+  return {
+    user: state.authenticationReducer.user
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Nav);

@@ -22,12 +22,36 @@
   font-weight: normal;
 }
 
+%modal-header {
+  .modal-title {
+    h2 {
+      font-size: 25px;
+      margin: 0;
+    }
+    h3 {
+      font-size: 20px;
+      font-weight: lighter;
+      color: $text-grey;
+      margin: 0;
+    }
+  }
+}
+
 %modal-body {
   max-height: 50vh;
   min-height: 25vh;
   overflow: auto;
   p {
     margin-bottom: 5px;
+    strong.low {
+      color: $value-low-color;
+    }
+    strong.med {
+      color: $value-med-color;
+    }
+    strong.high {
+      color: $value-high-color;
+    }
   }
 }
 
@@ -42,7 +66,7 @@
         border: none;
       }
       .dropdown-menu {
-        max-height: 200px;
+        max-height: 20vh;
         overflow: auto;      
       }
     }
