@@ -3,6 +3,7 @@ var router = express.Router();
 var User = require('../models/user');
 const config = require('../_helpers/config.json');
 const jwt = require('jsonwebtoken');
+var bcrypt = require('bcrypt');
 
 // const userService = require('./user-service');
 
@@ -28,33 +29,59 @@ router.get('/', function (req, res, next) {
   });
 });
 
+// TODO comment out after use to prevent user from accessing
+// router.post('/create', function (req, res, next) {
+//   bcrypt.hash(req.body.password, 10, function (err, hash) {
+//     var newUser = req.body;
+//     newUser.password = hash;
+//     User.create(newUser, function (err, user) {
+//       if (err) {
+//         response = {
+//           "error": true,
+//           "message": err
+//         };
+//         res.json(response);
+//       };
+//       res.json(user);
+//     });
+//   });
+
+// });
+
 router.post('/auth', function (req, res, next) {
   // userService.authenticate(req.body)
   //   .then(user => user.message ? res.json(user.message) : res.status(400).json({ message: 'Username or password is incorrect' }))
   //   .catch(err => next(err));
-  User.findOne(req.body).select('-password').exec(function (err, user) {
+  User.findOne({ username: req.body.username}).exec(function (err, user) {
     if (err) {
       response = {
         "error": true,
-        "message": "Invalid username and password"
+        "message": err
       };
       res.json(response);
-    } 
+    }
     if (!user) {
-      res.status(400).json({ message: 'Username or password is incorrect' });
+      res.status(400).json({ message: 'User does not exist' });
     }
     else {
-      console.log(user)
-      const token = jwt.sign({ sub: user._id }, config.secret);
-      response = {
-        "error": false,
-        "message": {
-          ...user._doc,
-          ...{token: token}
+      bcrypt.compare(req.body.password, user.password, function (err, result) {
+        if (result == true) {
+          const token = jwt.sign({ sub: user._id }, config.secret, {
+            expiresIn: 60 * 60 * 24 // expires in 24 hours
+          });
+          const { password, ...passwordless } = user._doc;
+          response = {
+            "error": false,
+            "message": {
+              ...passwordless,
+              ...{ token: token }
+            }
+          };
+          res.json(response);
+        } else {
+          res.status(400).json({ message: 'Username and password invalid' });
         }
-      };
-      res.json(response);
-
+      });
     }
   });
 });

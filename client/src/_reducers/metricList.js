@@ -1,4 +1,4 @@
-import { STORE_METRICS, REMOVE_METRICS } from '../actions/metricList';
+import { STORE_METRICS, REMOVE_METRICS } from '../_actions/metricList';
 const initialStateMetricReducer = {
   probabilities: [],
   estimateValues: [],

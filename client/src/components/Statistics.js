@@ -3,9 +3,10 @@ import './Statistics.scss';
 import { Line, Pie } from 'react-chartjs-2';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { storeMetrics } from '../actions/metricList';
+import { storeMetrics } from '../_actions/metricList';
 
 import { authHeader } from '../_helpers/auth';
+import { handleError } from '../_helpers/errors';
 
 class Statistics extends Component {
   constructor(props) {
@@ -24,6 +25,7 @@ class Statistics extends Component {
       method: 'GET',
       headers: authHeader()
     })
+      .then(res => handleError(res))
       .then(res => res.json())
       .then(resJson => {
         let calls = [];
@@ -46,6 +48,9 @@ class Statistics extends Component {
           probabilities: probabilities,
           estimateValues: estimateValues
         });
+      })
+      .catch(err => {
+        console.log(err)
       });
   }
 

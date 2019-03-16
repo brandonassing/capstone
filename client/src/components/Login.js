@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Login.scss';
 import { connect } from 'react-redux';
-import { userActions } from '../actions/user';
+import { userActions } from '../_actions/user';
 
 class Login extends Component {
   constructor(props) {
@@ -39,8 +39,8 @@ class Login extends Component {
           <div id="login-form">
             <form onSubmit={this.authenticate}>
               <div className="form-group">
-                <label htmlFor="email-login-input">Email address</label>
-                <input className="form-control" id="email-login-input" aria-describedby="emailHelp" placeholder="Enter email" value={this.state.username} onChange={(e) => { this.setState({ username: e.target.value }) }} />
+                <label htmlFor="email-login-input">Username</label>
+                <input className="form-control" id="email-login-input" aria-describedby="emailHelp" placeholder="Enter username" value={this.state.username} onChange={(e) => { this.setState({ username: e.target.value }) }} />
               </div>
               <div className="form-group">
                 <label htmlFor="password-login-input">Password</label>

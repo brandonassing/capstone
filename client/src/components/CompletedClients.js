@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './CompletedClients.scss';
-import { storeClientsCompleted, refreshClientsCompleted, updateClientCompleted } from '../actions/clientList';
+import { storeClientsCompleted, refreshClientsCompleted, updateClientCompleted } from '../_actions/clientList';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import moment from 'moment';
@@ -8,6 +8,7 @@ import { Modal } from 'react-bootstrap';
 
 import { connect } from 'react-redux';
 import { authHeader } from '../_helpers/auth';
+import { handleError } from '../_helpers/errors';
 
 
 class CompletedClients extends Component {
@@ -42,12 +43,16 @@ class CompletedClients extends Component {
       method: 'GET',
       headers: authHeader()
     })
+      .then(res => handleError(res))
       .then(res => res.json())
       .then(resJson => {
         this.props.refreshClients(resJson.message);
         this.setState({
           totalPages: resJson.pages
         })
+      })
+      .catch(err => {
+        console.log(err)
       });
   }
 
@@ -72,6 +77,7 @@ class CompletedClients extends Component {
       method: 'GET',
       headers: authHeader()
     })
+      .then(res => handleError(res))
       .then(res => res.json())
       .then(resJson => {
         // call redux refresh vs store
@@ -79,6 +85,9 @@ class CompletedClients extends Component {
         this.setState({
           totalPages: resJson.pages
         });
+      })
+      .catch(err => {
+        console.log(err)
       });
   }
 
