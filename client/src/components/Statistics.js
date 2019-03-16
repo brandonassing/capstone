@@ -5,6 +5,8 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { storeMetrics } from '../actions/metricList';
 
+import { authHeader } from '../_helpers/auth';
+
 class Statistics extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +20,10 @@ class Statistics extends Component {
   }
 
   componentDidMount() {
-    fetch('/clients/calls')
+    fetch('/clients/calls', {
+      method: 'GET',
+      headers: authHeader()
+    })
       .then(res => res.json())
       .then(resJson => {
         let calls = [];

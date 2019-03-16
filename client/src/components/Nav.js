@@ -5,6 +5,9 @@ import './Nav.scss';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { storeMetrics } from '../actions/metricList';
+
+import { authHeader } from '../_helpers/auth';
+
 class Nav extends Component {
   constructor(props) {
     super(props);
@@ -15,7 +18,10 @@ class Nav extends Component {
   }
 
   getStats() {
-    fetch('/clients/calls')
+    fetch('/clients/calls', {
+      method: 'GET',
+      headers: authHeader()
+    })
       .then(res => res.json())
       .then(resJson => {
         let calls = [];
@@ -43,11 +49,9 @@ class Nav extends Component {
   }
 
   componentDidMount() {
-    fetch('/users')
-      .then(res => res.json())
-      .then(users => this.setState({
-        user: users[0]
-      }));
+    this.setState({
+      user: this.props.user
+    })
   }
   render() {
     return (
@@ -89,4 +93,10 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(Nav);
+const mapStateToProps = state => {
+  return {
+    user: state.authenticationReducer.user
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Nav);

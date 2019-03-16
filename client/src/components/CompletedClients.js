@@ -7,6 +7,7 @@ import moment from 'moment';
 import { Modal } from 'react-bootstrap';
 
 import { connect } from 'react-redux';
+import { authHeader } from '../_helpers/auth';
 
 
 class CompletedClients extends Component {
@@ -37,7 +38,10 @@ class CompletedClients extends Component {
   }
 
   componentDidMount() {
-    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=completed')
+    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=completed', {
+      method: 'GET',
+      headers: authHeader()
+    })
       .then(res => res.json())
       .then(resJson => {
         this.props.refreshClients(resJson.message);
@@ -64,7 +68,10 @@ class CompletedClients extends Component {
   }
 
   getData(refresh) {
-    fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=completed')
+    fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=completed', {
+      method: 'GET',
+      headers: authHeader()
+    })
       .then(res => res.json())
       .then(resJson => {
         // call redux refresh vs store
