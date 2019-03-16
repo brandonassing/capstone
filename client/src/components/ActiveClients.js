@@ -246,7 +246,6 @@ class ActiveClients extends Component {
                       <div className="selection-content">
                         <div className="call-details">
                           <p>Call time: {moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</p>
-                          <p>Job type: {item.serviceType}</p>
                           {item.status === "completed" ? <p>Dispatched: {item.worker}</p> : ""}
                           <p>Status: {item.status}</p>
                           <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
