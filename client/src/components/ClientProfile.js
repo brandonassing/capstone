@@ -7,6 +7,7 @@ import moment from 'moment';
 import { Modal, Dropdown, DropdownButton } from 'react-bootstrap';
 
 import { connect } from 'react-redux';
+import { authHeader } from '../_helpers/auth';
 
 
 class ClientProfile extends Component {
@@ -37,7 +38,10 @@ class ClientProfile extends Component {
   }
 
   componentDidMount() {
-    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=inactive')
+    fetch('/clients/profiles?pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=inactive', {
+      method: 'GET',
+      headers: authHeader()
+    })
       .then(res => res.json())
       .then(resJson => {
         this.props.refreshClients(resJson.message);
@@ -64,7 +68,10 @@ class ClientProfile extends Component {
   }
 
   getData(refresh) {
-    fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=inactive')
+    fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=inactive', {
+      method: 'GET',
+      headers: authHeader()
+    })
       .then(res => res.json())
       .then(resJson => {
         // call redux refresh vs store
@@ -100,8 +107,10 @@ class ClientProfile extends Component {
     fetch('/clients/profiles/' + this.state.activeClient._id, {
       method: 'PUT',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        ...{
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }, ...authHeader()
       },
       body: JSON.stringify({
         calls: calls,

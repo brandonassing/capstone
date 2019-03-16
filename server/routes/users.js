@@ -11,7 +11,7 @@ router.get('/', function (req, res, next) {
   // userService.getAll()
   //   .then(users => res.json(users))
   //   .catch(err => next(err));
-  User.find().exec(function (err, data) {
+  User.find().select('-password').exec(function (err, data) {
     if (err) {
       response = {
         "error": true,
