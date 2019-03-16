@@ -5,7 +5,6 @@
     "clientId": "000032",
     "firstName": "Bill",
     "lastName": "Thompson",
-    "email": "b_newport@gmail.com",
     "phoneNumber": "6478849394",
     "address": "321 Capstone Crescent, Toronto, ON M5K 2L9",
     "calls": [
@@ -13,6 +12,7 @@
             "_id": {
                 "$oid": "5c881c46f54b937eb296bef7"
             },
+            "callId": String
             "worker": "Krishan P.",
             "estimateValue": 3,
             "opportunityProbability": 0.06,
@@ -33,5 +33,5 @@
     ]
 }
 
-
+// new invoices will have callId to match to call in DB
 // TODO change status to completed and set worker to ""

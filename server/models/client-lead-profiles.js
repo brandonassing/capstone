@@ -6,10 +6,10 @@ var ClientSchema = new Schema({
   clientId: String,
   firstName: String,
   lastName: String,
-  email: String,
   phoneNumber: String,
   adderss: String,
   calls: [{
+    callId: String,
     worker: String,
     estimateValue: Number,
     opportunityProbability: Number,
@@ -27,6 +27,6 @@ var ClientSchema = new Schema({
   }]
 });
 
-ClientSchema.index({ firstName: 'text', lastName: 'text', email: 'text', phoneNumber: 'text' });
+ClientSchema.index({ firstName: 'text', lastName: 'text', phoneNumber: 'text' });
 ClientSchema.plugin(mongoosePaginate);
 module.exports = mongoose.model('Client', ClientSchema);
