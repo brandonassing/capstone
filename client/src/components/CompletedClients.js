@@ -201,7 +201,6 @@ class CompletedClients extends Component {
                   return (
                     <div key={item._id}>
                       <p>Call time: {moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</p>
-                      <p>Job type: {item.serviceType}</p>
                       {item.status !== "inactive" ? <p>Dispatched: {item.worker}</p> : ""}
                       <p>Status: {item.status}</p>
                       <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
