@@ -29,7 +29,7 @@ router.get('/', function (req, res, next) {
   });
 });
 
-// TODO comment out after use to prevent user from accessing
+// // TODO comment out after use to prevent user from accessing
 // router.post('/create', function (req, res, next) {
 //   bcrypt.hash(req.body.password, 10, function (err, hash) {
 //     var newUser = req.body;
