@@ -149,11 +149,6 @@ class ClientProfile extends Component {
       Cell: col => <p>{col.value}</p>,
       minWidth: 100
     }, {
-      Header: () => <p>Email</p>,
-      accessor: 'email',
-      Cell: col => <p>{col.value}</p>,
-      minWidth: 150
-    }, {
       Header: () => <p>Phone number</p>,
       id: "phoneNumber",
       accessor: d => {
@@ -236,7 +231,7 @@ class ClientProfile extends Component {
       <div id="clients-body">
         <div id="clients-header">
           <h2>Prospect profiles</h2>
-          <input type="email" className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
+          <input className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
         </div>
         <ReactTable
           data={data}
