@@ -8,7 +8,7 @@ import CompletedClients from './CompletedClients';
 import Statistics from './Statistics';
 import AdminDashboard from './AdminDashboard';
 
-import { userActions } from '../actions/user';
+import { userActions } from '../_actions/user';
 import { connect } from 'react-redux';
 
 class Home extends Component {

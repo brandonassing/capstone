@@ -4,11 +4,12 @@ import './Nav.scss';
 
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { storeMetrics, removeMetrics } from '../actions/metricList';
-import { removeAllClients } from '../actions/clientList';
-import { removeUsers } from '../actions/user';
+import { storeMetrics, removeMetrics } from '../_actions/metricList';
+import { removeAllClients } from '../_actions/clientList';
+import { removeUsers } from '../_actions/user';
 
 import { authHeader } from '../_helpers/auth';
+import { handleError } from '../_helpers/errors';
 
 class Nav extends Component {
   constructor(props) {
@@ -24,6 +25,7 @@ class Nav extends Component {
       method: 'GET',
       headers: authHeader()
     })
+      .then(res => handleError(res))
       .then(res => res.json())
       .then(resJson => {
         let calls = [];
@@ -47,6 +49,9 @@ class Nav extends Component {
           probabilities: probabilities,
           estimateValues: estimateValues
         });
+      })
+      .catch(err => {
+        console.log(err)
       });
   }
 
