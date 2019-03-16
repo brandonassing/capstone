@@ -1,4 +1,4 @@
-import { userConstants } from '../constants/userConstants';
+import { userConstants } from '../_constants/userConstants';
 import { userService } from '../_services/user';
 // import { alertActions } from './';
 // import { history } from '../helpers/history';
@@ -59,3 +59,7 @@ function getAll() {
     function success(users) { return { type: userConstants.GETALL_SUCCESS, users } }
     function failure(error) { return { type: userConstants.GETALL_FAILURE, error } }
 }
+
+export const removeUsers = () => ({
+    type: userConstants.REMOVE
+});

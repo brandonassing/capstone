@@ -1,4 +1,4 @@
-import { clientConsts } from '../constants/clientConstants';
+import { clientConsts } from '../_constants/clientConstants';
 
 
 export const storeClients = clientData => ({
@@ -51,4 +51,8 @@ export const updateClientAll = clientData => ({
   data: clientData.client,
   inProspects: clientData.inProspects,
   inActive: clientData.inActive
+})
+
+export const removeAllClients = () => ({
+  type: clientConsts.REMOVE_ALL_CLIENTS
 })

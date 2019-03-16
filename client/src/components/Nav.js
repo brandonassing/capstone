@@ -4,7 +4,9 @@ import './Nav.scss';
 
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { storeMetrics } from '../actions/metricList';
+import { storeMetrics, removeMetrics } from '../actions/metricList';
+import { removeAllClients } from '../actions/clientList';
+import { removeUsers } from '../actions/user';
 
 import { authHeader } from '../_helpers/auth';
 
@@ -80,7 +82,11 @@ class Nav extends Component {
         </div>
         <div id="profile-group" className="col">
           <h2 id="user-name">{this.state.user.name}</h2>
-          <Link to="/login"><button type="button" className="btn btn-primary">Logout</button></Link>
+          <Link to="/login"><button type="button" className="btn btn-primary" onClick={() => {
+            this.props.removeMetrics();
+            this.props.removeAllClients();
+            this.props.removeUsers();
+          }}>Logout</button></Link>
         </div>
       </div>
     );
@@ -90,6 +96,9 @@ class Nav extends Component {
 const mapDispatchToProps = dispatch => {
   return {
     storeMetrics: data => dispatch(storeMetrics(data)),
+    removeMetrics: () => dispatch(removeMetrics()),
+    removeAllClients: () => dispatch(removeAllClients()),
+    removeUsers: () => dispatch(removeUsers())
   };
 };
 

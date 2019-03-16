@@ -38,7 +38,13 @@ router.post('/auth', function (req, res, next) {
         "error": true,
         "message": "Invalid username and password"
       };
-    } else {
+      res.json(response);
+    } 
+    if (!user) {
+      res.status(400).json({ message: 'Username or password is incorrect' });
+    }
+    else {
+      console.log(user)
       const token = jwt.sign({ sub: user._id }, config.secret);
       response = {
         "error": false,
@@ -47,9 +53,9 @@ router.post('/auth', function (req, res, next) {
           ...{token: token}
         }
       };
+      res.json(response);
 
     }
-    res.json(response);
   });
 });
 
