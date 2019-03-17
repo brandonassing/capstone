@@ -183,7 +183,7 @@ class CompletedClients extends Component {
             }
           }}
         />
-        <Modal show={this.state.showModal} onHide={this.handleClose} centered={true} size={'lg'}>
+        <Modal show={this.state.showModal} onHide={this.handleClose} centered={true}>
           <Modal.Header closeButton>
             <Modal.Title>
               <h2>{this.state.activeClient.firstName} {this.state.activeClient.lastName}</h2>
@@ -214,13 +214,13 @@ class CompletedClients extends Component {
                                     <p>{moment(inv.date).format('MMMM Do YYYY')}</p>
                                     <p>{inv.quantity} - {inv.itemCode}: {inv.description}</p>
                                     {inv.discount !== 0 ? <p>Discount: ${(Math.round(inv.discount * 100) / 100).toFixed(2)}</p> : ""}
-                                    <p>Subtotal: <strong>{inv.amountAfterDiscount < 0 ? "-" : ""}${(Math.round(Math.abs(inv.amountAfterDiscount) * 100) / 100).toFixed(2)}</strong></p>
+                                    <p className="price">Subtotal: <strong>{inv.amountAfterDiscount < 0 ? "-" : ""}${(Math.round(Math.abs(inv.amountAfterDiscount) * 100) / 100).toFixed(2)}</strong></p>
                                     {invIndex < item.invoice.length ? <hr /> : ""}
                                   </div>
                                 )
                               })
                             }
-                            <p><strong>Total: </strong>
+                            <p className="price"><strong>Total: </strong>
                               {
                                 item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0)
                               }
