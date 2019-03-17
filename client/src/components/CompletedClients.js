@@ -221,9 +221,11 @@ class CompletedClients extends Component {
                               })
                             }
                             <p className="price"><strong>Total: </strong>
-                              {
-                                item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0)
-                              }
+                              <strong>
+                                {
+                                  item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0)
+                                }
+                              </strong>
                             </p>
                           </div>
                           :
