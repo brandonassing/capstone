@@ -47,7 +47,6 @@ location_complete = location_address + ', ' + location_city + \
 location_complete = location_complete.upper()
 
 c = clients.find_one({"address": location_complete})
-# print(c['calls'][0])
 
 # invoice: [{
 #     date: Date,
@@ -59,27 +58,19 @@ c = clients.find_one({"address": location_complete})
 #     tech: String
 # }]
 
-# invoices = []
+invoices = []
 
 for index, row in invoice_data.iterrows():
-    invoice_date = row['Inv Date'].date()
-    invoice_date = invoice_date.strftime('%Y-%m-%d')
+    call_id = str(row['Call Id'])
+    
+    invoice_date = str(row['Inv Date'])
+    # invoice_date = invoice_date.strftime('%Y-%m-%d')
     quantity = row['Qty']
     item_code = row['Item Code']
     description = row['Item Description']
     discount = row['Discount']
     amount_after_discount = row['Amount After Discount']
     tech = row['Tech']
-
-    # print(invoice_date)
-    # print(type(invoice_date.date()))
-    # print(type(quantity))
-    # print(type(item_code))
-    # print(type(description))
-    # print(type(discount))
-    # print(type(amount_after_discount))
-    # print(type(tech))
-
     data = {
         "date": invoice_date,
         "quantity": quantity,
@@ -89,14 +80,29 @@ for index, row in invoice_data.iterrows():
         "amountAfterDiscount": amount_after_discount,
         "tech": tech
     }
+    json_data = json.dumps(data)   
+    invoices.append(data)
 
-    json_data = json.dumps(data)
-    db.clients['calls'][0]['invoices'].insert_one(json_data)
-    # invoices.append(json_data)
-    # print(c['calls'][0])
+# print(c)
+# print(invoices)
+callIndex = -1
+for i in range(0, len(c['calls'])):
+    if c['calls'][i]['callId'] == call_id:
+        c['calls'][i]['status'] = "completed"
+        c['calls'][i]['worker'] = ""
+        c['calls'][i]['invoice'] = invoices
+        callIndex = i
+        break
+if callIndex >= 0:
+    clients.update_one({'_id': c['_id']},{'$set': {'calls': c['calls']}}, upsert=False)
 
-    # print(json_data)
+
+
+
 # invoices = json.loads(invoices)
+# print(type(invoices))
+
 # print(str(invoices))
 
 # print(clients.insert_many(str(invoices)))
+# clients.update_one({'ref': ref}, {'$push': {'tags': new_tag}})
