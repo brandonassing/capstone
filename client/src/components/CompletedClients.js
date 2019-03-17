@@ -133,7 +133,9 @@ class CompletedClients extends Component {
         let totalInvoice = 0;
 
         for (let i = 0; i < d.calls.length; i++) {
-          totalInvoice += d.calls[i].invoice;
+          for (let j = 0; j < d.calls[i].invoice.length; j++) {
+            totalInvoice += d.calls[i].invoice[j].amountAfterDiscount;
+          }
         }
         return totalInvoice;
       },
@@ -181,7 +183,7 @@ class CompletedClients extends Component {
             }
           }}
         />
-        <Modal show={this.state.showModal} onHide={this.handleClose} centered={true}>
+        <Modal show={this.state.showModal} onHide={this.handleClose} centered={true} size={'lg'}>
           <Modal.Header closeButton>
             <Modal.Title>
               <h2>{this.state.activeClient.firstName} {this.state.activeClient.lastName}</h2>
@@ -196,11 +198,31 @@ class CompletedClients extends Component {
                   return (
                     <div key={item._id}>
                       <p>Call time: {moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</p>
-                      {item.status !== "inactive" ? <p>Dispatched: {item.worker}</p> : ""}
+                      {item.status === "active" ? <p>Dispatched: {item.worker}</p> : ""}
                       <p>Status: {item.status}</p>
                       <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
                       <p>Value estimate: <strong className={item.estimateValue === 1 ? "low" : item.estimateValue === 2 ? "med" : "high"}>{item.estimateValue === 1 ? "Low" : item.estimateValue === 2 ? "Med" : "High"}</strong></p>
-                      {item.status === "completed" ? <p>Invoice: <strong>${item.invoice}</strong></p> : ""}
+                      {item.status === "completed" ?
+                        !!item.invoice ?
+                          <div className="invoice-field">
+                            <h3>Invoice</h3>
+                            {item.invoice.map((inv, invIndex) => {
+                              return (
+                                <div>
+                                  <p>Date: {moment(inv.date).format('MMMM Do YYYY')}</p>
+                                  <p>{inv.quantity} - {inv.itemCode} - {inv.description}</p>
+                                  {inv.discount !== 0 ? <p>Discount: ${(Math.round(inv.discount * 100) / 100).toFixed(2)}</p> : ""}
+                                  <p>Total: <strong>{inv.amountAfterDiscount < 0 ? "-" : ""}${(Math.round(Math.abs(inv.amountAfterDiscount) * 100) / 100).toFixed(2)}</strong></p>
+                                  {invIndex < item.invoice.length - 1 ? <hr /> : ""}
+                                </div>
+                              )
+                            })}
+                          </div>
+                          :
+                          ""
+                        :
+                        ""
+                      }
                       {index < this.state.activeClient.calls.length - 1 ? <hr /> : ""}
                     </div>);
                 })
