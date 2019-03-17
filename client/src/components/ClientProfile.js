@@ -270,7 +270,6 @@ class ClientProfile extends Component {
                       <div className="selection-content">
                         <div className="call-details">
                           <p>Call time: {moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</p>
-                          {item.status === "completed" ? <p>Dispatched: {item.worker}</p> : ""}
                           <p>Status: {item.status}</p>
                           <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
                           <p>Value estimate: <strong className={item.estimateValue === 1 ? "low" : item.estimateValue === 2 ? "med" : "high"}>{item.estimateValue === 1 ? "Low" : item.estimateValue === 2 ? "Med" : "High"}</strong></p>
