@@ -206,17 +206,25 @@ class CompletedClients extends Component {
                         !!item.invoice ?
                           <div className="invoice-field">
                             <h3>Invoice</h3>
-                            {item.invoice.map((inv, invIndex) => {
-                              return (
-                                <div>
-                                  <p>Date: {moment(inv.date).format('MMMM Do YYYY')}</p>
-                                  <p>{inv.quantity} - {inv.itemCode} - {inv.description}</p>
-                                  {inv.discount !== 0 ? <p>Discount: ${(Math.round(inv.discount * 100) / 100).toFixed(2)}</p> : ""}
-                                  <p>Total: <strong>{inv.amountAfterDiscount < 0 ? "-" : ""}${(Math.round(Math.abs(inv.amountAfterDiscount) * 100) / 100).toFixed(2)}</strong></p>
-                                  {invIndex < item.invoice.length - 1 ? <hr /> : ""}
-                                </div>
-                              )
-                            })}
+                            {
+                              item.invoice.map((inv, invIndex) => {
+                                return (
+                                  // TODO change key to _id
+                                  <div key={inv.itemCode}>
+                                    <p>{moment(inv.date).format('MMMM Do YYYY')}</p>
+                                    <p>{inv.quantity} - {inv.itemCode}: {inv.description}</p>
+                                    {inv.discount !== 0 ? <p>Discount: ${(Math.round(inv.discount * 100) / 100).toFixed(2)}</p> : ""}
+                                    <p>Subtotal: <strong>{inv.amountAfterDiscount < 0 ? "-" : ""}${(Math.round(Math.abs(inv.amountAfterDiscount) * 100) / 100).toFixed(2)}</strong></p>
+                                    {invIndex < item.invoice.length ? <hr /> : ""}
+                                  </div>
+                                )
+                              })
+                            }
+                            <p><strong>Total: </strong>
+                              {
+                                item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0)
+                              }
+                            </p>
                           </div>
                           :
                           ""
