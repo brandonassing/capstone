@@ -78,7 +78,7 @@ main()
 
 // global script variables ---------
 var once = false
-var i = 0
+var i = 300 // SCRIPTS PICKS UP AT THIS INDEX
 var jsonArray;
 var lastLink = false
 // global script variables ----------
@@ -99,10 +99,9 @@ once = true
 // Access the metadata of the call object: 
 var metadata = jsonArray[i]
 //console.log("the jsonArray: " + JSON.stringify(jsonArray[0]))
-//var dest = "./downloads/" + metadata['Call Id'] + ".mp3"
 var unique = i //metadata['Unique Id']
 var callId = metadata['Call Id']
-var dest = "./downloads/" + unique + ".mp3"
+var dest = "./downloads2/" + unique + ".mp3"
 var url = metadata['Audio URL']
 
   await download(url, dest, callId, metadata, unique, function(x){
@@ -110,13 +109,13 @@ var url = metadata['Audio URL']
     console.log("download mp3 #: " + i)
 
     // Set the limit of this script
-    if(i == 299){
+    if(i == 599){
       console.log("Last file")
       lastLink = true
     }
 
     // Convert the audio file into text
-    convertMP3toWAV(dest, callId,lastLink, metadata, unique, function(){
+    convertMP3toWAV(dest, callId,lastLink, metadata,unique, function(){
      // console.log("Callback finished!")
 
         if(!lastLink){
@@ -144,7 +143,7 @@ async function download(url, dest,callId, metadata,unique, cb) {
   });
 };
 
-
+/*
 async function convert2Flac(){
 
   const ffmpeg = require('fluent-ffmpeg');
@@ -174,14 +173,14 @@ async function convert2Flac(){
 
 
 }
-
+*/
 
 // Use the SoX CLI to convert the mp3 file (from call source) into a .wav format
-async function convertMP3toWAV(dest, callId,lastLink, metadata,unique, cb) {
+async function convertMP3toWAV(dest, callId,lastLink, metadata, unique, cb) {
 
   // Define variable locations
   var mp3File = dest
-  var outputDestiation = './wavFiles/' + unique + ".wav"
+  var outputDestiation = './wavFiles2/' + unique + ".wav"
 
 
    sox.identify(mp3File, function(err, results) {
@@ -210,7 +209,7 @@ async function convertMP3toWAV(dest, callId,lastLink, metadata,unique, cb) {
         console.log("Conversion complete.");
         // Upload the file location to Google Cloud Storage
         
-         upload2GoogleBucket(outputDestiation, callId,lastLink, metadata,unique, function(){
+         upload2GoogleBucket(outputDestiation, callId,lastLink, metadata, unique, function(){
 
           cb()
          })
@@ -228,7 +227,7 @@ async function upload2GoogleBucket(localUrl, callId,lastLink, metadata,unique, c
   const storage = new Storage();
 
   // Specify the bucket name for all files
-  const bucketName = "formatedwavfiles"
+  const bucketName = "formatedwavfiles2"
 
   // Uploads a local file to tshe bucket
   await storage.bucket(bucketName).upload(localUrl, {
@@ -267,11 +266,11 @@ console.log(`gs://${bucketName}/${name} is now public.`);
 
 
 // Call the google speech to text API, referencing an audio file in GCS
-async function googleSpeech2Text(name,callId, lastLink, metadata,unique, cb3) {
+async function googleSpeech2Text(name,callId, lastLink, metadata,unique,cb3) {
   console.log("inside speech to text for id: " + name)
 
   const audio = {
-    uri:  "gs://formatedwavfiles/" + name
+    uri:  "gs://formatedwavfiles2/" + name
   };
   
   const request = {
@@ -317,7 +316,7 @@ async function googleSpeech2Text(name,callId, lastLink, metadata,unique, cb3) {
 
     console.log("Last link confirmed!")
 
-    fs.writeFile("Transcriptions0-299.csv", csv, function(err, data) {
+    fs.writeFile("Transcriptions300-599.csv", csv, function(err, data) {
       if (err) console.log(err);
       console.log("Successfully Written to File.");
     });
