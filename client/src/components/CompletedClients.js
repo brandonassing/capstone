@@ -92,7 +92,12 @@ class CompletedClients extends Component {
   }
 
   dateSort = (a, b) => {
-    return new Date(a.timestamp) - new Date(b.timestamp);
+    if (a.timestamp && b.timestamp) {
+      return new Date(a.timestamp) - new Date(b.timestamp);
+    }
+    else if (a.date && b.date) {
+      return new Date(a.date) - new Date(b.date);
+    }
   }
 
   render() {
@@ -204,7 +209,7 @@ class CompletedClients extends Component {
                           <div className="invoice-field">
                             <h3>Invoice</h3>
                             {
-                              item.invoice.map((inv, invIndex) => {
+                              item.invoice.sort(this.dateSort).map((inv, invIndex) => {
                                 return (
                                   // TODO change key to _id
                                   <div key={inv.itemCode}>
