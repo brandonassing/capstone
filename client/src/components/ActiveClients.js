@@ -252,13 +252,18 @@ class ActiveClients extends Component {
                           <div className="worker-dropdown">
                             <DropdownButton id="dropdown-basic-button" title={item.worker !== "" ? item.worker : "Dispatch worker"}>
                               <Dropdown.Item value="" onClick={(e) => { this.setWorker("", item._id) }}><strong>Set inactive</strong></Dropdown.Item>
-                              <Dropdown.Item value="Jon F." onClick={(e) => { this.setWorker("Jon F.", item._id) }}>Jon F.</Dropdown.Item>
-                              <Dropdown.Item value="Brandon A." onClick={(e) => { this.setWorker("Brandon A.", item._id) }}>Brandon A.</Dropdown.Item>
-                              <Dropdown.Item value="Yanick H." onClick={(e) => { this.setWorker("Yanick H.", item._id) }}>Yanick H.</Dropdown.Item>
-                              <Dropdown.Item value="Krishan P." onClick={(e) => { this.setWorker("Krishan P.", item._id) }}>Krishan P.</Dropdown.Item>
-                              <Dropdown.Item value="Jake R." onClick={(e) => { this.setWorker("Jake R.", item._id) }}>Jake R.</Dropdown.Item>
+                              <Dropdown.Item value="GLYN" onClick={(e) => { this.setWorker("GLYN", item._id) }}>GLYN</Dropdown.Item>
+                              <Dropdown.Item value="MIKEY" onClick={(e) => { this.setWorker("MIKEY", item._id) }}>MIKEY</Dropdown.Item>
+                              <Dropdown.Item value="JOHN" onClick={(e) => { this.setWorker("JOHN", item._id) }}>JOHN</Dropdown.Item>
+                              <Dropdown.Item value="RYANC" onClick={(e) => { this.setWorker("RYANC", item._id) }}>RYANC</Dropdown.Item>
+                              <Dropdown.Item value="CHRLES" onClick={(e) => { this.setWorker("CHRLES", item._id) }}>CHRLES</Dropdown.Item>
+                              <Dropdown.Item value="TONY" onClick={(e) => { this.setWorker("TONY", item._id) }}>TONY</Dropdown.Item>
+                              <Dropdown.Item value="JIML" onClick={(e) => { this.setWorker("JIML", item._id) }}>JIML</Dropdown.Item>
+                              <Dropdown.Item value="MIKEJ" onClick={(e) => { this.setWorker("MIKEJ", item._id) }}>MIKEJ</Dropdown.Item>
+                              <Dropdown.Item value="SHARBL" onClick={(e) => { this.setWorker("SHARBL", item._id) }}>SHARBL</Dropdown.Item>
+                              <Dropdown.Item value="DARREN" onClick={(e) => { this.setWorker("DARREN", item._id) }}>DARREN</Dropdown.Item>
                             </DropdownButton>
-                          </div>
+                             </div>
                           :
                           ""}
                       </div>
