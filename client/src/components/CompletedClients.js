@@ -91,10 +91,8 @@ class CompletedClients extends Component {
       });
   }
 
-  compareDate() {
-    return function (a, b) {
-      return moment(a).isBefore(moment(b));
-    };
+  dateSort = (a, b) => {
+    return new Date(a.timestamp) - new Date(b.timestamp);
   }
 
   render() {
@@ -192,9 +190,8 @@ class CompletedClients extends Component {
           </Modal.Header>
           <Modal.Body>
             {
-              // TODO sort not working; maybe sort by status (ie: completed first)
               !!this.state.activeClient.calls ?
-                this.state.activeClient.calls.sort(this.compareDate()).map((item, index) => {
+                this.state.activeClient.calls.sort(this.dateSort).map((item, index) => {
                   return (
                     <div key={item._id}>
                       <p>Call time: {moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</p>

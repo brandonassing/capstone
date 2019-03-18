@@ -135,6 +135,10 @@ class ClientProfile extends Component {
       });
   };
 
+  dateSort = (a, b) => {
+    return new Date(a.timestamp) - new Date(b.timestamp);
+  }
+
   render() {
     const data = this.props.clientProfiles;
     const columns = [{
@@ -262,9 +266,8 @@ class ClientProfile extends Component {
           </Modal.Header>
           <Modal.Body>
             {
-              // TODO sort not working; maybe sort by status (ie: completed first)
               !!this.state.activeClient.calls ?
-                this.state.activeClient.calls.map((item, index) => {
+                this.state.activeClient.calls.sort(this.dateSort).map((item, index) => {
                   return (
                     <div key={item._id}>
                       <div className="selection-content">
