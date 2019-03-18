@@ -91,30 +91,23 @@ class CompletedClients extends Component {
       });
   }
 
-  compareDate() {
-    return function (a, b) {
-      return moment(a).isBefore(moment(b));
-    };
+  dateSort = (a, b) => {
+    if (a.timestamp && b.timestamp) {
+      return new Date(a.timestamp) - new Date(b.timestamp);
+    }
+    else if (a.date && b.date) {
+      return new Date(a.date) - new Date(b.date);
+    }
   }
 
   render() {
     const data = this.props.clientProfiles;
     const columns = [{
-      Header: () => <p>Id</p>,
-      accessor: 'clientId',
-      Cell: col => <p>{col.value}</p>,
-      minWidth: 100
-    }, {
       Header: () => <p>Name</p>,
       id: 'name',
       accessor: d => `${d.firstName} ${d.lastName}`,
       Cell: col => <p>{col.value}</p>,
       minWidth: 200
-    }, {
-      Header: () => <p>Email</p>,
-      accessor: 'email',
-      Cell: col => <p>{col.value}</p>,
-      minWidth: 250
     }, {
       Header: () => <p>Phone number</p>,
       id: "phoneNumber",
@@ -138,7 +131,9 @@ class CompletedClients extends Component {
         let totalInvoice = 0;
 
         for (let i = 0; i < d.calls.length; i++) {
-          totalInvoice += d.calls[i].invoice;
+          for (let j = 0; j < d.calls[i].invoice.length; j++) {
+            totalInvoice += d.calls[i].invoice[j].amountAfterDiscount;
+          }
         }
         return totalInvoice;
       },
@@ -164,7 +159,7 @@ class CompletedClients extends Component {
       <div id="completed-body">
         <div id="completed-header">
           <h2>Client invoices</h2>
-          <input type="email" className="form-control" id="completed-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
+          <input className="form-control" id="completed-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
         </div>
         <ReactTable
           data={data}
@@ -195,18 +190,54 @@ class CompletedClients extends Component {
           </Modal.Header>
           <Modal.Body>
             {
-              // TODO sort not working; maybe sort by status (ie: completed first)
               !!this.state.activeClient.calls ?
-                this.state.activeClient.calls.sort(this.compareDate()).map((item, index) => {
+                this.state.activeClient.calls.sort(this.dateSort).map((item, index) => {
                   return (
                     <div key={item._id}>
                       <p>Call time: {moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</p>
-                      <p>Job type: {item.serviceType}</p>
-                      {item.status !== "inactive" ? <p>Dispatched: {item.worker}</p> : ""}
+                      {item.status === "active" ? <p>Dispatched: {item.worker}</p> : ""}
                       <p>Status: {item.status}</p>
-                      <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
-                      <p>Value estimate: <strong className={item.estimateValue === 1 ? "low" : item.estimateValue === 2 ? "med" : "high"}>{item.estimateValue === 1 ? "Low" : item.estimateValue === 2 ? "Med" : "High"}</strong></p>
-                      {item.status === "completed" ? <p>Invoice: <strong>${item.invoice}</strong></p> : ""}
+                      {
+                        item.status === "completed" ?
+                          ""
+                          // <p>Invoice total: <strong>${item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0)}</strong></p>
+                          :
+                          <div>
+                            <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
+                            <p>Value estimate: <strong className={item.estimateValue === 1 ? "low" : item.estimateValue === 2 ? "med" : "high"}>{item.estimateValue === 1 ? "Low" : item.estimateValue === 2 ? "Med" : "High"}</strong></p>
+                          </div>
+                      }
+                      {item.status === "completed" ?
+                        !!item.invoice ?
+                          <div className="invoice-field">
+                            <h3>Invoice</h3>
+                            {
+                              item.invoice.sort(this.dateSort).map((inv, invIndex) => {
+                                return (
+                                  // TODO change key to _id
+                                  <div key={inv.itemCode}>
+                                    <p>{moment(inv.date).format('MMMM Do YYYY')}, technician: <strong>{inv.tech}</strong></p>
+                                    <p>{inv.quantity} - {inv.itemCode}: {inv.description}</p>
+                                    {inv.discount !== 0 ? <p>Discount: ${(Math.round(inv.discount * 100) / 100).toFixed(2)}</p> : ""}
+                                    <p className="price">Subtotal: <strong>{inv.amountAfterDiscount < 0 ? "-" : ""}${(Math.round(Math.abs(inv.amountAfterDiscount) * 100) / 100).toFixed(2)}</strong></p>
+                                    {invIndex < item.invoice.length ? <hr /> : ""}
+                                  </div>
+                                )
+                              })
+                            }
+                            <p className="price"><strong>Total: </strong>
+                              <strong>
+                                {
+                                  item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0)
+                                }
+                              </strong>
+                            </p>
+                          </div>
+                          :
+                          ""
+                        :
+                        ""
+                      }
                       {index < this.state.activeClient.calls.length - 1 ? <hr /> : ""}
                     </div>);
                 })
