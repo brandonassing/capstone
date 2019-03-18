@@ -71,6 +71,8 @@ for index, row in invoice_data.iterrows():
     discount = row['Discount']
     amount_after_discount = row['Amount After Discount']
     tech = row['Tech']
+
+    # TODO add mongo id
     data = {
         "date": invoice_date,
         "quantity": quantity,
