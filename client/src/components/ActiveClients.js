@@ -143,11 +143,6 @@ class ActiveClients extends Component {
   render() {
     const data = this.props.clientProfiles;
     const columns = [{
-      Header: () => <p>Id</p>,
-      accessor: 'clientId',
-      Cell: col => <p>{col.value}</p>,
-      minWidth: 100
-    }, {
       Header: () => <p>Name</p>,
       id: 'name',
       accessor: d => `${d.firstName} ${d.lastName}`,
