@@ -135,24 +135,18 @@ class ClientProfile extends Component {
       });
   };
 
+  dateSort = (a, b) => {
+    return new Date(a.timestamp) - new Date(b.timestamp);
+  }
+
   render() {
     const data = this.props.clientProfiles;
     const columns = [{
-      Header: () => <p>Id</p>,
-      accessor: 'clientId',
-      Cell: col => <p>{col.value}</p>,
-      minWidth: 75
-    }, {
       Header: () => <p>Name</p>,
       id: 'name',
       accessor: d => `${d.firstName} ${d.lastName}`,
       Cell: col => <p>{col.value}</p>,
       minWidth: 100
-    }, {
-      Header: () => <p>Email</p>,
-      accessor: 'email',
-      Cell: col => <p>{col.value}</p>,
-      minWidth: 150
     }, {
       Header: () => <p>Phone number</p>,
       id: "phoneNumber",
@@ -236,7 +230,7 @@ class ClientProfile extends Component {
       <div id="clients-body">
         <div id="clients-header">
           <h2>Prospect profiles</h2>
-          <input type="email" className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
+          <input className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
         </div>
         <ReactTable
           data={data}
@@ -267,30 +261,38 @@ class ClientProfile extends Component {
           </Modal.Header>
           <Modal.Body>
             {
-              // TODO sort not working; maybe sort by status (ie: completed first)
               !!this.state.activeClient.calls ?
-                this.state.activeClient.calls.map((item, index) => {
+                this.state.activeClient.calls.sort(this.dateSort).map((item, index) => {
                   return (
                     <div key={item._id}>
                       <div className="selection-content">
                         <div className="call-details">
                           <p>Call time: {moment(item.timestamp).format('MMMM Do YYYY, h:mm:ss a')}</p>
-                          <p>Job type: {item.serviceType}</p>
-                          {item.status === "completed" ? <p>Dispatched: {item.worker}</p> : ""}
                           <p>Status: {item.status}</p>
-                          <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
-                          <p>Value estimate: <strong className={item.estimateValue === 1 ? "low" : item.estimateValue === 2 ? "med" : "high"}>{item.estimateValue === 1 ? "Low" : item.estimateValue === 2 ? "Med" : "High"}</strong></p>
-                          {item.status === "completed" ? <p>Invoice: <strong>${item.invoice}</strong></p> : ""}
+                          {
+                            item.status === "completed" ?
+                              <p>Invoice total: <strong>${item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0)}</strong></p>
+                              :
+                              <div>
+                                <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
+                                <p>Value estimate: <strong className={item.estimateValue === 1 ? "low" : item.estimateValue === 2 ? "med" : "high"}>{item.estimateValue === 1 ? "Low" : item.estimateValue === 2 ? "Med" : "High"}</strong></p>
+                              </div>
+                          }
                         </div>
                         {item.status !== "completed" ?
                           <div className="worker-dropdown">
                             <DropdownButton id="dropdown-basic-button" title={item.worker !== "" ? item.worker : "Dispatch worker"}>
                               <Dropdown.Item value="" onClick={(e) => { this.setWorker("", item._id) }}><strong>Set inactive</strong></Dropdown.Item>
-                              <Dropdown.Item value="Jon F." onClick={(e) => { this.setWorker("Jon F.", item._id) }}>Jon F.</Dropdown.Item>
-                              <Dropdown.Item value="Brandon A." onClick={(e) => { this.setWorker("Brandon A.", item._id) }}>Brandon A.</Dropdown.Item>
-                              <Dropdown.Item value="Yanick H." onClick={(e) => { this.setWorker("Yanick H.", item._id) }}>Yanick H.</Dropdown.Item>
-                              <Dropdown.Item value="Krishan P." onClick={(e) => { this.setWorker("Krishan P.", item._id) }}>Krishan P.</Dropdown.Item>
-                              <Dropdown.Item value="Jake R." onClick={(e) => { this.setWorker("Jake R.", item._id) }}>Jake R.</Dropdown.Item>
+                              <Dropdown.Item value="GLYN" onClick={(e) => { this.setWorker("GLYN", item._id) }}>GLYN</Dropdown.Item>
+                              <Dropdown.Item value="MIKEY" onClick={(e) => { this.setWorker("MIKEY", item._id) }}>MIKEY</Dropdown.Item>
+                              <Dropdown.Item value="JOHN" onClick={(e) => { this.setWorker("JOHN", item._id) }}>JOHN</Dropdown.Item>
+                              <Dropdown.Item value="RYANC" onClick={(e) => { this.setWorker("RYANC", item._id) }}>RYANC</Dropdown.Item>
+                              <Dropdown.Item value="CHRLES" onClick={(e) => { this.setWorker("CHRLES", item._id) }}>CHRLES</Dropdown.Item>
+                              <Dropdown.Item value="TONY" onClick={(e) => { this.setWorker("TONY", item._id) }}>TONY</Dropdown.Item>
+                              <Dropdown.Item value="JIML" onClick={(e) => { this.setWorker("JIML", item._id) }}>JIML</Dropdown.Item>
+                              <Dropdown.Item value="MIKEJ" onClick={(e) => { this.setWorker("MIKEJ", item._id) }}>MIKEJ</Dropdown.Item>
+                              <Dropdown.Item value="SHARBL" onClick={(e) => { this.setWorker("SHARBL", item._id) }}>SHARBL</Dropdown.Item>
+                              <Dropdown.Item value="DARREN" onClick={(e) => { this.setWorker("DARREN", item._id) }}>DARREN</Dropdown.Item>
                             </DropdownButton>
                           </div>
                           :
