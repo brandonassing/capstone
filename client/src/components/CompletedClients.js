@@ -211,7 +211,7 @@ class CompletedClients extends Component {
                                 return (
                                   // TODO change key to _id
                                   <div key={inv.itemCode}>
-                                    <p>{moment(inv.date).format('MMMM Do YYYY')}</p>
+                                    <p>{moment(inv.date).format('MMMM Do YYYY')}, technician: <strong>{inv.tech}</strong></p>
                                     <p>{inv.quantity} - {inv.itemCode}: {inv.description}</p>
                                     {inv.discount !== 0 ? <p>Discount: ${(Math.round(inv.discount * 100) / 100).toFixed(2)}</p> : ""}
                                     <p className="price">Subtotal: <strong>{inv.amountAfterDiscount < 0 ? "-" : ""}${(Math.round(Math.abs(inv.amountAfterDiscount) * 100) / 100).toFixed(2)}</strong></p>
