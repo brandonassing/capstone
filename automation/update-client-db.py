@@ -11,20 +11,7 @@ print(sys.argv[1])
 client = pymongo.MongoClient(
     "mongodb+srv://main:se4450@main-ia8yw.mongodb.net/test?retryWrites=true")
 db = client.Main
-
 clients = db.clients
-
-# Retrieve current working directory (`cwd`)
-cwd = os.getcwd()
-cwd
-
-# Change directory
-# os.chdir("./invoices")
-
-# List all files and directories in current directory
-# os.listdir('.')
-
-# print(os.getcwd())
 
 # Assign spreadsheet filename to `file`
 file = sys.argv[1]
@@ -32,11 +19,8 @@ file = sys.argv[1]
 # Load spreadsheet
 xl = pd.ExcelFile(file)
 
-# Print the sheet names
-# print(xl.sheet_names)
-
 # Load a sheet into a DataFrame by name: invoice_data
-invoice_data = xl.parse('Sheet1')
+invoice_data = xl.parse()
 invoice_data['Discount'].fillna(0, inplace=True)
 
 location_address = invoice_data['Location Address'].unique()[0].upper()
