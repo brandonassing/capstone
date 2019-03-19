@@ -210,6 +210,7 @@ class ActiveClients extends Component {
           <input className="form-control" id="active-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
         </div>
         <ReactTable
+          pageSize={this.props.clientProfiles.length}
           data={data}
           columns={columns}
           showPagination={false}

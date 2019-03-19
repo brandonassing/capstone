@@ -209,7 +209,7 @@ class Statistics extends Component {
     return (
       <div id="stats-body">
         <div id="stats-header">
-          <h2>Client statistics (last 6 months)</h2>
+          <h2>Client statistics <span>(last 6 months)</span></h2>
         </div>
         {
           this.props.metricAvg.length === 0 ?

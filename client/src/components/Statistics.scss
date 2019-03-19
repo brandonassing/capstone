@@ -5,6 +5,13 @@
 #stats-body {
     #stats-header {
         @extend %tab-heading;
+        h2 {
+            span {
+                font-weight: lighter;
+                font-size: 20px;
+                color: $text-grey;
+            }
+        }
     }
     // for spinner 
     .text-primary {
