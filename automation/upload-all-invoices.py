@@ -4,6 +4,7 @@ import pymongo
 import dns
 import json
 from bson.objectid import ObjectId
+import sys
 
 # DB connection
 client = pymongo.MongoClient(
@@ -11,21 +12,14 @@ client = pymongo.MongoClient(
 db = client.Main
 clients = db.clients
 
-# Retrieve current working directory (`cwd`)
-cwd = os.getcwd()
-cwd
-
-# Change directory
-os.chdir("./data-load")
-
 # Assign spreadsheet filename to `file`
-file = 'all2.xlsx'
+file = sys.argv[1]
 
 # Load spreadsheet
 xl = pd.ExcelFile(file)
 
 # Load a sheet into a DataFrame by name: invoice_data
-invoice_data = xl.parse('Sheet1')
+invoice_data = xl.parse()
 invoice_data['Discount'].fillna(0, inplace=True)
 invoice_data['Amount After Discount'].fillna(0, inplace=True)
 
