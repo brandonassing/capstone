@@ -3,6 +3,8 @@ const initialStateMetricReducer = {
   probabilities: [],
   estimateValues: [],
   timestamps: [],
+  metricAvg: [],
+  invoices: [],
   calls: [],
   metricWeek: 0,
   metricMonth: 0,
@@ -15,6 +17,8 @@ export const metricReducer = (state = initialStateMetricReducer, action) => {
         probabilities: [],
         estimateValues: [],
         timestamps: [],
+        metricAvg: [],
+        invoices: [],
         calls: [],
         metricWeek: 0,
         metricMonth: 0,
@@ -26,6 +30,8 @@ export const metricReducer = (state = initialStateMetricReducer, action) => {
         estimateValues: action.data.estimateValues,
         probabilities: action.data.probabilities,
         timestamps: action.data.timestamps,
+        metricAvg: action.data.metricAvg,
+        invoices: action.data.invoices,
         calls: action.data.calls
       };
     default: return state;

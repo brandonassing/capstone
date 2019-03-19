@@ -147,7 +147,13 @@ class ActiveClients extends Component {
       id: 'name',
       accessor: d => `${d.firstName} ${d.lastName}`,
       Cell: col => <p>{col.value}</p>,
-      minWidth: 200
+      minWidth: 100
+    }, {
+      Header: () => <p>Address</p>,
+      id: 'address',
+      accessor: d => `${d.address}`,
+      Cell: col => <p>{col.value}</p>,
+      minWidth: 300
     }, {
       Header: () => <p>Phone number</p>,
       id: "phoneNumber",
@@ -157,13 +163,13 @@ class ActiveClients extends Component {
         return stringNum
       },
       Cell: col => <p>{col.value}</p>,
-      minWidth: 150
+      minWidth: 120
     }, {
       Header: () => <p># calls</p>,
       id: 'calls',
       accessor: d => d.calls.length,
       Cell: col => <p>{col.value}</p>,
-      minWidth: 80
+      minWidth: 50
     }, {
       Header: () => <p>Max value estimate</p>,
       id: 'value',
@@ -193,7 +199,7 @@ class ActiveClients extends Component {
         return (<p className={tierClass}>{col.value === 1 ? "Low" : col.value === 2 ? "Med" : "High"}</p>);
       },
       className: 'value-metric',
-      minWidth: 150,
+      minWidth: 100,
       resizable: false
     }];
 
@@ -204,6 +210,7 @@ class ActiveClients extends Component {
           <input className="form-control" id="active-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
         </div>
         <ReactTable
+          pageSize={this.props.clientProfiles.length}
           data={data}
           columns={columns}
           showPagination={false}
@@ -242,7 +249,7 @@ class ActiveClients extends Component {
                           <p>Status: {item.status}</p>
                           {
                             item.status === "completed" ?
-                              <p>Invoice total: <strong>${item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0)}</strong></p>
+                              <p>Invoice total: <strong>${(Math.round(item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2)}</strong></p>
                               :
                               <div>
                                 <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
