@@ -4,7 +4,9 @@ import pymongo
 import dns
 import json
 from bson.objectid import ObjectId
+import sys
 
+print(sys.argv[1])
 # DB connection
 client = pymongo.MongoClient(
     "mongodb+srv://main:se4450@main-ia8yw.mongodb.net/test?retryWrites=true")
@@ -17,15 +19,15 @@ cwd = os.getcwd()
 cwd
 
 # Change directory
-os.chdir("./invoices")
+# os.chdir("./invoices")
 
 # List all files and directories in current directory
-os.listdir('.')
+# os.listdir('.')
 
 # print(os.getcwd())
 
 # Assign spreadsheet filename to `file`
-file = '1.xlsx'
+file = sys.argv[1]
 
 # Load spreadsheet
 xl = pd.ExcelFile(file)
@@ -79,6 +81,8 @@ for i in range(0, len(c['calls'])):
         c['calls'][i]['invoice'] = invoices
         callIndex = i
         break
+
 if callIndex >= 0:
     clients.update_one({'_id': c['_id']}, {
                        '$set': {'calls': c['calls']}}, upsert=False)
+    print("Added invoice(s) to " + c['firstName'] + " " + c['lastName'])
