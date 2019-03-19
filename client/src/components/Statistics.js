@@ -40,11 +40,14 @@ class Statistics extends Component {
         calls.sort((a, b) => (moment(a.timestamp).isAfter(b.timestamp)) ? 1 : ((moment(b.timestamp).isAfter(a.timestamp)) ? -1 : 0));
 
         for (let i = 0; i < calls.length; i++) {
-          timestamps.push(calls[i].timestamp.slice(0, 10));
-          probabilities.push(Math.round(calls[i].opportunityProbability * 100));
-          estimateValues.push(calls[i].estimateValue);
-          let invoiceTotal = calls[i].invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0);
-          invoices.push(invoiceTotal);
+          // NOTE: controls graph scope
+          if (moment().diff(moment(calls[i].timestamp.slice(0, 10)), 'months') <= 6) {
+            timestamps.push(calls[i].timestamp.slice(0, 10));
+            probabilities.push(Math.round(calls[i].opportunityProbability * 100));
+            estimateValues.push(calls[i].estimateValue);
+            let invoiceTotal = calls[i].invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0);
+            invoices.push(invoiceTotal);
+          }
         }
 
         let timesObject = {};
@@ -122,17 +125,6 @@ class Statistics extends Component {
         xAxes: [{
           type: 'time',
           time: {
-            displayFormats: {
-              'millisecond': 'MMM',
-              'second': 'MMM',
-              'minute': 'MMM',
-              'hour': 'MMM',
-              'day': 'MMM',
-              'week': 'MMM',
-              'month': 'MMM',
-              'quarter': 'MMM',
-              'year': 'MMM',
-            },
             tooltipFormat: 'DD/MM/YY'
           }
         }],
@@ -145,7 +137,7 @@ class Statistics extends Component {
       },
       elements: {
         line: {
-          tension: 0.05, // disables bezier curves
+          tension: 0.2, // disables bezier curves
         }
       },
       legend: {
@@ -190,9 +182,8 @@ class Statistics extends Component {
         yearDenom++;
       }
     }
-
     let weekJSX;
-    if (weekDenom !== 0) {
+    if (weekDenom > 0) {
       weekJSX = <p>{totalMetricWeek / weekDenom}</p>
     }
     else {
@@ -200,7 +191,7 @@ class Statistics extends Component {
     }
 
     let monthJSX;
-    if (monthDenom !== 0) {
+    if (monthDenom > 0) {
       monthJSX = <p>{totalMetricMonth / monthDenom}</p>
     }
     else {
@@ -208,7 +199,7 @@ class Statistics extends Component {
     }
 
     let yearJSX;
-    if (yearDenom !== 0) {
+    if (yearDenom > 0) {
       yearJSX = <p>{totalMetricYear / yearDenom}</p>
     }
     else {
@@ -218,7 +209,7 @@ class Statistics extends Component {
     return (
       <div id="stats-body">
         <div id="stats-header">
-          <h2>Client statistics</h2>
+          <h2>Client statistics (last 6 months)</h2>
         </div>
         <div id="stats-content">
           <div id="line-graph">
