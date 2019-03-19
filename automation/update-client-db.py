@@ -3,6 +3,7 @@ import pandas as pd
 import pymongo
 import dns
 import json
+from bson.objectid import ObjectId
 
 # DB connection
 client = pymongo.MongoClient(
@@ -35,8 +36,6 @@ xl = pd.ExcelFile(file)
 # Load a sheet into a DataFrame by name: invoice_data
 invoice_data = xl.parse('Sheet1')
 invoice_data['Discount'].fillna(0, inplace=True)
-# print(invoice_data.head())
-# print(invoice_data['Location Address'].unique()[0])
 
 location_address = invoice_data['Location Address'].unique()[0].upper()
 location_city = invoice_data['Location City'].unique()[0]
@@ -48,23 +47,11 @@ location_complete = location_complete.upper()
 
 c = clients.find_one({"address": location_complete})
 
-# invoice: [{
-#     date: Date,
-#     quantity: Number,
-#     itemCode: String,
-#     description: String,
-#     discount: Number,
-#     amountAfterDiscount: Number,
-#     tech: String
-# }]
-
 invoices = []
 
 for index, row in invoice_data.iterrows():
     call_id = str(row['Call Id'])
-    
     invoice_date = str(row['Inv Date'])
-    # invoice_date = invoice_date.strftime('%Y-%m-%d')
     quantity = row['Qty']
     item_code = row['Item Code']
     description = row['Item Description']
@@ -72,8 +59,8 @@ for index, row in invoice_data.iterrows():
     amount_after_discount = row['Amount After Discount']
     tech = row['Tech']
 
-    # TODO add mongo id
     data = {
+        "_id": ObjectId(),
         "date": invoice_date,
         "quantity": quantity,
         "itemCode": item_code,
@@ -82,11 +69,8 @@ for index, row in invoice_data.iterrows():
         "amountAfterDiscount": amount_after_discount,
         "tech": tech
     }
-    json_data = json.dumps(data)   
     invoices.append(data)
 
-# print(c)
-# print(invoices)
 callIndex = -1
 for i in range(0, len(c['calls'])):
     if c['calls'][i]['callId'] == call_id:
@@ -96,15 +80,5 @@ for i in range(0, len(c['calls'])):
         callIndex = i
         break
 if callIndex >= 0:
-    clients.update_one({'_id': c['_id']},{'$set': {'calls': c['calls']}}, upsert=False)
-
-
-
-
-# invoices = json.loads(invoices)
-# print(type(invoices))
-
-# print(str(invoices))
-
-# print(clients.insert_many(str(invoices)))
-# clients.update_one({'ref': ref}, {'$push': {'tags': new_tag}})
+    clients.update_one({'_id': c['_id']}, {
+                       '$set': {'calls': c['calls']}}, upsert=False)
