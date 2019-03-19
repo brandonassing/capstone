@@ -3,13 +3,13 @@ import pandas as pd
 import pymongo
 import dns
 import json
+from bson.objectid import ObjectId
 
 # DB connection
 client = pymongo.MongoClient(
     "mongodb+srv://main:se4450@main-ia8yw.mongodb.net/test?retryWrites=true")
 db = client.Main
-
-clients = db.clients
+clients = db.clientstwo
 
 # Retrieve current working directory (`cwd`)
 cwd = os.getcwd()
@@ -18,11 +18,8 @@ cwd
 # Change directory
 os.chdir("./invoices")
 
-# List all files and directories in current directory
-os.listdir('.')
-
 # Assign spreadsheet filename to `file`
-file = 'all.xlsx'
+file = 'all2.xlsx'
 
 # Load spreadsheet
 xl = pd.ExcelFile(file)
@@ -32,63 +29,63 @@ invoice_data = xl.parse('Sheet1')
 invoice_data['Discount'].fillna(0, inplace=True)
 invoice_data['Amount After Discount'].fillna(0, inplace=True)
 
-location_address = ""
-for i, row in invoice_data.iterrows():
-    
-    current_address = row['Location Address'].upper()
+for address in invoice_data['Location Address'].unique():
+    data1 = invoice_data.loc[invoice_data['Location Address']
+                             == address]
 
-    if (current_address != location_address):
-        location_address = row['Location Address'].unique().upper()
-        location_city = row['Location City'].unique()
-        location_province = row['Location Province'].unique()
-        location_pc = row['Location PC'].unique()
-        location_complete = location_address + ', ' + location_city + \
-            ', ' + location_province + ' ' + location_pc
-        location_complete = location_complete.upper()
+    first_name = data1['Billing first name'].unique()[0]
+    last_name = data1['Billing last name'].unique()[0]
+    phone_number = data1['Caller Number'].unique()[0]
+    location_address = invoice_data['Location Address'].unique()[0].upper()
+    location_city = invoice_data['Location City'].unique()[0]
+    location_province = invoice_data['Location Province'].unique()[0]
+    location_pc = invoice_data['Location PC'].unique()[0]
+    location_complete = location_address + ', ' + location_city + \
+        ', ' + location_province + ' ' + location_pc
+    location_complete = location_complete.upper()
 
-        firstName = row['Billing first name']
-        lastName = row['Billing last name']
-        phoneNumber = row['Caller Number']
+    client = {
+        "firstName": first_name,
+        "lastName": last_name,
+        "phoneNumber": str(phone_number),
+        "address": location_complete,
+        "calls": []
+    }
 
-        # clientSkip = 0
+    for callId in data1['Call Id'].unique():
+        data2 = data1.loc[data1['Call Id'] == callId]
 
-        newClient = {
-            "firstName": firstName,
-            "lastName": lastName,
-            "phoneNumber": phoneNumber,
-            "address": location_complete,
-            "calls": []
-        }
-
-    while location_address == row['Location Address'].unique()[i+1].upper():
-        callId = str(row['Call Id'])
-        callTime = str(row['Date']) + " " + str(row['Time'])
-        newClientCalls = {
-            "callId": callId,
+        call_date_time = str(data2['Date Time'].unique()[0])
+        call = {
+            "_id": ObjectId(),
+            "callId": str(callId),
             "worker": "",
-            "estimateValue": 0,
-            "opportunityProbability": 0.50,
-            "timestamp": callTime,
+            "estimateValue": 0.00,
+            "opportunityProbability": 0.00,
+            "timestamp": call_date_time,
             "status": "completed",
             "invoice": []
         }
-        # TODO add mongo id
 
-    clients.insert_one(newClient)
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        for index, row in data2.iterrows():
+            invoice_date = str(row['Inv Date'])
+            quantity = row['Qty']
+            item_code = row['Item Code']
+            description = row['Item Description']
+            discount = row['Discount']
+            amount_after_discount = row['Amount After Discount']
+            tech = row['Tech']
+            inv = {
+                "_id": ObjectId(),
+                "date": invoice_date,
+                "quantity": quantity,
+                "itemCode": item_code,
+                "description": description,
+                "discount": discount,
+                "amountAfterDiscount": amount_after_discount,
+                "tech": tech
+            }
+            call['invoice'].append(inv)
+        client['calls'].append(call)
+    print(first_name, last_name, phone_number)
+    clients.insert_one(client)
