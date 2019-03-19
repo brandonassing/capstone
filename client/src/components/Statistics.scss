@@ -5,9 +5,20 @@
 #stats-body {
     #stats-header {
         @extend %tab-heading;
+        h2 {
+            span {
+                font-weight: lighter;
+                font-size: 20px;
+                color: $text-grey;
+            }
+        }
+    }
+    // for spinner 
+    .text-primary {
+        margin-top: 150px;
+        color: $accent-color!important;
     }
     #stats-content {
-        
         display: flex;
         justify-content: space-between;
         flex-direction: column;

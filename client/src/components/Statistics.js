@@ -32,21 +32,57 @@ class Statistics extends Component {
         let timestamps = [];
         let probabilities = [];
         let estimateValues = [];
+        let invoices = [];
+
         for (let i = 0; i < resJson.message.length; i++) {
           calls = [...calls, ...resJson.message[i].calls];
         }
         calls.sort((a, b) => (moment(a.timestamp).isAfter(b.timestamp)) ? 1 : ((moment(b.timestamp).isAfter(a.timestamp)) ? -1 : 0));
 
         for (let i = 0; i < calls.length; i++) {
-          timestamps.push(calls[i].timestamp);
-          probabilities.push(Math.round(calls[i].opportunityProbability * 100));
-          estimateValues.push(calls[i].estimateValue);
+          // NOTE: controls graph scope
+          if (moment().diff(moment(calls[i].timestamp.slice(0, 10)), 'months') <= 6) {
+            timestamps.push(calls[i].timestamp.slice(0, 10));
+            probabilities.push(Math.round(calls[i].opportunityProbability * 100));
+            estimateValues.push(calls[i].estimateValue);
+            let invoiceTotal = calls[i].invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0);
+            invoices.push(invoiceTotal);
+          }
         }
+
+        let timesObject = {};
+
+        // NOTE: used metricAvg as generic array. Change invoice to other array to graph different data
+        for (let i = 0; i < timestamps.length; i++) {
+          if (!timesObject.hasOwnProperty(timestamps[i])) {
+            timesObject[timestamps[i]] = [invoices[i]];
+          }
+          else {
+            timesObject[timestamps[i]] = [...timesObject[timestamps[i]], invoices[i]]
+          }
+        }
+
+        for (let prop in timesObject) {
+          let sum = 0;
+          for (let i = 0; i < timesObject[prop].length; i++) {
+            sum += timesObject[prop][i];
+          }
+          let avg = sum / timesObject[prop].length;
+          timesObject[prop] = avg;
+        }
+
+        timestamps = Object.keys(timesObject);
+        let metricAvg = timestamps.map((item) => {
+          return parseInt((Math.round(timesObject[item] * 100) / 100).toFixed(2));
+        });
+
         this.props.storeMetrics({
           calls: calls,
           timestamps: timestamps,
+          metricAvg: metricAvg,
           probabilities: probabilities,
-          estimateValues: estimateValues
+          estimateValues: estimateValues,
+          invoices: invoices
         });
       })
       .catch(err => {
@@ -58,14 +94,14 @@ class Statistics extends Component {
     let low = 0;
     let med = 0;
     let high = 0;
-    this.props.estimateValues.forEach((e) => {
-      if (e === 1) {
+    this.props.invoices.forEach((e) => {
+      if (e >= 0 && e < 1000) {
         low++;
       }
-      else if (e === 2) {
+      else if (e >= 1000 && e < 5000) {
         med++;
       }
-      else if (e === 3) {
+      else if (e >= 5000) {
         high++;
       }
     });
@@ -77,9 +113,9 @@ class Statistics extends Component {
       labels: this.props.timestamps,
       datasets: [{
         fill: false,
-        label: "Call value",
+        label: "Daily total ($)",
         borderColor: '#51C4C6',
-        data: this.props.probabilities,
+        data: this.props.metricAvg,
         borderCapStyle: "round",
         borderJoinStyle: "round",
       }]
@@ -89,30 +125,19 @@ class Statistics extends Component {
         xAxes: [{
           type: 'time',
           time: {
-            displayFormats: {
-              'millisecond': 'MMM',
-              'second': 'MMM',
-              'minute': 'MMM',
-              'hour': 'MMM',
-              'day': 'MMM',
-              'week': 'MMM',
-              'month': 'MMM',
-              'quarter': 'MMM',
-              'year': 'MMM',
-            },
             tooltipFormat: 'DD/MM/YY'
           }
         }],
         yAxes: [{
           scaleLabel: {
             display: true,
-            labelString: 'Probability (%)'
+            labelString: 'Invoice total ($)'
           }
         }]
       },
       elements: {
         line: {
-          tension: 0.05, // disables bezier curves
+          tension: 0.2, // disables bezier curves
         }
       },
       legend: {
@@ -126,7 +151,7 @@ class Statistics extends Component {
         backgroundColor: ["#E62325", "#00A78F", "#8EE9D4"],
         hoverBackgroundColor: ["#D90001", "#55AE9E", "#90DFDA"]
       }],
-      labels: ["High", "Med", "Low"]
+      labels: ["$5000+", "$1000 - $5000", "$0 - $1000"]
     };
     let donutOptions = {
       cutoutPercentage: 50,
@@ -141,24 +166,24 @@ class Statistics extends Component {
     let totalMetricWeek = 0, weekDenom = 0;
     let totalMetricMonth = 0, monthDenom = 0;
     let totalMetricYear = 0, yearDenom = 0;
-
+    // TODO
     for (let i = 0; i < this.props.calls.length; i++) {
       if (moment(this.props.calls[i].timestamp).isSame(new Date(), 'week')) {
-        totalMetricWeek += this.props.calls[i].opportunityProbability;
+        totalMetricWeek += parseInt((Math.round(this.props.calls[i].invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2));
+
         weekDenom++;
       }
       if (moment(this.props.calls[i].timestamp).isSame(new Date(), 'month')) {
-        totalMetricMonth += this.props.calls[i].opportunityProbability;
+        totalMetricMonth += parseInt((Math.round(this.props.calls[i].invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2));
         monthDenom++;
       }
       if (moment(this.props.calls[i].timestamp).isSame(new Date(), 'year')) {
-        totalMetricYear += this.props.calls[i].opportunityProbability;
+        totalMetricYear += parseInt((Math.round(this.props.calls[i].invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2));
         yearDenom++;
       }
     }
-
     let weekJSX;
-    if (weekDenom !== 0) {
+    if (weekDenom > 0) {
       weekJSX = <p>{totalMetricWeek / weekDenom}</p>
     }
     else {
@@ -166,7 +191,7 @@ class Statistics extends Component {
     }
 
     let monthJSX;
-    if (monthDenom !== 0) {
+    if (monthDenom > 0) {
       monthJSX = <p>{totalMetricMonth / monthDenom}</p>
     }
     else {
@@ -174,7 +199,7 @@ class Statistics extends Component {
     }
 
     let yearJSX;
-    if (yearDenom !== 0) {
+    if (yearDenom > 0) {
       yearJSX = <p>{totalMetricYear / yearDenom}</p>
     }
     else {
@@ -184,38 +209,52 @@ class Statistics extends Component {
     return (
       <div id="stats-body">
         <div id="stats-header">
-          <h2>Call statistics</h2>
+          <h2>Client statistics <span>(last 6 months)</span></h2>
         </div>
-        <div id="stats-content">
-          <div id="line-graph">
-            <h3>Clients' invoice probability over time</h3>
-            <Line data={lineData} options={lineOptions} height={100} />
-          </div>
-          <div id="lower-group">
-            <div id="donut-graph">
-              <h3>Clients' value estimate distribution</h3>
-              <Pie data={donutData} options={donutOptions} />
+        {
+          this.props.metricAvg.length === 0 ?
+            <div className="text-center">
+              <div className="spinner-grow text-primary" role="status">
+                <span className="sr-only">Loading...</span>
+              </div>
+              <div className="spinner-grow text-primary" role="status">
+                <span className="sr-only">Loading...</span>
+              </div>
+              <div className="spinner-grow text-primary" role="status">
+                <span className="sr-only">Loading...</span>
+              </div>
             </div>
-            <div id="avg-group">
-              <h3>Clients' value averages</h3>
-              <div id="avg-cards">
-                <div className="avg">
-                  <h4>This week</h4>
-                  {weekJSX}
+            :
+            <div id="stats-content">
+              <div id="line-graph">
+                <h3>Daily invoice totals</h3>
+                <Line data={lineData} options={lineOptions} height={100} />
+              </div>
+              <div id="lower-group">
+                <div id="donut-graph">
+                  <h3>Clients' invoice totals distribution</h3>
+                  <Pie data={donutData} options={donutOptions} />
                 </div>
-                <div className="avg">
-                  <h4>This month</h4>
-                  {monthJSX}
-                </div>
-                <div className="avg">
-                  <h4>This year</h4>
-                  {yearJSX}
+                <div id="avg-group">
+                  <h3>Clients' invoice totals averages</h3>
+                  <div id="avg-cards">
+                    <div className="avg">
+                      <h4>This week</h4>
+                      {weekJSX}
+                    </div>
+                    <div className="avg">
+                      <h4>This month</h4>
+                      {monthJSX}
+                    </div>
+                    <div className="avg">
+                      <h4>This year</h4>
+                      {yearJSX}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-
-        </div>
+        }
       </div>
     );
   }
@@ -231,8 +270,10 @@ const mapStateToProps = state => {
   return {
     calls: state.metricReducer.calls,
     timestamps: state.metricReducer.timestamps,
+    metricAvg: state.metricReducer.metricAvg,
     probabilities: state.metricReducer.probabilities,
-    estimateValues: state.metricReducer.estimateValues
+    estimateValues: state.metricReducer.estimateValues,
+    invoices: state.metricReducer.invoices
   };
 };
 

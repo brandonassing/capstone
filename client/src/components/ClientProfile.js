@@ -233,6 +233,7 @@ class ClientProfile extends Component {
           <input className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
         </div>
         <ReactTable
+          pageSize={this.props.clientProfiles.length}
           data={data}
           columns={columns}
           showPagination={false}
@@ -271,7 +272,7 @@ class ClientProfile extends Component {
                           <p>Status: {item.status}</p>
                           {
                             item.status === "completed" ?
-                              <p>Invoice total: <strong>${item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0)}</strong></p>
+                              <p>Invoice total: <strong>${(Math.round(item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2)}</strong></p>
                               :
                               <div>
                                 <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
