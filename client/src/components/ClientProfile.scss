@@ -5,6 +5,7 @@
 #clients-body {
   #clients-header {
     @extend %tab-heading;
+    @extend %table-input;
     #client-search {
       width: 400px;
       @extend %input-field;

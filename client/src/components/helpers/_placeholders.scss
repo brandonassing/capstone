@@ -3,6 +3,21 @@
   border: none;
 }
 
+%table-input {
+  .table-header {
+    display: flex;
+    .btn-container {
+      margin: 0;
+      button {
+        margin-right: 15px;
+        color: $text-grey;
+      }
+    }
+   
+  }
+
+}
+
 %tab-heading {
   padding-bottom: 15px;
   display: flex;
