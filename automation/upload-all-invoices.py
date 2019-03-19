@@ -36,10 +36,10 @@ for address in invoice_data['Location Address'].unique():
     first_name = data1['Billing first name'].unique()[0]
     last_name = data1['Billing last name'].unique()[0]
     phone_number = data1['Caller Number'].unique()[0]
-    location_address = invoice_data['Location Address'].unique()[0].upper()
-    location_city = invoice_data['Location City'].unique()[0]
-    location_province = invoice_data['Location Province'].unique()[0]
-    location_pc = invoice_data['Location PC'].unique()[0]
+    location_address = data1['Location Address'].unique()[0].upper()
+    location_city = data1['Location City'].unique()[0]
+    location_province = data1['Location Province'].unique()[0]
+    location_pc = data1['Location PC'].unique()[0]
     location_complete = location_address + ', ' + location_city + \
         ', ' + location_province + ' ' + location_pc
     location_complete = location_complete.upper()
