@@ -107,7 +107,13 @@ class CompletedClients extends Component {
       id: 'name',
       accessor: d => `${d.firstName} ${d.lastName}`,
       Cell: col => <p>{col.value}</p>,
-      minWidth: 200
+      minWidth: 100
+    }, {
+      Header: () => <p>Address</p>,
+      id: 'address',
+      accessor: d => `${d.address}`,
+      Cell: col => <p>{col.value}</p>,
+      minWidth: 300
     }, {
       Header: () => <p>Phone number</p>,
       id: "phoneNumber",
@@ -117,13 +123,13 @@ class CompletedClients extends Component {
         return stringNum
       },
       Cell: col => <p>{col.value}</p>,
-      minWidth: 150
+      minWidth: 120
     }, {
       Header: () => <p># calls</p>,
       id: 'calls',
       accessor: d => d.calls.length,
       Cell: col => <p>{col.value}</p>,
-      minWidth: 80
+      minWidth: 50
     }, {
       Header: () => <p>Total invoice</p>,
       id: 'invoice',
@@ -142,16 +148,16 @@ class CompletedClients extends Component {
         if (col.value >= 0 && col.value < 1000) {
           tierClass = "low";
         }
-        else if (col.value >= 1000 && col.value < 20000) {
+        else if (col.value >= 1000 && col.value < 5000) {
           tierClass = "med";
         }
-        else if (col.value >= 20000) {
+        else if (col.value >= 5000) {
           tierClass = "high";
         }
-        return (<p className={tierClass}>${col.value}</p>);
+        return (<p className={tierClass}>${(Math.round(col.value * 100) / 100).toFixed(2)}</p>);
       },
       className: 'value-metric',
-      minWidth: 150,
+      minWidth: 100,
       resizable: false
     }];
 
@@ -181,7 +187,7 @@ class CompletedClients extends Component {
             }
           }}
         />
-        <Modal show={this.state.showModal} onHide={this.handleClose} centered={true}>
+        <Modal show={this.state.showModal} onHide={this.handleClose} centered={true} size={'lg'}>
           <Modal.Header closeButton>
             <Modal.Title>
               <h2>{this.state.activeClient.firstName} {this.state.activeClient.lastName}</h2>
@@ -200,7 +206,7 @@ class CompletedClients extends Component {
                       {
                         item.status === "completed" ?
                           ""
-                          // <p>Invoice total: <strong>${item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0)}</strong></p>
+                          // <p>Invoice total: <strong>${(Math.round(item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2)}</strong></p>
                           :
                           <div>
                             <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
@@ -214,8 +220,7 @@ class CompletedClients extends Component {
                             {
                               item.invoice.sort(this.dateSort).map((inv, invIndex) => {
                                 return (
-                                  // TODO change key to _id
-                                  <div key={inv.itemCode}>
+                                  <div key={inv._id}>
                                     <p>{moment(inv.date).format('MMMM Do YYYY')}, technician: <strong>{inv.tech}</strong></p>
                                     <p>{inv.quantity} - {inv.itemCode}: {inv.description}</p>
                                     {inv.discount !== 0 ? <p>Discount: ${(Math.round(inv.discount * 100) / 100).toFixed(2)}</p> : ""}
@@ -225,10 +230,10 @@ class CompletedClients extends Component {
                                 )
                               })
                             }
-                            <p className="price"><strong>Total: </strong>
+                            <p className="price"><strong>Total: $</strong>
                               <strong>
                                 {
-                                  item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0)
+                                  (Math.round(item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2)
                                 }
                               </strong>
                             </p>

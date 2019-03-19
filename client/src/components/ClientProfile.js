@@ -271,7 +271,7 @@ class ClientProfile extends Component {
                           <p>Status: {item.status}</p>
                           {
                             item.status === "completed" ?
-                              <p>Invoice total: <strong>${item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0)}</strong></p>
+                              <p>Invoice total: <strong>${(Math.round(item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2)}</strong></p>
                               :
                               <div>
                                 <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
