@@ -6,8 +6,12 @@
     #stats-header {
         @extend %tab-heading;
     }
+    // for spinner 
+    .text-primary {
+        margin-top: 150px;
+        color: $accent-color!important;
+    }
     #stats-content {
-        
         display: flex;
         justify-content: space-between;
         flex-direction: column;
