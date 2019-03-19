@@ -21,6 +21,7 @@ class Nav extends Component {
     this.getStats = this.getStats.bind(this);
   }
 
+  // TODO is this necessary?
   getStats() {
     fetch('/clients/calls', {
       method: 'GET',
@@ -33,22 +34,53 @@ class Nav extends Component {
         let timestamps = [];
         let probabilities = [];
         let estimateValues = [];
+        let invoices = [];
+
         for (let i = 0; i < resJson.message.length; i++) {
           calls = [...calls, ...resJson.message[i].calls];
         }
         calls.sort((a, b) => (moment(a.timestamp).isAfter(b.timestamp)) ? 1 : ((moment(b.timestamp).isAfter(a.timestamp)) ? -1 : 0));
 
         for (let i = 0; i < calls.length; i++) {
-          timestamps.push(calls[i].timestamp);
+          timestamps.push(calls[i].timestamp.slice(0, 10));
           probabilities.push(Math.round(calls[i].opportunityProbability * 100));
           estimateValues.push(calls[i].estimateValue);
-
+          let invoiceTotal = calls[i].invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0);
+          invoices.push(invoiceTotal);
         }
+
+        let timesObject = {};
+
+        for (let i = 0; i < timestamps.length; i++) {
+          if (!timesObject.hasOwnProperty(timestamps[i])) {
+            timesObject[timestamps[i]] = [invoices[i]];
+          }
+          else {
+            timesObject[timestamps[i]] = [...timesObject[timestamps[i]], invoices[i]]
+          }
+        }
+
+        for (let prop in timesObject) {
+          let sum = 0;
+          for (let i = 0; i < timesObject[prop].length; i++) {
+            sum += timesObject[prop][i];
+          }
+          let avg = sum / timesObject[prop].length;
+          timesObject[prop] = avg;
+        }
+
+        timestamps = Object.keys(timesObject);
+        let metricAvg = timestamps.map((item) => {
+          return parseInt((Math.round(timesObject[item] * 100) / 100).toFixed(2));
+        });
+
         this.props.storeMetrics({
           calls: calls,
           timestamps: timestamps,
+          metricAvg: metricAvg,
           probabilities: probabilities,
-          estimateValues: estimateValues
+          estimateValues: estimateValues,
+          invoices: invoices
         });
       })
       .catch(err => {
