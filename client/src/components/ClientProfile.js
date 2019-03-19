@@ -72,6 +72,14 @@ class ClientProfile extends Component {
     }
   }
 
+  refresh = () => {
+    this.setState({
+      totalPages: 0,
+      pageNo: 1,
+      size: 10
+    }, () => this.getData(true));
+  }
+
   getData(refresh) {
     fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=inactive', {
       method: 'GET',
@@ -230,7 +238,12 @@ class ClientProfile extends Component {
       <div id="clients-body">
         <div id="clients-header">
           <h2>Prospect profiles</h2>
-          <input className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
+          <div className="table-header">
+            <div className="btn-container">
+              <button type="button" className="btn btn-light" onClick={this.refresh}>Refresh</button>
+            </div>
+            <input className="form-control" id="client-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
+          </div>
         </div>
         <ReactTable
           pageSize={this.props.clientProfiles.length}

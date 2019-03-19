@@ -5,6 +5,7 @@
 #completed-body {
   #completed-header {
     @extend %tab-heading;
+    @extend %table-input;
     #completed-search {
       width: 400px;
       @extend %input-field;
