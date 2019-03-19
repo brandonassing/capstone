@@ -9,7 +9,7 @@ from bson.objectid import ObjectId
 client = pymongo.MongoClient(
     "mongodb+srv://main:se4450@main-ia8yw.mongodb.net/test?retryWrites=true")
 db = client.Main
-clients = db.clientstwo
+clients = db.clients
 
 # Retrieve current working directory (`cwd`)
 cwd = os.getcwd()
