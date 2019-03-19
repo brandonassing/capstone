@@ -211,36 +211,50 @@ class Statistics extends Component {
         <div id="stats-header">
           <h2>Client statistics (last 6 months)</h2>
         </div>
-        <div id="stats-content">
-          <div id="line-graph">
-            <h3>Daily invoice totals</h3>
-            <Line data={lineData} options={lineOptions} height={100} />
-          </div>
-          <div id="lower-group">
-            <div id="donut-graph">
-              <h3>Clients' invoice totals distribution</h3>
-              <Pie data={donutData} options={donutOptions} />
+        {
+          this.props.metricAvg.length === 0 ?
+            <div className="text-center">
+              <div className="spinner-grow text-primary" role="status">
+                <span className="sr-only">Loading...</span>
+              </div>
+              <div className="spinner-grow text-primary" role="status">
+                <span className="sr-only">Loading...</span>
+              </div>
+              <div className="spinner-grow text-primary" role="status">
+                <span className="sr-only">Loading...</span>
+              </div>
             </div>
-            <div id="avg-group">
-              <h3>Clients' invoice totals averages</h3>
-              <div id="avg-cards">
-                <div className="avg">
-                  <h4>This week</h4>
-                  {weekJSX}
+            :
+            <div id="stats-content">
+              <div id="line-graph">
+                <h3>Daily invoice totals</h3>
+                <Line data={lineData} options={lineOptions} height={100} />
+              </div>
+              <div id="lower-group">
+                <div id="donut-graph">
+                  <h3>Clients' invoice totals distribution</h3>
+                  <Pie data={donutData} options={donutOptions} />
                 </div>
-                <div className="avg">
-                  <h4>This month</h4>
-                  {monthJSX}
-                </div>
-                <div className="avg">
-                  <h4>This year</h4>
-                  {yearJSX}
+                <div id="avg-group">
+                  <h3>Clients' invoice totals averages</h3>
+                  <div id="avg-cards">
+                    <div className="avg">
+                      <h4>This week</h4>
+                      {weekJSX}
+                    </div>
+                    <div className="avg">
+                      <h4>This month</h4>
+                      {monthJSX}
+                    </div>
+                    <div className="avg">
+                      <h4>This year</h4>
+                      {yearJSX}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-
-        </div>
+        }
       </div>
     );
   }
