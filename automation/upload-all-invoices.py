@@ -16,7 +16,7 @@ cwd = os.getcwd()
 cwd
 
 # Change directory
-os.chdir("./invoices")
+os.chdir("./data-load")
 
 # Assign spreadsheet filename to `file`
 file = 'all2.xlsx'
