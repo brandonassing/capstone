@@ -12,7 +12,7 @@ const initialState = {};
 const enhancers = [];
 const middleware = [
   thunk,
-  logger,
+  // logger,
   routerMiddleware(history)
 ];
 

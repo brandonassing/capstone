@@ -1,0 +1,25 @@
+{
+    "_id": {
+        "$oid": "5c575c2cae8dd87ccf3db193"
+    },
+    "firstName": "Teresa",
+    "lastName": "Yim",
+    "phoneNumber": "5194741974",
+    "address": "63 LAUREL COURT, LONDON, ON N6H 4W3",
+    "calls": [
+        {
+            "_id": {
+                "$oid": "5c881be1f54b937eb296beef"
+            },
+            "invoice": [],
+            "callId": "747457303",
+            "worker": "JOHN",
+            "estimateValue": 3,
+            "opportunityProbability": 0.31,
+            "timestamp": {
+                "$date": "2018-09-17T07:24:00.000Z"
+            },
+            "status": "active"
+        }
+    ]
+}
