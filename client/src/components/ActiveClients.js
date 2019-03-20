@@ -179,7 +179,7 @@ class ActiveClients extends Component {
       Cell: col => <p>{col.value}</p>,
       minWidth: 50
     }, {
-      Header: () => <p>Max value estimate</p>,
+      Header: () => <p>Value estimate</p>,
       id: 'value',
       accessor: d => {
         let max = 0;
@@ -266,7 +266,7 @@ class ActiveClients extends Component {
                               <p>Invoice total: <strong>${(Math.round(item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2)}</strong></p>
                               :
                               <div>
-                                <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
+                                <p>Conversion probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
                                 <p>Value estimate: <strong className={item.estimateValue === 1 ? "low" : item.estimateValue === 2 ? "med" : "high"}>{item.estimateValue === 1 ? "Low" : item.estimateValue === 2 ? "Med" : "High"}</strong></p>
                               </div>
                           }

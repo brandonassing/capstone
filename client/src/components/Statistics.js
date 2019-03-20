@@ -156,7 +156,7 @@ class Statistics extends Component {
         yAxes: [{
           scaleLabel: {
             display: true,
-            labelString: 'Invoice total ($)'
+            labelString: 'Revenue ($)'
           }
         }]
       },
@@ -200,17 +200,17 @@ class Statistics extends Component {
           <div className="top-worker">
             <p><strong>1. {workersArr[1].name}</strong></p>
             <p>${(Math.round(workersArr[1].total * 100) / 100).toFixed(2)}</p>
-            <p className="value-percent">~{Math.round(workersArr[1].total / workersArr[0].total * 100)}% of total revenue</p>
+            <p className="value-percent">~{Math.round(workersArr[1].total / workersArr[0].total * 100)}% of total service revenue</p>
           </div>
           <div className="top-worker">
             <p><strong>2. {workersArr[2].name}</strong></p>
             <p>${(Math.round(workersArr[2].total * 100) / 100).toFixed(2)}</p>
-            <p className="value-percent">~{Math.round(workersArr[2].total / workersArr[0].total * 100)}% of total revenue</p>
+            <p className="value-percent">~{Math.round(workersArr[2].total / workersArr[0].total * 100)}% of total service revenue</p>
           </div>
           <div className="top-worker">
             <p><strong>3. {workersArr[3].name}</strong></p>
             <p>${(Math.round(workersArr[3].total * 100) / 100).toFixed(2)}</p>
-            <p className="value-percent">~{Math.round(workersArr[3].total / workersArr[0].total * 100)}% of total revenue</p>
+            <p className="value-percent">~{Math.round(workersArr[3].total / workersArr[0].total * 100)}% of total service revenue</p>
           </div>
         </div>
       );
@@ -285,17 +285,17 @@ class Statistics extends Component {
             :
             <div id="stats-content">
               <div id="line-graph">
-                <h3>Daily invoice totals</h3>
+                <h3>Daily service revenue</h3>
                 <Line data={lineData} options={lineOptions} height={100} />
               </div>
               <div id="lower-group">
                 <div id="donut-graph">
-                  <h3>Clients' invoice totals distribution</h3>
+                  <h3>Revenue range distribution</h3>
                   <Pie data={donutData} options={donutOptions} />
                 </div>
                 <div id="leaderboard-group">
                   <div className="leaderboard-section">
-                    <h3>Top techs</h3>
+                    <h3>Top technicians</h3>
                     <div className="leaderboard">
                       {topTechs}
                     </div>
