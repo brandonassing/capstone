@@ -131,6 +131,8 @@ labels = ['0','1']
 for s in input_x:
     pred = model.predict(np.asmatrix(s))
     print(np.argmax(pred))
+    # @Krishan - the first input parameter is whether or not it will be an invoice (0 means no, 1 means yes)
+    # the second parameter is the percentage confidence, so if its (0, 98) it means there is a 2% chance it becomes an invoice
     print((labels[np.argmax(pred)], pred[0][np.argmax(pred)]*100))
 
 
