@@ -11,6 +11,11 @@
       button {
         margin-right: 15px;
         color: $text-grey;
+        border: none;
+        background-color: $light-grey;
+      }
+      button:hover {
+        background-color: $dark-grey;
       }
     }
    
