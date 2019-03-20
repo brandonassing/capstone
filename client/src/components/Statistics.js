@@ -8,19 +8,28 @@ import { storeMetrics } from '../_actions/metricList';
 import { authHeader } from '../_helpers/auth';
 import { handleError } from '../_helpers/errors';
 
+import { Dropdown, DropdownButton } from 'react-bootstrap';
+
+
 class Statistics extends Component {
   constructor(props) {
     super(props);
     this.state = {
       metricWeek: 0,
       metricMonth: 0,
-      metricYear: 0
+      metricYear: 0,
+      monthScope: 6,
+      isLoading: true
     }
 
     this.getDonutData = this.getDonutData.bind(this);
   }
 
   componentDidMount() {
+    this.getCallData();
+  }
+
+  getCallData = () => {
     fetch('/clients/calls', {
       method: 'GET',
       headers: authHeader()
@@ -33,6 +42,7 @@ class Statistics extends Component {
         let probabilities = [];
         let estimateValues = [];
         let invoices = [];
+        let callsMonthScope = [];
 
         for (let i = 0; i < resJson.message.length; i++) {
           calls = [...calls, ...resJson.message[i].calls];
@@ -40,8 +50,8 @@ class Statistics extends Component {
         calls.sort((a, b) => (moment(a.timestamp).isAfter(b.timestamp)) ? 1 : ((moment(b.timestamp).isAfter(a.timestamp)) ? -1 : 0));
 
         for (let i = 0; i < calls.length; i++) {
-          // NOTE: controls graph scope
-          if (moment().diff(moment(calls[i].timestamp.slice(0, 10)), 'months') <= 6) {
+          if (moment().diff(moment(calls[i].timestamp.slice(0, 10)), 'months') <= this.state.monthScope) {
+            callsMonthScope.push(calls[i]);
             timestamps.push(calls[i].timestamp.slice(0, 10));
             probabilities.push(Math.round(calls[i].opportunityProbability * 100));
             estimateValues.push(calls[i].estimateValue);
@@ -77,13 +87,14 @@ class Statistics extends Component {
         });
 
         this.props.storeMetrics({
-          calls: calls,
+          calls: callsMonthScope,
           timestamps: timestamps,
           metricAvg: metricAvg,
           probabilities: probabilities,
           estimateValues: estimateValues,
           invoices: invoices
         });
+        this.setState({ isLoading: false });
       })
       .catch(err => {
         console.log(err)
@@ -108,11 +119,28 @@ class Statistics extends Component {
     return [high, med, low];
   }
 
+  getWorkersInfo = () => {
+    let workersArr = [{ name: "TOTAL", total: 0 }];
+    for (let i = 0; i < this.props.calls.length; i++) {
+      for (let j = 0; j < this.props.calls[i].invoice.length; j++) {
+        if (!!this.props.calls[i].invoice[j].tech) {
+          if (!workersArr.filter(item => item.name === this.props.calls[i].invoice[j].tech).length > 0) {
+            workersArr = [...workersArr, { name: this.props.calls[i].invoice[j].tech, total: 0 }];
+          }
+          workersArr.find(item => item.name === this.props.calls[i].invoice[j].tech).total += this.props.calls[i].invoice[j].amountAfterDiscount;
+          workersArr.find(item => item.name === "TOTAL").total += this.props.calls[i].invoice[j].amountAfterDiscount;
+        }
+      }
+    }
+    return workersArr;
+  };
+
   render() {
     let lineData = {
       labels: this.props.timestamps,
       datasets: [{
-        fill: false,
+        fill: true,
+        backgroundColor: "rgba(68, 185, 186, 0.3)",
         label: "Daily total ($)",
         borderColor: '#51C4C6',
         data: this.props.metricAvg,
@@ -163,6 +191,12 @@ class Statistics extends Component {
       }
     };
 
+    let workersArr = this.getWorkersInfo();
+    workersArr.sort((a, b) => {
+      return b.total - a.total;
+    });
+    console.log(workersArr);
+
     let totalMetricWeek = 0, weekDenom = 0;
     let totalMetricMonth = 0, monthDenom = 0;
     let totalMetricYear = 0, yearDenom = 0;
@@ -209,10 +243,17 @@ class Statistics extends Component {
     return (
       <div id="stats-body">
         <div id="stats-header">
-          <h2>Client statistics <span>(last 6 months)</span></h2>
+          <h2>Client statistics <span>(last {this.state.monthScope} months)</span></h2>
+          <div className="months-dropdown">
+            <DropdownButton id="dropdown-basic-button" title={"Last " + this.state.monthScope + " months"}>
+              <Dropdown.Item value={3} onClick={(e) => { this.setState({ monthScope: 3, isLoading: true }, this.getCallData) }}>3 months</Dropdown.Item>
+              <Dropdown.Item value={6} onClick={(e) => { this.setState({ monthScope: 6, isLoading: true }, this.getCallData) }}>6 months</Dropdown.Item>
+              <Dropdown.Item value={12} onClick={(e) => { this.setState({ monthScope: 12, isLoading: true }, this.getCallData) }}>1 year</Dropdown.Item>
+            </DropdownButton>
+          </div>
         </div>
         {
-          this.props.metricAvg.length === 0 ?
+          this.state.isLoading ?
             <div className="text-center">
               <div className="spinner-grow text-primary" role="status">
                 <span className="sr-only">Loading...</span>

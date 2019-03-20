@@ -12,6 +12,13 @@
                 color: $text-grey;
             }
         }
+        .months-dropdown {
+            .btn-primary {
+                background-color: $accent-color;
+                color: white;
+                border: none;
+            }
+        }
     }
     // for spinner 
     .text-primary {
@@ -52,12 +59,14 @@
                 }
                 padding-left: $spacing-smaller;
                 #avg-cards {
+                    height: 80%;
                     display: flex;
                     justify-content: space-between;
                     .avg {
+                        @include border-curved(8px);
                         padding: 10px;
                         background-color: $light-grey;
-                        width: 30%;
+                        width: 32%;
                     }
                 }
                 
