@@ -5,6 +5,7 @@
 #active-body {
   #active-header {
     @extend %tab-heading;
+    @extend %table-input;
     #active-search {
       width: 400px;
       @extend %input-field;
