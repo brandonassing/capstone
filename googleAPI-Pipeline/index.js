@@ -1,6 +1,6 @@
-const csvFilePath = process.argv[2].toString() + process.argv[3].toString();
-
+const csvFilePath = process.argv[2].toString();
 const csv = require("csvtojson");
+console.log(csvFilePath);
 
 // Imports the Google Cloud client library
 const { Storage } = require("@google-cloud/storage");
@@ -99,7 +99,7 @@ async function main() {
   var metadata = jsonArray[i];
   var unique = i; //metadata['Unique Id']
   var callId = metadata["Call Id"];
-  var dest = "./downloads/" + unique + ".mp3";
+  var dest = "googleAPI-Pipeline/downloads/" + unique + ".mp3";
   var url = metadata["Audio URL"];
 
   await download(url, dest, callId, metadata, unique, function(x) {
@@ -171,7 +171,7 @@ async function convert2Flac() {
 async function convertMP3toWAV(dest, callId, lastLink, metadata, unique, cb) {
   // Define variable locations
   var mp3File = dest;
-  var outputDestiation = "./wavFiles/" + unique + ".wav";
+  var outputDestiation = "googleAPI-Pipeline/wavFiles/" + unique + ".wav";
 
   sox.identify(mp3File, function(err, results) {
     // Preview the details about the mp3 file:
@@ -335,18 +335,18 @@ async function googleSpeech2Text(
   if (lastLink) {
     const parser = new Json2csvParser({ fields });
     const csv = parser.parse(myCSV);
+    var filename = process.argv[2].toString().split("/");
+    filename = filename[filename.length - 1];
 
-    fs.writeFile(
-      "../automation/transcriptions/" + process.argv[3],
-      csv,
-      function(err, data) {
-        if (err) console.log(err);
-        console.log(
-          "Successfully Written to ../automation/transcriptions/" +
-            process.argv[3]
-        );
-      }
-    );
+    fs.writeFile("automation/transcriptions/" + filename, csv, function(
+      err,
+      data
+    ) {
+      if (err) console.log(err);
+      console.log(
+        "Successfully Written to automation/transcriptions/" + filename
+      );
+    });
   }
 
   cb3();
