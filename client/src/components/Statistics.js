@@ -8,19 +8,25 @@ import { storeMetrics } from '../_actions/metricList';
 import { authHeader } from '../_helpers/auth';
 import { handleError } from '../_helpers/errors';
 
+import { Dropdown, DropdownButton } from 'react-bootstrap';
+
+
 class Statistics extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      metricWeek: 0,
-      metricMonth: 0,
-      metricYear: 0
+      monthScope: 6,
+      isLoading: true
     }
 
     this.getDonutData = this.getDonutData.bind(this);
   }
 
   componentDidMount() {
+    this.getCallData();
+  }
+
+  getCallData = () => {
     fetch('/clients/calls', {
       method: 'GET',
       headers: authHeader()
@@ -33,6 +39,7 @@ class Statistics extends Component {
         let probabilities = [];
         let estimateValues = [];
         let invoices = [];
+        let callsMonthScope = [];
 
         for (let i = 0; i < resJson.message.length; i++) {
           calls = [...calls, ...resJson.message[i].calls];
@@ -40,8 +47,8 @@ class Statistics extends Component {
         calls.sort((a, b) => (moment(a.timestamp).isAfter(b.timestamp)) ? 1 : ((moment(b.timestamp).isAfter(a.timestamp)) ? -1 : 0));
 
         for (let i = 0; i < calls.length; i++) {
-          // NOTE: controls graph scope
-          if (moment().diff(moment(calls[i].timestamp.slice(0, 10)), 'months') <= 6) {
+          if (moment().diff(moment(calls[i].timestamp.slice(0, 10)), 'months') <= this.state.monthScope) {
+            callsMonthScope.push(calls[i]);
             timestamps.push(calls[i].timestamp.slice(0, 10));
             probabilities.push(Math.round(calls[i].opportunityProbability * 100));
             estimateValues.push(calls[i].estimateValue);
@@ -77,13 +84,14 @@ class Statistics extends Component {
         });
 
         this.props.storeMetrics({
-          calls: calls,
+          calls: callsMonthScope,
           timestamps: timestamps,
           metricAvg: metricAvg,
           probabilities: probabilities,
           estimateValues: estimateValues,
           invoices: invoices
         });
+        this.setState({ isLoading: false });
       })
       .catch(err => {
         console.log(err)
@@ -108,11 +116,28 @@ class Statistics extends Component {
     return [high, med, low];
   }
 
+  getWorkersInfo = () => {
+    let workersArr = [{ name: "TOTAL", total: 0 }];
+    for (let i = 0; i < this.props.calls.length; i++) {
+      for (let j = 0; j < this.props.calls[i].invoice.length; j++) {
+        if (!!this.props.calls[i].invoice[j].tech) {
+          if (!workersArr.filter(item => item.name === this.props.calls[i].invoice[j].tech).length > 0) {
+            workersArr = [...workersArr, { name: this.props.calls[i].invoice[j].tech, total: 0 }];
+          }
+          workersArr.find(item => item.name === this.props.calls[i].invoice[j].tech).total += this.props.calls[i].invoice[j].amountAfterDiscount;
+          workersArr.find(item => item.name === "TOTAL").total += this.props.calls[i].invoice[j].amountAfterDiscount;
+        }
+      }
+    }
+    return workersArr;
+  };
+
   render() {
     let lineData = {
       labels: this.props.timestamps,
       datasets: [{
-        fill: false,
+        fill: true,
+        backgroundColor: "rgba(68, 185, 186, 0.3)",
         label: "Daily total ($)",
         borderColor: '#51C4C6',
         data: this.props.metricAvg,
@@ -163,56 +188,89 @@ class Statistics extends Component {
       }
     };
 
-    let totalMetricWeek = 0, weekDenom = 0;
-    let totalMetricMonth = 0, monthDenom = 0;
-    let totalMetricYear = 0, yearDenom = 0;
-    // TODO
-    for (let i = 0; i < this.props.calls.length; i++) {
-      if (moment(this.props.calls[i].timestamp).isSame(new Date(), 'week')) {
-        totalMetricWeek += parseInt((Math.round(this.props.calls[i].invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2));
+    let workersArr = this.getWorkersInfo();
+    workersArr.sort((a, b) => {
+      return b.total - a.total;
+    });
 
-        weekDenom++;
-      }
-      if (moment(this.props.calls[i].timestamp).isSame(new Date(), 'month')) {
-        totalMetricMonth += parseInt((Math.round(this.props.calls[i].invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2));
-        monthDenom++;
-      }
-      if (moment(this.props.calls[i].timestamp).isSame(new Date(), 'year')) {
-        totalMetricYear += parseInt((Math.round(this.props.calls[i].invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2));
-        yearDenom++;
-      }
-    }
-    let weekJSX;
-    if (weekDenom > 0) {
-      weekJSX = <p>{totalMetricWeek / weekDenom}</p>
-    }
-    else {
-      weekJSX = <p>No data</p>
-    }
-
-    let monthJSX;
-    if (monthDenom > 0) {
-      monthJSX = <p>{totalMetricMonth / monthDenom}</p>
-    }
-    else {
-      monthJSX = <p>No data</p>
+    let topTechs;
+    if (!!workersArr && workersArr.length > 3) {
+      topTechs = (
+        <div>
+          <div className="top-worker">
+            <p><strong>1. {workersArr[1].name}</strong></p>
+            <p>${(Math.round(workersArr[1].total * 100) / 100).toFixed(2)}</p>
+            <p className="value-percent">~{Math.round(workersArr[1].total / workersArr[0].total * 100)}% of total revenue</p>
+          </div>
+          <div className="top-worker">
+            <p><strong>2. {workersArr[2].name}</strong></p>
+            <p>${(Math.round(workersArr[2].total * 100) / 100).toFixed(2)}</p>
+            <p className="value-percent">~{Math.round(workersArr[2].total / workersArr[0].total * 100)}% of total revenue</p>
+          </div>
+          <div className="top-worker">
+            <p><strong>3. {workersArr[3].name}</strong></p>
+            <p>${(Math.round(workersArr[3].total * 100) / 100).toFixed(2)}</p>
+            <p className="value-percent">~{Math.round(workersArr[3].total / workersArr[0].total * 100)}% of total revenue</p>
+          </div>
+        </div>
+      );
     }
 
-    let yearJSX;
-    if (yearDenom > 0) {
-      yearJSX = <p>{totalMetricYear / yearDenom}</p>
-    }
-    else {
-      yearJSX = <p>No data</p>
+    let valueEstimates;
+    if (this.props.estimateValues.length > 0) {
+      let valuesObj = {
+        total: 0,
+        high: 0,
+        med: 0,
+        low: 0
+      };
+      this.props.estimateValues.forEach((val) => {
+        if (val === 1) {
+          valuesObj.low++;
+          valuesObj.total++;
+        } else if (val === 2) {
+          valuesObj.med++;
+          valuesObj.total++;
+        } else if (val === 3) {
+          valuesObj.high++;
+          valuesObj.total++;
+        }
+      });
+      valueEstimates = (
+        <div>
+          <div className="value-estimate">
+            <p className="high"><strong>High</strong></p>
+            <p><strong>{valuesObj.high}</strong> high value prospects</p>
+            <p className="value-percent">~{Math.round(valuesObj.high / valuesObj.total * 100)}% of all prospects</p>
+          </div>
+          <div className="value-estimate">
+            <p className="med"><strong>Medium</strong></p>
+            <p><strong>{valuesObj.med}</strong> medium value prospects</p>
+            <p className="value-percent">~{Math.round(valuesObj.med / valuesObj.total * 100)}% of all prospects</p>
+          </div>
+          <div className="value-estimate">
+            <p className="low"><strong>Low</strong></p>
+            <p><strong>{valuesObj.low}</strong> low value prospects</p>
+            <p className="value-percent">~{Math.round(valuesObj.low / valuesObj.total * 100)}% of all prospects</p>
+          </div>
+        </div>
+      );
     }
 
     return (
       <div id="stats-body">
         <div id="stats-header">
-          <h2>Client statistics <span>(last 6 months)</span></h2>
+          <h2>Client statistics <span>(last {this.state.monthScope} months)</span></h2>
+          <div className="months-dropdown">
+            <DropdownButton id="dropdown-basic-button" title={"Last " + this.state.monthScope + " months"}>
+              <Dropdown.Item value={3} onClick={() => { this.setState({ monthScope: 3, isLoading: true }, this.getCallData) }}>3 months</Dropdown.Item>
+              <Dropdown.Item value={6} onClick={() => { this.setState({ monthScope: 6, isLoading: true }, this.getCallData) }}>6 months</Dropdown.Item>
+              <Dropdown.Item value={12} onClick={() => { this.setState({ monthScope: 12, isLoading: true }, this.getCallData) }}>12 months</Dropdown.Item>
+            </DropdownButton>
+          </div>
         </div>
         {
-          this.props.metricAvg.length === 0 ?
+          this.state.isLoading ?
             <div className="text-center">
               <div className="spinner-grow text-primary" role="status">
                 <span className="sr-only">Loading...</span>
@@ -235,20 +293,17 @@ class Statistics extends Component {
                   <h3>Clients' invoice totals distribution</h3>
                   <Pie data={donutData} options={donutOptions} />
                 </div>
-                <div id="avg-group">
-                  <h3>Clients' invoice totals averages</h3>
-                  <div id="avg-cards">
-                    <div className="avg">
-                      <h4>This week</h4>
-                      {weekJSX}
+                <div id="leaderboard-group">
+                  <div className="leaderboard-section">
+                    <h3>Top techs</h3>
+                    <div className="leaderboard">
+                      {topTechs}
                     </div>
-                    <div className="avg">
-                      <h4>This month</h4>
-                      {monthJSX}
-                    </div>
-                    <div className="avg">
-                      <h4>This year</h4>
-                      {yearJSX}
+                  </div>
+                  <div className="leaderboard-section">
+                    <h3>Value estimates</h3>
+                    <div className="leaderboard">
+                      {valueEstimates}
                     </div>
                   </div>
                 </div>
