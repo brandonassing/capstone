@@ -179,7 +179,7 @@ class ClientProfile extends Component {
       minWidth: 150,
       resizable: false
     }, {
-      Header: () => <p>Type</p>,
+      Header: () => <p>Customer status</p>,
       id: 'type',
       accessor: d => {
         let hasInvoice = false;
@@ -191,10 +191,10 @@ class ClientProfile extends Component {
         return hasInvoice ? "Existing" : "New"
       },
       Cell: col => <p>{col.value}</p>,
-      minWidth: 50,
+      minWidth: 60,
       resizable: false
     }, {
-      Header: () => <p>Probability of invoice</p>,
+      Header: () => <p>Conversion probability</p>,
       id: 'prob',
       accessor: d => {
         // let sum = 0;
