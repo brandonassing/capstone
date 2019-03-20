@@ -6,7 +6,7 @@ var ClientSchema = new Schema({
   firstName: String,
   lastName: String,
   phoneNumber: String,
-  adderss: String,
+  address: String,
   calls: [{
     callId: String,
     worker: String,

@@ -72,6 +72,14 @@ class CompletedClients extends Component {
     }
   }
 
+  refresh = () => {
+    this.setState({
+      totalPages: 0,
+      pageNo: 1,
+      size: 10
+    }, () => this.getData(true));
+  }
+
   getData(refresh) {
     fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=completed', {
       method: 'GET',
@@ -93,10 +101,10 @@ class CompletedClients extends Component {
 
   dateSort = (a, b) => {
     if (a.timestamp && b.timestamp) {
-      return new Date(a.timestamp) - new Date(b.timestamp);
+      return new Date(b.timestamp) - new Date(a.timestamp);
     }
     else if (a.date && b.date) {
-      return new Date(a.date) - new Date(b.date);
+      return new Date(b.date) - new Date(a.date);
     }
   }
 
@@ -131,7 +139,7 @@ class CompletedClients extends Component {
       Cell: col => <p>{col.value}</p>,
       minWidth: 50
     }, {
-      Header: () => <p>Total invoice</p>,
+      Header: () => <p>Total revenue</p>,
       id: 'invoice',
       accessor: d => {
         let totalInvoice = 0;
@@ -165,7 +173,12 @@ class CompletedClients extends Component {
       <div id="completed-body">
         <div id="completed-header">
           <h2>Client invoices</h2>
-          <input className="form-control" id="completed-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
+          <div className="table-header">
+            <div className="btn-container">
+              <button type="button" className="btn btn-light" onClick={this.refresh}>Refresh</button>
+            </div>
+            <input className="form-control" id="completed-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
+          </div>
         </div>
         <ReactTable
           pageSize={this.props.clientProfiles.length}
@@ -210,7 +223,7 @@ class CompletedClients extends Component {
                           // <p>Invoice total: <strong>${(Math.round(item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2)}</strong></p>
                           :
                           <div>
-                            <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
+                            <p>Conversion probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
                             <p>Value estimate: <strong className={item.estimateValue === 1 ? "low" : item.estimateValue === 2 ? "med" : "high"}>{item.estimateValue === 1 ? "Low" : item.estimateValue === 2 ? "Med" : "High"}</strong></p>
                           </div>
                       }
@@ -222,7 +235,7 @@ class CompletedClients extends Component {
                               item.invoice.sort(this.dateSort).map((inv, invIndex) => {
                                 return (
                                   <div key={inv._id}>
-                                    <p>{moment(inv.date).format('MMMM Do YYYY')}, technician: <strong>{inv.tech}</strong></p>
+                                    <p>{moment(inv.date).format('MMMM Do YYYY')}{inv.tech !== "" ? ", technician: " : ""}<strong>{inv.tech}</strong></p>
                                     <p>{inv.quantity} - {inv.itemCode}: {inv.description}</p>
                                     {inv.discount !== 0 ? <p>Discount: ${(Math.round(inv.discount * 100) / 100).toFixed(2)}</p> : ""}
                                     <p className="price">Subtotal: <strong>{inv.amountAfterDiscount < 0 ? "-" : ""}${(Math.round(Math.abs(inv.amountAfterDiscount) * 100) / 100).toFixed(2)}</strong></p>

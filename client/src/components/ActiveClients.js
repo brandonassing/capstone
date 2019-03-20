@@ -72,6 +72,14 @@ class ActiveClients extends Component {
     }
   }
 
+  refresh = () => {
+    this.setState({
+      totalPages: 0,
+      pageNo: 1,
+      size: 10
+    }, () => this.getData(true));
+  }
+
   getData(refresh) {
     fetch('/clients/profiles' + (this.state.searchKey === "" ? '?' : '/search?searchKey=' + this.state.searchKey + '&') + '&pageNo=' + this.state.pageNo + '&size=' + this.state.size + '&callStatus=active', {
       method: 'GET',
@@ -137,7 +145,7 @@ class ActiveClients extends Component {
   };
 
   dateSort = (a, b) => {
-    return new Date(a.timestamp) - new Date(b.timestamp);
+    return new Date(b.timestamp) - new Date(a.timestamp);
   }
 
   render() {
@@ -171,7 +179,7 @@ class ActiveClients extends Component {
       Cell: col => <p>{col.value}</p>,
       minWidth: 50
     }, {
-      Header: () => <p>Max value estimate</p>,
+      Header: () => <p>Value estimate</p>,
       id: 'value',
       accessor: d => {
         let max = 0;
@@ -207,7 +215,13 @@ class ActiveClients extends Component {
       <div id="active-body">
         <div id="active-header">
           <h2>Active clients</h2>
-          <input className="form-control" id="active-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
+          <div className="table-header">
+            <div className="btn-container">
+              <button type="button" className="btn btn-light" onClick={this.refresh}>Refresh</button>
+            </div>
+            <input className="form-control" id="active-search" placeholder="Search" value={this.state.searchKey} onChange={(e) => this.setState({ searchKey: e.target.value })} onKeyPress={this.search} />
+          </div>
+
         </div>
         <ReactTable
           pageSize={this.props.clientProfiles.length}
@@ -252,7 +266,7 @@ class ActiveClients extends Component {
                               <p>Invoice total: <strong>${(Math.round(item.invoice.reduce((total, inv) => total + inv.amountAfterDiscount, 0) * 100) / 100).toFixed(2)}</strong></p>
                               :
                               <div>
-                                <p>Invoice probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
+                                <p>Conversion probability: <strong>{Math.round(item.opportunityProbability * 100)}%</strong></p>
                                 <p>Value estimate: <strong className={item.estimateValue === 1 ? "low" : item.estimateValue === 2 ? "med" : "high"}>{item.estimateValue === 1 ? "Low" : item.estimateValue === 2 ? "Med" : "High"}</strong></p>
                               </div>
                           }

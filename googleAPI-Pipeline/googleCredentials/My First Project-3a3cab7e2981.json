@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "optimum-attic-235120",
+  "private_key_id": "3a3cab7e2981a0f2b04e6e20db3a91f7ba10bfb3",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDhXT+3OgWYOI60\nGaVmPcE2ajF+5MtpoQ0I6/drudSD/ujvIMC8+6FWqaOBGFU4bcoXZavjmRzaa2pG\nQRD6r1aUWk5/TXUMwJwQ5GNRYaGrYBXPi41olo0j0pbLip9VKE5fW51B4A3QkPhb\nxwSdFfcIhIOiCg6ahTc7ahQ0qmK+DnSHDZDrc7Lm5qwx0DxS4v+qJq/PrsLAtf/D\ncH2sVlwNOEF86VB50a6rmjJSbfGqAglefDDXLQVRuu0aBaVGV6j4qhgEY2maK0rl\nO/IDj3nfJ1M0RbQY7CAsWCoZYc2zJ8PwAoilM1cc8Uo2bu6nByV+HsLM8UqrHrEO\nsAgi3Og7AgMBAAECggEAHYQwjadoRy0VJ6p6Or9Y2G8lJ2kA6UdCJUp+f9n5ZwZS\nbMtd4wKT+X1DYGuW8cqTXugekLMjj8nkw+nOtv6S+OAxCsRS0cZCSoYXKff/DCqM\nAMBW131sY+Y3gNYZkzYxuZSOrquRM6FhHegdhxNy5OcyNF1b10oeV0ZH+jPcteaA\n2diFAvkDO/odwwZ+upYKMiAWwAzv+c2rySSdHkyA2H1p7cHwwQ0t/jtxgU6QPfrY\n+yH/HSOE+J+Holds49s2Zn893Gfh6didLrI5Kv/yGQ3zsQXolY3Wuzy5pOHdQxYN\nYTod81TDtkTZUnLDsi1ftDEddPBmuvbjMCCmlsdlVQKBgQDyXfUDLGzAe4AJTpYh\njJzzbYRWis12h4q2zJ0cOGHipzDmm/KVI0hqR/O8KdvT/ITE7rtT8YTNC/S56NyK\n/J9n0NkrQ17ECGkJvqyEUI4BdCnAfhVAw30DMiYnZCzhMd+xYov51lDohEQdW6d7\nh6IBeCCbRXjHx0T9FrOH8cEd9QKBgQDuCnR2cD6bx3lfu6/Mz3dt1UiBcFBoo5gR\nXJNW3igvlSx9N30yKOQ7JXAZWgDLNhGWKB19rYXrDWAxI1H0oDzv0UK9bsjHdVH2\nupU38tO/CvBPBn07HYeuIbbeOqRcAYh611LxIG8CYGkRYJHo/c94HLHbxd5AyaVb\nLiNIARdfbwKBgHDQDSCqCADcO2+ZlcYN9mxUeLnzp8lZM9b8jNC66c0fN2LQCe0j\nXCykSy41aa5VptMnsChVjhQHUaVLX4SOLACdtMgvdqfWplWz3AdGm6LPmDOSPIBF\nviXDrQC+3yj/FvkxPqhO+qAQGMh1hhK4wk7exIahoqOS/Gi1rWFExTgVAoGBALE3\neWMfx4zEYflCyuvo3RoY+oTbMBHnEXSDfnHirPpXzapfYEayqM/b3GwTVJn1Y/xt\nWx9Qy22mJKIQkJhVn2hPW6eaTcIo9t+AI01m6/vD0gqTYzJalsOt9+3UrL6OqaQC\noI5BvkN/sVktkxNpukbK3iMnWYLUXNXYMI4Pue3jAoGAZLYWg1buQzaghygBBDyb\nP4UUKLFHxz4LYqjDierVP9Lf5Y5P5TMOLL6omoWo1YBr/cvI/Ki89UDlmUEV/HQN\n6J4G2R+kjewhkSQIzH5dD1sxY1uLz8G7dHpJm6+SMIaGHR4O+eEENjqjDeOjIF1I\ntobDNF8QejO2SEeQEu+V6qk=\n-----END PRIVATE KEY-----\n",
+  "client_email": "capstone@optimum-attic-235120.iam.gserviceaccount.com",
+  "client_id": "112944054398071567607",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/capstone%40optimum-attic-235120.iam.gserviceaccount.com"
+}
