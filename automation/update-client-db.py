@@ -6,7 +6,6 @@ import json
 from bson.objectid import ObjectId
 import sys
 
-print(sys.argv[1])
 # DB connection
 client = pymongo.MongoClient(
     "mongodb+srv://main:se4450@main-ia8yw.mongodb.net/test?retryWrites=true")
