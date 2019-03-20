@@ -52,24 +52,43 @@
                     max-width: 100%;
                 }
             }
-            #avg-group {
+            #leaderboard-group {
                 width: 50%;
                 h3 {
                     @extend %stat-data-heading
                 }
                 padding-left: $spacing-smaller;
-                #avg-cards {
-                    height: 80%;
-                    display: flex;
-                    justify-content: space-between;
-                    .avg {
+                display: flex;
+                justify-content: space-between;
+                min-height: 80%;
+                .leaderboard-section {
+                    width: 47%;
+                    .leaderboard {
+                        min-height: 85%;
                         @include border-curved(8px);
-                        padding: 10px;
+                        padding: $spacing-smaller;
                         background-color: $light-grey;
-                        width: 32%;
+                        .top-worker, .value-estimate {
+                            margin-bottom: 10px;
+                            p {
+                                margin: 0;
+                            }
+                            .high {
+                                color: $value-high-color;
+                            }
+                            .med {
+                                color: $value-med-color;
+                            }
+                            .low {
+                                color: $value-low-color;
+                            }
+                            .value-percent {
+                                color: $text-grey;
+                                font-style: italic;
+                            }
+                        }
                     }
                 }
-                
             }
         }
     }
