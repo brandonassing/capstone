@@ -113,7 +113,7 @@
     }
     background-color: $dark-grey;
     @include border-curved(8px);
-    padding: 15px;
+    padding: $spacing-smaller;
   }
 }
 
