@@ -101,10 +101,10 @@ class CompletedClients extends Component {
 
   dateSort = (a, b) => {
     if (a.timestamp && b.timestamp) {
-      return new Date(a.timestamp) - new Date(b.timestamp);
+      return new Date(b.timestamp) - new Date(a.timestamp);
     }
     else if (a.date && b.date) {
-      return new Date(a.date) - new Date(b.date);
+      return new Date(b.date) - new Date(a.date);
     }
   }
 

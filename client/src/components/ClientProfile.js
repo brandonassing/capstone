@@ -144,7 +144,7 @@ class ClientProfile extends Component {
   };
 
   dateSort = (a, b) => {
-    return new Date(a.timestamp) - new Date(b.timestamp);
+    return new Date(b.timestamp) - new Date(a.timestamp);
   }
 
   render() {
@@ -166,55 +166,73 @@ class ClientProfile extends Component {
       Cell: col => <p>{col.value}</p>,
       minWidth: 100
     }, {
-      Header: () => <p># calls</p>,
-      id: 'calls',
-      accessor: d => d.calls.length,
+      Header: () => <p>Last call time</p>,
+      id: 'time',
+      accessor: d => {
+        let time = 0;
+        time = d.calls.sort(this.dateSort)[0].timestamp;
+        return new Date(time);
+      },
+      Cell: col => {
+        return (<p>{moment(col.value).format('MMMM Do YYYY, h:mm:ss a')}</p>);
+      },
+      minWidth: 150,
+      resizable: false
+    }, {
+      Header: () => <p>Type</p>,
+      id: 'type',
+      accessor: d => {
+        let hasInvoice = false;
+        for (let i = 0; i < d.calls.length; i++) {
+          if (d.calls[i].status === "completed") {
+            hasInvoice = true;
+          } 
+        }
+        return hasInvoice ? "Existing" : "New"
+      },
       Cell: col => <p>{col.value}</p>,
-      minWidth: 50
+      minWidth: 50,
+      resizable: false
     }, {
       Header: () => <p>Probability of invoice</p>,
       id: 'prob',
       accessor: d => {
-        let sum = 0;
-        let counter = 0;
-        for (let i = 0; i < d.calls.length; i++) {
-          if (d.calls[i].status === "inactive") {
-            sum += d.calls[i].opportunityProbability;
-            counter++;
-          }
-        }
-        return Math.round((sum / counter) * 100);
+        // let sum = 0;
+        // let counter = 0;
+        // for (let i = 0; i < d.calls.length; i++) {
+        //   if (d.calls[i].status === "inactive") {
+        //     sum += d.calls[i].opportunityProbability;
+        //     counter++;
+        //   }
+        // }
+        // return Math.round((sum / counter) * 100);
+        let prob = 0;
+        prob = d.calls.sort(this.dateSort)[0].opportunityProbability;
+        return (prob * 100).toFixed(0);
       },
       Cell: col => {
-        let tierClass = "";
-        if (col.value === 1) {
-          tierClass = "low";
-        }
-        else if (col.value === 2) {
-          tierClass = "med";
-        }
-        else if (col.value === 3) {
-          tierClass = "high";
-        }
-        return (<p className={tierClass}>{col.value}%</p>);
+        return (<p>{col.value}%</p>);
       },
       className: 'value-metric',
-      minWidth: 100,
+      minWidth: 75,
       resizable: false
     }, {
-      Header: () => <p>Max value estimate</p>,
+      Header: () => <p>Value estimate</p>,
       id: 'value',
       accessor: d => {
-        let max = 0;
+        // let max = 0;
 
-        for (let i = 0; i < d.calls.length; i++) {
-          if (d.calls[i].status === "inactive") {
-            if (d.calls[i].estimateValue > max) {
-              max = d.calls[i].estimateValue;
-            }
-          }
-        }
-        return max;
+        // for (let i = 0; i < d.calls.length; i++) {
+        //   if (d.calls[i].status === "inactive") {
+        //     if (d.calls[i].estimateValue > max) {
+        //       max = d.calls[i].estimateValue;
+        //     }
+        //   }
+        // }
+        // return max;
+        let val = 0;
+        val = d.calls.sort(this.dateSort)[0].estimateValue;
+        return val;
       },
       Cell: col => {
         let tierClass = "";
@@ -230,7 +248,7 @@ class ClientProfile extends Component {
         return (<p className={tierClass}>{col.value === 1 ? "Low" : col.value === 2 ? "Med" : "High"}</p>);
       },
       className: 'value-metric',
-      minWidth: 100,
+      minWidth: 75,
       resizable: false
     }];
 

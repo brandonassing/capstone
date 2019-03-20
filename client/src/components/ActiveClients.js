@@ -145,7 +145,7 @@ class ActiveClients extends Component {
   };
 
   dateSort = (a, b) => {
-    return new Date(a.timestamp) - new Date(b.timestamp);
+    return new Date(b.timestamp) - new Date(a.timestamp);
   }
 
   render() {
