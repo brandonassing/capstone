@@ -21,6 +21,7 @@ xl = pd.ExcelFile(file)
 # Load a sheet into a DataFrame by name: invoice_data
 invoice_data = xl.parse()
 invoice_data['Discount'].fillna(0, inplace=True)
+invoice_data['Amount After Discount'].fillna(0, inplace=True)
 
 location_address = invoice_data['Location Address'].unique()[0].upper()
 location_city = invoice_data['Location City'].unique()[0]

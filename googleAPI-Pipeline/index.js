@@ -1,6 +1,5 @@
 const csvFilePath = process.argv[2].toString();
 const csv = require("csvtojson");
-console.log(csvFilePath);
 
 // Imports the Google Cloud client library
 const { Storage } = require("@google-cloud/storage");
@@ -86,7 +85,7 @@ var lastLink = false;
 // global script variables ----------
 
 async function main() {
-  console.log("Loading script");
+  console.log("Loading script...");
 
   if (!once) {
     jsonArray = await csv().fromFile(csvFilePath);
@@ -103,20 +102,15 @@ async function main() {
   var url = metadata["Audio URL"];
 
   await download(url, dest, callId, metadata, unique, function(x) {
-    console.log("download mp3 #: " + i);
-
+    console.log("Downloading mp3 file...");
     // Set the limit of this script
     if (i <= jsonArray.length - 1) {
-      console.log("Last file");
       lastLink = true;
     }
 
     // Convert the audio file into text
     convertMP3toWAV(dest, callId, lastLink, metadata, unique, function() {
-      // console.log("Callback finished!")
-
       if (!lastLink) {
-        console.log("not over yet");
         i++;
         main();
       }
@@ -153,12 +147,9 @@ async function convert2Flac() {
     .on("error", err => {
       console.log("An error occurred: " + err.message);
     })
-    .on("progress", progress => {
-      // console.log(JSON.stringify(progress));
-      console.log("Processing: " + progress.targetSize + " KB converted");
-    })
+    .on("progress", progress => {})
     .on("end", () => {
-      console.log("Processing finished !");
+      console.log("Processing finished!");
 
       // Upload to google bucket:
       var googleBucketAddress = "./transcodes/please.flac";
@@ -175,7 +166,8 @@ async function convertMP3toWAV(dest, callId, lastLink, metadata, unique, cb) {
 
   sox.identify(mp3File, function(err, results) {
     // Preview the details about the mp3 file:
-    console.log("Inside details: " + JSON.stringify(results));
+    console.log("MP3 file details: " + JSON.stringify(results));
+    console.log("Converting MP3 file to WAV...");
 
     var job = sox.transcode(mp3File, outputDestiation, {
       sampleRate: 16000,
@@ -188,14 +180,14 @@ async function convertMP3toWAV(dest, callId, lastLink, metadata, unique, cb) {
       console.error(err);
     });
     job.on("progress", function(amountDone, amountTotal) {
-      console.log("progress", amountDone, amountTotal);
+      // console.log("progress", amountDone, amountTotal);
     });
     job.on("src", function(info) {});
     job.on("dest", function(info) {
       console.log("WAV file details: " + JSON.stringify(info));
     });
     job.on("end", function() {
-      console.log("Conversion complete.");
+      console.log("Conversion complete!");
       // Upload the file location to Google Cloud Storage
 
       upload2GoogleBucket(
@@ -228,7 +220,6 @@ async function upload2GoogleBucket(
 
   // Specify the bucket name for all files
   const bucketName = "formattedwavfiles";
-  console.log(localUrl);
   // Uploads a local file to tshe bucket
   await storage.bucket(bucketName).upload(localUrl, {
     // Support for HTTP requests made with `Accept-Encoding: gzip`
@@ -261,7 +252,7 @@ async function googleSpeech2Text(
   unique,
   cb3
 ) {
-  console.log("Transcribing: " + name);
+  console.log("Transcribing audio file...");
 
   const audio = {
     uri: "gs://formattedwavfiles/" + name
@@ -329,7 +320,7 @@ async function googleSpeech2Text(
 
   myCSV.push(temp);
 
-  console.log("Final: " + JSON.stringify(myCSV));
+  console.log("Processed data: " + JSON.stringify(myCSV, null, 2));
 
   // Check if that was the last song:
   if (lastLink) {
@@ -344,7 +335,7 @@ async function googleSpeech2Text(
     ) {
       if (err) console.log(err);
       console.log(
-        "Successfully Written to automation/transcriptions/" + filename
+        "Successfully written to automation/transcriptions/" + filename
       );
     });
   }
@@ -360,6 +351,6 @@ function convert() {
 
   fs.writeFile("Transcription2200-2387.csv", csv, function(err, data) {
     if (err) console.log(err);
-    console.log("Successfully Written to File.");
+    console.log("Successfully written to file.");
   });
 }

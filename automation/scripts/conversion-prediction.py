@@ -1,4 +1,8 @@
 import json
+import os
+import pymongo
+import dns
+from bson.objectid import ObjectId
 import sys
 import keras
 import keras.preprocessing.text as kpt
@@ -17,6 +21,7 @@ pd.set_option('display.max_columns', 500)
 
 # loading in the calls manually
 data = pd.read_csv(sys.argv[1])
+client_data = data
 
 # BASIC DATA PREP
 data = data.rename(columns={'Prospect/Non-Prospect': 'Type'})
@@ -34,7 +39,7 @@ months = []
 
 for d in dates:
     d_format = "%m/%d/%Y"
-    dt = datetime.strptime(d, d_format)
+    dt = datetime.strptime(str(d), d_format)
     weekdays.append(dt.weekday())
     months.append(dt.month)
 
@@ -138,7 +143,7 @@ np.set_printoptions(threshold=np.nan)
 def combine_inputs(input_w, data):
     data = data.drop(['Call Id', 'Words'], axis=1)
     data = data.fillna(0)
-    print(data)
+    # print(data)
     input_o = data.to_numpy()
     input_x = np.concatenate((input_o, input_w), axis=1)
     return input_x
@@ -186,7 +191,7 @@ for s in input_x_conv_prob:
     if(labels_conv_prob[np.argmax(pred)] == '0'):
         conv_prob.append(1-pred[0][np.argmax(pred)])
     else:
-        conv_prob.append(pred[0][np.argmax(pred)]*100)
+        conv_prob.append(pred[0][np.argmax(pred)])
 
 # Value Estimation
 labels_value_est = ['1', '2', '3']
@@ -195,5 +200,66 @@ for s in input_x_value_est:
     pred = model_value_est.predict(np.asmatrix(s))
     value_est.append(labels_value_est[np.argmax(pred)])
 
-print(conv_prob)
-print(value_est)
+print("Conversion probability: " + str(conv_prob))
+print("Tier prediction: " + str(value_est))
+
+
+# DB connection
+client = pymongo.MongoClient(
+    "mongodb+srv://main:se4450@main-ia8yw.mongodb.net/test?retryWrites=true")
+db = client.Main
+clients = db.clients
+
+# client_data = xl.parse()
+
+location_address = client_data['Street Address'].unique()[0].upper()
+location_city = client_data['City'].unique()[0]
+location_province = client_data['State'].unique()[0]
+location_pc = client_data['Zip Code'].unique()[0]
+location_complete = location_address + ', ' + location_city + \
+    ', ' + location_province + ' ' + location_pc
+location_complete = location_complete.upper()
+
+
+raw_time = client_data['Time'].unique()[0].strip()
+raw_date = client_data['Date'].unique()[0].strip()
+raw_date_time = raw_date + " " + raw_time
+
+date_format = "%m/%d/%Y %I:%M:%S %p"
+date_time = datetime.strptime(str(raw_date_time), date_format)
+date_time = datetime.strftime(date_time, "%Y-%m-%dT%H:%M:%S")
+
+c = clients.find_one({"address": location_complete})
+
+call = {
+    "_id": ObjectId(),
+    "callId": str(client_data['Call Id'].unique()[0]),
+    "worker": "",
+    "estimateValue": int(value_est[0]),
+    "opportunityProbability": float(conv_prob[0]),
+    "timestamp": date_time,
+    "status": "inactive",
+    "invoice": []
+}
+
+if c == None:
+    print("New client")
+    first_name = client_data['First Name'].unique()[0]
+    last_name = client_data['Last Name'].unique()[0]
+    phone_number = client_data['Caller Number'].unique()[0]
+    new_client = {
+        "firstName": first_name,
+        "lastName": last_name,
+        "phoneNumber": str(phone_number),
+        "address": location_complete,
+        "calls": []
+    }
+    new_client['calls'].append(call)
+    clients.insert_one(new_client)
+    print(new_client)
+else:
+    print("Existing client")
+    c['calls'].append(call)
+    clients.update_one({'_id': c['_id']}, {
+                       '$set': {'calls': c['calls']}}, upsert=False)
+    print(call)
