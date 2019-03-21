@@ -260,7 +260,7 @@ class Statistics extends Component {
     return (
       <div id="stats-body">
         <div id="stats-header">
-          <h2>Client statistics <span>(last {this.state.monthScope} months)</span></h2>
+          <h2>Dashboard <span>(last {this.state.monthScope} months)</span></h2>
           <div className="months-dropdown">
             <DropdownButton id="dropdown-basic-button" title={"Last " + this.state.monthScope + " months"}>
               <Dropdown.Item value={3} onClick={() => { this.setState({ monthScope: 3, isLoading: true }, this.getCallData) }}>3 months</Dropdown.Item>

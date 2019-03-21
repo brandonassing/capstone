@@ -31,7 +31,7 @@ class Nav extends Component {
           </div>
           <ul className="nav nav-pills" id="navTabs" role="tablist">
             <li className="nav-item">
-              <a className="nav-link active" data-toggle="tab" href="#stats" role="tab" aria-controls="stats" aria-selected="true">Statistics</a>
+              <a className="nav-link active" data-toggle="tab" href="#stats" role="tab" aria-controls="stats" aria-selected="true">Dashboard</a>
             </li>
             <li className="nav-item">
               <a className="nav-link" data-toggle="tab" href="#clients" role="tab" aria-controls="clients" aria-selected="false">Prospects</a>
