@@ -1,0 +1,2 @@
+python3 automation/event-listener.py "node" "googleAPI-Pipeline/index.js" "automation/call-data"
+python3 automation/event-listener.py "python3" "automation/conversion-prediction.py" "automation/transcriptions"
