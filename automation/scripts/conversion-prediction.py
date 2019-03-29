@@ -143,7 +143,6 @@ np.set_printoptions(threshold=np.nan)
 def combine_inputs(input_w, data):
     data = data.drop(['Call Id', 'Words'], axis=1)
     data = data.fillna(0)
-    # print(data)
     input_o = data.to_numpy()
     input_x = np.concatenate((input_o, input_w), axis=1)
     return input_x
@@ -210,7 +209,6 @@ client = pymongo.MongoClient(
 db = client.Main
 clients = db.clients
 
-# client_data = xl.parse()
 
 location_address = client_data['Street Address'].unique()[0].upper()
 location_city = client_data['City'].unique()[0]

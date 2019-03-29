@@ -5,7 +5,7 @@ const csv = require("csvtojson");
 const { Storage } = require("@google-cloud/storage");
 
 // Your Google Cloud Platform project ID
-const projectId = "leadsense-230423";
+const projectId = "capstone-1553111895430";
 
 // HTTP configuration for downloading MP3 files
 const https = require("https");
@@ -219,7 +219,7 @@ async function upload2GoogleBucket(
   const storage = new Storage();
 
   // Specify the bucket name for all files
-  const bucketName = "formattedwavfiles";
+  const bucketName = "formattedwavfiles2";
   // Uploads a local file to tshe bucket
   await storage.bucket(bucketName).upload(localUrl, {
     // Support for HTTP requests made with `Accept-Encoding: gzip`
@@ -255,7 +255,7 @@ async function googleSpeech2Text(
   console.log("Transcribing audio file...");
 
   const audio = {
-    uri: "gs://formattedwavfiles/" + name
+    uri: "gs://formattedwavfiles2/" + name
   };
 
   const request = {
